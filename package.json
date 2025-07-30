@@ -1,0 +1,39 @@
+{
+  "name": "crypto-wallet-analyzer",
+  "version": "1.0.0",
+  "description": "Système d'analyse de portefeuilles crypto avec traitement batch et IA",
+  "main": "wallet-batch-processor.js",
+  "scripts": {
+    "start": "node wallet-batch-processor.js process",
+    "init": "node wallet-batch-processor.js init",
+    "stats": "node wallet-batch-processor.js stats",
+    "top": "node wallet-batch-processor.js top",
+    "enqueue": "node wallet-batch-processor.js enqueue",
+    "dev": "nodemon wallet-batch-processor.js process",
+    "api": "node cielo-api.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "axios": "^1.6.2",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "ioredis": "^5.3.2",
+    "node-fetch": "^3.3.2",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "redis": "^5.6.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": [
+    "crypto",
+    "wallet",
+    "analysis",
+    "batch-processing",
+    "supabase",
+    "redis"
+  ],
+  "author": "Helene Mounissamy",
+  "license": "MIT"
+}

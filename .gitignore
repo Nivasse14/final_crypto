@@ -1,0 +1,19 @@
+node_modules/
+.env
+*.log
+.DS_Store
+.vscode/
+coverage/
+dist/
+build/
+*.tmp
+*.temp
+
+# Données locales
+wallets.json
+*.csv
+*.html
+
+# Secrets
+.env.local
+.env.production

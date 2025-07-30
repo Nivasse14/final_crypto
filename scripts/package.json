@@ -1,0 +1,33 @@
+{
+  "name": "scandune-scripts",
+  "version": "1.0.0",
+  "description": "Scripts de collecte et traitement de données pour scanDune",
+  "main": "dune-scraper.js",
+  "scripts": {
+    "test": "node test-setup.js",
+    "dune-scraper": "node dune-scraper.js",
+    "extract-dune": "node extract-dune-top-traders.js",
+    "complete-data": "node complete-data-extractor.js",
+    "api-gmgn": "node api-gmgn.js",
+    "test-apis": "node coingecko-terminal-api.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.53.0",
+    "axios": "^1.11.0",
+    "csv-parser": "^3.0.0",
+    "dotenv": "^16.6.1",
+    "fs": "^0.0.1-security",
+    "puppeteer": "^21.0.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  },
+  "keywords": [
+    "solana",
+    "dune",
+    "scraping",
+    "wallets",
+    "trading"
+  ],
+  "author": "scanDune",
+  "license": "MIT"
+}
