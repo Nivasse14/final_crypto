@@ -1,6 +1,10 @@
-# 🚀 scanDune - Architecture Hybride Serverless + Scripts
+# 🚀 scanDune - Architecture Serverless pour Analyse Wallets Solana
 
-Système de monitoring et analyse des wallets Solana avec architecture hybride : **Edge Functions Supabase serverless** + **Scripts Node.js locaux**.
+[![Status](https://img.shields.io/badge/Status-Opérationnel-green)](https://github.com/Nivasse14/final_crypto)
+[![Architecture](https://img.shields.io/badge/Architecture-Serverless%20Hybrid-blue)](https://supabase.com)
+[![Deployment](https://img.shields.io/badge/Deployment-Supabase%20Edge%20Functions-purple)](https://supabase.com/edge-functions)
+
+Système avancé d'analyse et monitoring des wallets Solana avec architecture serverless moderne.
 
 ## 📁 Structure du Projet
 
