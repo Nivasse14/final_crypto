@@ -1,0 +1,402 @@
+{
+  "info": {
+    "name": "Cielo API Complete - Tests",
+    "description": "Collection complète pour tester l'API Cielo avec les vrais endpoints TRPC découverts. TOKENS-PNL FONCTIONNEL avec vraies données !",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "supabase_url",
+      "value": "https://xkndddxqqlxqknbqtefv.supabase.co/functions/v1",
+      "type": "string"
+    },
+    {
+      "key": "test_wallet",
+      "value": "ABdAsGjQv1bLLvzgcqEWJmAuwNbUJyfNUausyTVe7STB",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🩺 Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{supabase_url}}/cielo-api/health",
+          "host": ["{{supabase_url}}"],
+          "path": ["cielo-api", "health"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Health check successful', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.status).to.eql('healthy');",
+              "    pm.expect(response.data_source).to.include('REAL_CIELO_API');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "📋 Portfolio",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{supabase_url}}/cielo-api/portfolio/{{test_wallet}}",
+          "host": ["{{supabase_url}}"],
+          "path": ["cielo-api", "portfolio", "{{test_wallet}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Portfolio data retrieved', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.success).to.be.true;",
+              "    pm.expect(response.source).to.eql('CIELO_API');",
+              "    pm.expect(response.wallet_address).to.eql(pm.variables.get('test_wallet'));",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "📊 Stats (All Time) - Enhanced Aggregated",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{supabase_url}}/cielo-api/stats/{{test_wallet}}",
+          "host": ["{{supabase_url}}"],
+          "path": ["cielo-api", "stats", "{{test_wallet}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Stats aggregated data retrieved', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.success).to.be.true;",
+              "    pm.expect(response.source).to.eql('CIELO_API');",
+              "    pm.expect(response.endpoint_used).to.eql('/enhanced-stats/aggregated');",
+              "    pm.expect(response.cielo_url).to.include('enhanced-stats/aggregated');",
+              "    pm.expect(response.cielo_url).to.include('days=max');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "📊 Stats (7 Days) - Enhanced Aggregated",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{supabase_url}}/cielo-api/stats-7d/{{test_wallet}}",
+          "host": ["{{supabase_url}}"],
+          "path": ["cielo-api", "stats-7d", "{{test_wallet}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Stats 7d data retrieved', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.success).to.be.true;",
+              "    pm.expect(response.source).to.eql('CIELO_API');",
+              "    pm.expect(response.endpoint_used).to.eql('/enhanced-stats/aggregated');",
+              "    pm.expect(response.period).to.eql('7_days');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "💹 Profitability (All Time) - Enhanced Stats",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{supabase_url}}/cielo-api/profitability/{{test_wallet}}",
+          "host": ["{{supabase_url}}"],
+          "path": ["cielo-api", "profitability", "{{test_wallet}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Profitability data retrieved', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.success).to.be.true;",
+              "    pm.expect(response.source).to.eql('CIELO_API');",
+              "    pm.expect(response.endpoint_used).to.eql('/enhanced-stats/profitability');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "💹 Profitability (7 Days) - Enhanced Stats",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{supabase_url}}/cielo-api/profitability-7d/{{test_wallet}}",
+          "host": ["{{supabase_url}}"],
+          "path": ["cielo-api", "profitability-7d", "{{test_wallet}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Profitability 7d data retrieved', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.success).to.be.true;",
+              "    pm.expect(response.source).to.eql('CIELO_API');",
+              "    pm.expect(response.endpoint_used).to.eql('/enhanced-stats/profitability');",
+              "    pm.expect(response.period).to.eql('7_days');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "💰 PnL",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{supabase_url}}/cielo-api/pnl/{{test_wallet}}",
+          "host": ["{{supabase_url}}"],
+          "path": ["cielo-api", "pnl", "{{test_wallet}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('PnL data retrieved', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.success).to.be.true;",
+              "    pm.expect(response.source).to.eql('CIELO_API');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "💰 PnL Complete (with tokens)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{supabase_url}}/cielo-api/pnl-complete/{{test_wallet}}",
+          "host": ["{{supabase_url}}"],
+          "path": ["cielo-api", "pnl-complete", "{{test_wallet}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('PnL complete data retrieved', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.success).to.be.true;",
+              "    pm.expect(response.source).to.eql('CIELO_API');",
+              "    pm.expect(response.include_tokens).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔄 Complete (All Endpoints) - TRPC Batch Equivalent",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{supabase_url}}/cielo-api/complete/{{test_wallet}}",
+          "host": ["{{supabase_url}}"],
+          "path": ["cielo-api", "complete", "{{test_wallet}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Complete data retrieved - FULL TRPC + TOKENS PNL', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.success).to.be.true;",
+              "    pm.expect(response.source).to.eql('CIELO_API');",
+              "    pm.expect(response.endpoints_called).to.be.an('array');",
+              "    pm.expect(response.endpoints_called.length).to.eql(5);",
+              "    // Vérifier qu'on a TOUS les endpoints TRPC découverts + tokens-pnl",
+              "    pm.expect(response.endpoints_called.join(' ')).to.include('portfolio');",
+              "    pm.expect(response.endpoints_called.join(' ')).to.include('enhanced-stats/aggregated');",
+              "    pm.expect(response.endpoints_called.join(' ')).to.include('enhanced-stats/profitability');",
+              "    pm.expect(response.endpoints_called.join(' ')).to.include('track-status');",
+              "    pm.expect(response.endpoints_called.join(' ')).to.include('TRPC profile.fetchTokenPnlSlow');",
+              "    pm.expect(response.trpc_equivalent).to.include('profile.getWalletPortfolio');",
+              "    pm.expect(response.trpc_equivalent).to.include('profile.getEnhancedStatsAggregated');",
+              "    pm.expect(response.trpc_equivalent).to.include('profile.getEnhancedStatsProfitability');",
+              "    pm.expect(response.trpc_equivalent).to.include('profile.getWalletGlobalTrackStatus');",
+              "    pm.expect(response.trpc_equivalent).to.include('profile.fetchTokenPnlSlow');",
+              "    // Vérifier que tokens_pnl est inclus avec les vraies données TRPC",
+              "    pm.expect(response.tokens_pnl).to.be.an('object');",
+              "    pm.expect(response.tokens_pnl.source).to.eql('TRPC_DIRECT');",
+              "    pm.expect(response.tokens_pnl.data).to.be.an('object');",
+              "    pm.expect(response.tokens_pnl.total_tokens).to.be.a('number');",
+              "    pm.expect(response.tokens_pnl.total_pnl_usd).to.be.a('number');",
+              "    pm.expect(response.tokens_pnl.winrate).to.be.a('number');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔍 Track Status - NEW from TRPC",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{supabase_url}}/cielo-api/track-status/{{test_wallet}}",
+          "host": ["{{supabase_url}}"],
+          "path": ["cielo-api", "track-status", "{{test_wallet}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Track status data retrieved', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.success).to.be.true;",
+              "    pm.expect(response.source).to.eql('CIELO_API');",
+              "    pm.expect(response.endpoint_used).to.eql('/wallet/track-status');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "🪙 Tokens PnL (Detailed) - REAL DATA from TRPC profile.fetchTokenPnlSlow",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{supabase_url}}/cielo-api/tokens-pnl/{{test_wallet}}?page=1&chains=&timeframe=&sortBy=&tokenFilter=",
+          "host": ["{{supabase_url}}"],
+          "path": ["cielo-api", "tokens-pnl", "{{test_wallet}}"],
+          "query": [
+            {
+              "key": "page",
+              "value": "1",
+              "description": "Page number for pagination (1, 2, 3...)"
+            },
+            {
+              "key": "chains",
+              "value": "",
+              "description": "Chain filter (empty for all chains)"
+            },
+            {
+              "key": "timeframe",
+              "value": "",
+              "description": "Timeframe filter (empty for all time)"
+            },
+            {
+              "key": "sortBy",
+              "value": "",
+              "description": "Sort field (empty for default)"
+            },
+            {
+              "key": "tokenFilter",
+              "value": "",
+              "description": "Token filter (empty for all tokens)"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Tokens PnL REAL TRPC data retrieved successfully', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.success).to.be.true;",
+              "    pm.expect(response.source).to.eql('CIELO_TRPC_DIRECT');",
+              "    pm.expect(response.endpoint_used).to.eql('profile.fetchTokenPnlSlow');",
+              "    pm.expect(response.trpc_equivalent).to.eql('profile.fetchTokenPnlSlow');",
+              "    pm.expect(response.trpc_url).to.include('profile.fetchTokenPnlSlow');",
+              "    pm.expect(response.data).to.be.an('object');",
+              "    pm.expect(response.data.json).to.be.an('object');",
+              "    pm.expect(response.data.json.data).to.be.an('object');",
+              "    pm.expect(response.data.json.data.tokens).to.be.an('array');",
+              "    pm.expect(response.data.json.data.total_tokens_traded).to.be.a('number');",
+              "    pm.expect(response.data.json.data.winrate).to.be.a('number');",
+              "    pm.expect(response.data.json.data.total_pnl_usd).to.be.a('number');",
+              "    pm.expect(response.data.json.paging).to.be.an('object');",
+              "    pm.expect(response.data.json.paging.total_pages).to.be.a('number');",
+              "    pm.expect(response.metadata.trpc_direct_call).to.be.true;",
+              "    // Vérifier qu'on a des vraies données de tokens avec toutes les métriques TRPC",
+              "    if (response.data.json.data.tokens.length > 0) {",
+              "        const firstToken = response.data.json.data.tokens[0];",
+              "        pm.expect(firstToken.token_symbol).to.be.a('string');",
+              "        pm.expect(firstToken.token_name).to.be.a('string');",
+              "        pm.expect(firstToken.token_address).to.be.a('string');",
+              "        pm.expect(firstToken.total_pnl_usd).to.be.a('number');",
+              "        pm.expect(firstToken.roi_percentage).to.be.a('number');",
+              "        pm.expect(firstToken.num_swaps).to.be.a('number');",
+              "        pm.expect(firstToken.total_buy_usd).to.be.a('number');",
+              "        pm.expect(firstToken.total_sell_usd).to.be.a('number');",
+              "        pm.expect(firstToken.chain).to.be.a('string');",
+              "    }",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
