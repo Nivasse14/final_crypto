@@ -1,0 +1,230 @@
+{
+  "info": {
+    "name": "Cielo API with ChatGPT Copy Trading Analysis",
+    "description": "Collection complète pour tester l'API Cielo avec l'analyse comportementale ChatGPT intégrée",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhrbmRkZHhxcWx4cWtuYnF0ZWZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwMTY3MTEsImV4cCI6MjA2ODU5MjcxMX0.1JfLmuXhKZLhSpIVkoubfaaE9M1jAANoPjKcXZTgPgU"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://xkndddxqqlxqknbqtefv.supabase.co/functions/v1"
+    },
+    {
+      "key": "test_wallet",
+      "value": "ABdAsGjQv1bLLvzgcqEWJmAuwNbUJyfNUausyTVe7STB"
+    },
+    {
+      "key": "alt_wallet",
+      "value": "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔍 Health Check with ChatGPT Info",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/cielo-api/health",
+          "host": ["{{base_url}}"],
+          "path": ["cielo-api", "health"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Health check successful', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.status).to.eql('healthy');",
+              "    pm.expect(response.behavioral_analysis).to.exist;",
+              "    pm.expect(response.copy_trading_criteria).to.exist;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "🤖 ChatGPT Analysis - Direct API",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"walletAddress\": \"test_demo\",\n  \"walletData\": {\n    \"total_pnl_usd\": 15750.80,\n    \"winrate\": 89.2,\n    \"total_tokens_traded\": 142,\n    \"total_roi_percentage\": 312.5,\n    \"tokens\": [\n      {\n        \"token_symbol\": \"SOL\",\n        \"token_address\": \"So11111111111111111111111111111111111111112\",\n        \"pnl\": 5500.25,\n        \"realized_pnl\": 4200.30,\n        \"unrealized_pnl\": 1299.95\n      },\n      {\n        \"token_symbol\": \"BONK\",\n        \"token_address\": \"DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263\",\n        \"pnl\": 3450.15,\n        \"realized_pnl\": 3450.15,\n        \"unrealized_pnl\": 0\n      },\n      {\n        \"token_symbol\": \"RAY\",\n        \"token_address\": \"4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R\",\n        \"pnl\": 2800.40,\n        \"realized_pnl\": 1500.20,\n        \"unrealized_pnl\": 1300.20\n      }\n    ],\n    \"stats_aggregated\": {\n      \"total_pnl\": 15750.80,\n      \"winrate\": 89.2,\n      \"total_roi_percentage\": 312.5,\n      \"swap_count\": 142,\n      \"total_volume\": 125000\n    }\n  }\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/analyze-wallet-behavior",
+          "host": ["{{base_url}}"],
+          "path": ["analyze-wallet-behavior"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('ChatGPT analysis response', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.copyTradingScore).to.exist;",
+              "    pm.expect(response.recommendation).to.exist;",
+              "    pm.expect(response.explanation).to.exist;",
+              "    pm.expect(response.criteriaAnalysis).to.exist;",
+              "    pm.expect(response.metadata).to.exist;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔄 Complete Endpoint with ChatGPT",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/cielo-api/complete/{{test_wallet}}",
+          "host": ["{{base_url}}"],
+          "path": ["cielo-api", "complete", "{{test_wallet}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Complete endpoint with behavioral analysis', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.success).to.be.true;",
+              "    pm.expect(response.behavioral_analysis).to.exist;",
+              "    pm.expect(response.tokens_pnl).to.exist;",
+              "    pm.expect(response.stats_aggregated).to.exist;",
+              "    ",
+              "    // Vérifier structure analysis comportementale",
+              "    const behaviorAnalysis = response.behavioral_analysis;",
+              "    pm.expect(behaviorAnalysis.success).to.exist;",
+              "    pm.expect(behaviorAnalysis.analysis_duration_ms).to.exist;",
+              "    ",
+              "    if (behaviorAnalysis.success) {",
+              "        pm.expect(behaviorAnalysis.analysis.copyTradingScore).to.exist;",
+              "        pm.expect(behaviorAnalysis.analysis.recommendation).to.exist;",
+              "    }",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "🪙 Tokens PnL with Enrichment",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/cielo-api/tokens-pnl/{{test_wallet}}",
+          "host": ["{{base_url}}"],
+          "path": ["cielo-api", "tokens-pnl", "{{test_wallet}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Tokens PnL with Gecko enrichment', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.success).to.be.true;",
+              "    pm.expect(response.metadata.enriched_with_gecko).to.be.true;",
+              "    pm.expect(response.data.tokens).to.be.an('array');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "📊 Stats Aggregated",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/cielo-api/stats/{{test_wallet}}",
+          "host": ["{{base_url}}"],
+          "path": ["cielo-api", "stats", "{{test_wallet}}"]
+        }
+      }
+    },
+    {
+      "name": "📊 Stats 7 Days",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/cielo-api/stats-7d/{{test_wallet}}",
+          "host": ["{{base_url}}"],
+          "path": ["cielo-api", "stats-7d", "{{test_wallet}}"]
+        }
+      }
+    },
+    {
+      "name": "🦎 Demo P1 Enrichment",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/cielo-api/demo-p1-enrichment",
+          "host": ["{{base_url}}"],
+          "path": ["cielo-api", "demo-p1-enrichment"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('P1 enrichment demo', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.success).to.be.true;",
+              "    pm.expect(response.enrichment_results).to.be.an('array');",
+              "    pm.expect(response.summary.successfully_enriched).to.be.greaterThan(0);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔍 Debug Enrich One Token",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/cielo-api/debug-enrich-one/{{test_wallet}}",
+          "host": ["{{base_url}}"],
+          "path": ["cielo-api", "debug-enrich-one", "{{test_wallet}}"]
+        }
+      }
+    }
+  ]
+}

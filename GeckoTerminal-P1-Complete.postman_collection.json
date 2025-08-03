@@ -1,0 +1,185 @@
+{
+  "info": {
+    "name": "GeckoTerminal P1 Enrichment - Complete Tests",
+    "description": "Tests complets pour l'enrichissement GeckoTerminal V2→P1 avec données avancées",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "🎯 Démo P1 - Enrichissement Showcase",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{SUPABASE_ANON_KEY}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{SUPABASE_URL}}/functions/v1/cielo-api/demo-p1-enrichment/test",
+          "host": ["{{SUPABASE_URL}}"],
+          "path": ["functions", "v1", "cielo-api", "demo-p1-enrichment", "test"]
+        },
+        "description": "Démonstration complète de l'enrichissement P1 sur 3 tokens populaires"
+      },
+      "response": []
+    },
+    {
+      "name": "🪙 Tokens PnL - Enrichissement P1 Actif",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{SUPABASE_ANON_KEY}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{SUPABASE_URL}}/functions/v1/cielo-api/tokens-pnl/{{WALLET_ADDRESS}}",
+          "host": ["{{SUPABASE_URL}}"],
+          "path": ["functions", "v1", "cielo-api", "tokens-pnl", "{{WALLET_ADDRESS}}"]
+        },
+        "description": "Récupération tokens PnL avec enrichissement automatique V2→P1"
+      },
+      "response": []
+    },
+    {
+      "name": "🎯 Complete - Données Enrichies P1",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{SUPABASE_ANON_KEY}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{SUPABASE_URL}}/functions/v1/cielo-api/complete/{{WALLET_ADDRESS}}",
+          "host": ["{{SUPABASE_URL}}"],
+          "path": ["functions", "v1", "cielo-api", "complete", "{{WALLET_ADDRESS}}"]
+        },
+        "description": "Endpoint complet avec tous les données enrichies P1"
+      },
+      "response": []
+    },
+    {
+      "name": "📋 Portfolio - Enrichissement Limité",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{SUPABASE_ANON_KEY}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{SUPABASE_URL}}/functions/v1/cielo-api/portfolio/{{WALLET_ADDRESS}}",
+          "host": ["{{SUPABASE_URL}}"],
+          "path": ["functions", "v1", "cielo-api", "portfolio", "{{WALLET_ADDRESS}}"]
+        },
+        "description": "Portfolio avec enrichissement P1 sur les 5 premiers tokens"
+      },
+      "response": []
+    },
+    {
+      "name": "🦎 Test GeckoTerminal V2 - Pools Discovery",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{SUPABASE_ANON_KEY}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{SUPABASE_URL}}/functions/v1/cielo-api/gecko-api-test/pools/So11111111111111111111111111111111111111112/solana",
+          "host": ["{{SUPABASE_URL}}"],
+          "path": ["functions", "v1", "cielo-api", "gecko-api-test", "pools", "So11111111111111111111111111111111111111112", "solana"]
+        },
+        "description": "Test de l'API GeckoTerminal V2 pour découvrir les pools SOL"
+      },
+      "response": []
+    },
+    {
+      "name": "🚀 Test GeckoTerminal P1 - Advanced Data",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{SUPABASE_ANON_KEY}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{SUPABASE_URL}}/functions/v1/cielo-api/gecko-api-test/p1-pool/58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2/solana",
+          "host": ["{{SUPABASE_URL}}"],
+          "path": ["functions", "v1", "cielo-api", "gecko-api-test", "p1-pool", "58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2", "solana"]
+        },
+        "description": "Test direct de l'API P1 pour récupérer les données avancées d'un pool"
+      },
+      "response": []
+    },
+    {
+      "name": "🔍 Validation Champs P1 - Token Unique",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{SUPABASE_ANON_KEY}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{SUPABASE_URL}}/functions/v1/cielo-api/tokens-pnl/{{WALLET_ADDRESS}}",
+          "host": ["{{SUPABASE_URL}}"],
+          "path": ["functions", "v1", "cielo-api", "tokens-pnl", "{{WALLET_ADDRESS}}"]
+        },
+        "description": "Validation que les champs P1 exclusifs sont présents"
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Validation des champs P1 exclusifs",
+          "pm.globals.set('P1_REQUIRED_FIELDS', JSON.stringify([",
+          "  'fdv_usd',",
+          "  'gt_score',", 
+          "  'gt_score_details',",
+          "  'gecko_pool_address',",
+          "  'gecko_pool_id',",
+          "  'gecko_data_source'",
+          "]));"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "SUPABASE_URL",
+      "value": "https://xkndddxqqlxqknbqtefv.supabase.co",
+      "type": "string"
+    },
+    {
+      "key": "SUPABASE_ANON_KEY",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhrbmRkZHhxcWx4cWtuYnF0ZWZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwMTY3MTEsImV4cCI6MjA2ODU5MjcxMX0.1JfLmuXhKZLhSpIVkoubfaaE9M1jAANoPjKcXZTgPgU",
+      "type": "string"
+    },
+    {
+      "key": "WALLET_ADDRESS",
+      "value": "ABdAsGjQv1bLLvzgcqEWJmAuwNbUJyfNUausyTVe7STB",
+      "type": "string"
+    }
+  ]
+}

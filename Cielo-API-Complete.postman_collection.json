@@ -284,6 +284,19 @@
               "    pm.expect(response.tokens_pnl.total_tokens).to.be.a('number');",
               "    pm.expect(response.tokens_pnl.total_pnl_usd).to.be.a('number');",
               "    pm.expect(response.tokens_pnl.winrate).to.be.a('number');",
+              "    pm.expect(response.tokens_pnl.enriched_with_gecko).to.be.true;",
+              "    pm.expect(response.tokens_pnl.enriched_tokens_count).to.be.a('number');",
+              "    // Vérifier que les tokens sont enrichis avec Geckoterminal",
+              "    if (response.tokens_pnl.data.tokens && response.tokens_pnl.data.tokens.length > 0) {",
+              "        const firstToken = response.tokens_pnl.data.tokens[0];",
+              "        pm.expect(firstToken.token_symbol).to.be.a('string');",
+              "        pm.expect(firstToken.token_address).to.be.a('string');",
+              "        pm.expect(firstToken.total_pnl_usd).to.be.a('number');",
+              "        // Vérifier les données Gecko (peuvent être null si enrichissement échoué)",
+              "        if (firstToken.gecko_price_usd !== undefined) {",
+              "            pm.expect(firstToken.gecko_price_usd).to.satisfy(val => val === null || typeof val === 'number');",
+              "        }",
+              "    }",
               "});"
             ]
           }

@@ -1,0 +1,309 @@
+{
+  "info": {
+    "name": "GeckoTerminal API Test Endpoints",
+    "description": "Collection de tests pour l'endpoint GeckoTerminal API intégré dans Supabase",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Help - Documentation",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{SUPABASE_ANON_KEY}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/gecko-api-test",
+          "host": ["{{BASE_URL}}"],
+          "path": ["gecko-api-test"]
+        },
+        "description": "Affiche la documentation d'aide avec tous les types de tests disponibles et des exemples d'usage"
+      }
+    },
+    {
+      "name": "Networks - List All",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{SUPABASE_ANON_KEY}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/gecko-api-test/networks",
+          "host": ["{{BASE_URL}}"],
+          "path": ["gecko-api-test", "networks"]
+        },
+        "description": "Récupère la liste de tous les réseaux supportés par GeckoTerminal (Solana, Ethereum, BSC, etc.)"
+      }
+    },
+    {
+      "name": "Token Info - SDOG",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{SUPABASE_ANON_KEY}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/gecko-api-test/token/25PwuUsuJ4PHtZ4TCprvmrVkbNQNvYuWj1CZd2xqbonk/solana",
+          "host": ["{{BASE_URL}}"],
+          "path": ["gecko-api-test", "token", "25PwuUsuJ4PHtZ4TCprvmrVkbNQNvYuWj1CZd2xqbonk", "solana"]
+        },
+        "description": "Récupère les informations détaillées du token SDOG (prix, supply, market cap, etc.)"
+      }
+    },
+    {
+      "name": "Token Info - SOL",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{SUPABASE_ANON_KEY}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/gecko-api-test/token/So11111111111111111111111111111111111111112/solana",
+          "host": ["{{BASE_URL}}"],
+          "path": ["gecko-api-test", "token", "So11111111111111111111111111111111111111112", "solana"]
+        },
+        "description": "Récupère les informations du token SOL (token natif de Solana)"
+      }
+    },
+    {
+      "name": "Token Pools - SDOG",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{SUPABASE_ANON_KEY}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/gecko-api-test/pools/25PwuUsuJ4PHtZ4TCprvmrVkbNQNvYuWj1CZd2xqbonk/solana",
+          "host": ["{{BASE_URL}}"],
+          "path": ["gecko-api-test", "pools", "25PwuUsuJ4PHtZ4TCprvmrVkbNQNvYuWj1CZd2xqbonk", "solana"]
+        },
+        "description": "Récupère tous les pools de liquidité associés au token SDOG avec informations des DEX"
+      }
+    },
+    {
+      "name": "Trending Pools - Solana",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{SUPABASE_ANON_KEY}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/gecko-api-test/trending/solana",
+          "host": ["{{BASE_URL}}"],
+          "path": ["gecko-api-test", "trending", "solana"]
+        },
+        "description": "Récupère les pools tendance sur le réseau Solana (top 20)"
+      }
+    },
+    {
+      "name": "Trending Pools - Ethereum",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{SUPABASE_ANON_KEY}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/gecko-api-test/trending/eth",
+          "host": ["{{BASE_URL}}"],
+          "path": ["gecko-api-test", "trending", "eth"]
+        },
+        "description": "Récupère les pools tendance sur le réseau Ethereum"
+      }
+    },
+    {
+      "name": "DEX List - Solana",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{SUPABASE_ANON_KEY}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/gecko-api-test/dexes/solana",
+          "host": ["{{BASE_URL}}"],
+          "path": ["gecko-api-test", "dexes", "solana"]
+        },
+        "description": "Liste tous les DEX disponibles sur Solana (Raydium, Meteora, etc.)"
+      }
+    },
+    {
+      "name": "DEX List - Ethereum",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{SUPABASE_ANON_KEY}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/gecko-api-test/dexes/eth",
+          "host": ["{{BASE_URL}}"],
+          "path": ["gecko-api-test", "dexes", "eth"]
+        },
+        "description": "Liste tous les DEX disponibles sur Ethereum (Uniswap, SushiSwap, etc.)"
+      }
+    },
+    {
+      "name": "Pool Specific - SDOG Pool",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{SUPABASE_ANON_KEY}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/gecko-api-test/pool-specific/8MsMB9zGkescT7r3mSA6uJdFthtgx3JHAn93b8swQicT/solana",
+          "host": ["{{BASE_URL}}"],
+          "path": ["gecko-api-test", "pool-specific", "8MsMB9zGkescT7r3mSA6uJdFthtgx3JHAn93b8swQicT", "solana"]
+        },
+        "description": "Récupère les données spécifiques d'un pool SDOG/SOL sur Raydium"
+      }
+    },
+    {
+      "name": "Error Test - Invalid Type",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{SUPABASE_ANON_KEY}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/gecko-api-test/invalid-type",
+          "host": ["{{BASE_URL}}"],
+          "path": ["gecko-api-test", "invalid-type"]
+        },
+        "description": "Test de gestion d'erreur avec un type de test invalide"
+      }
+    },
+    {
+      "name": "Error Test - Missing Token Address",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{SUPABASE_ANON_KEY}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/gecko-api-test/token",
+          "host": ["{{BASE_URL}}"],
+          "path": ["gecko-api-test", "token"]
+        },
+        "description": "Test de gestion d'erreur avec un paramètre manquant requis"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "https://xkndddxqqlxqknbqtefv.supabase.co/functions/v1/cielo-api",
+      "type": "string"
+    },
+    {
+      "key": "SUPABASE_ANON_KEY",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhrbmRkZHhxcWx4cWtuYnF0ZWZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU5MDQwNzMsImV4cCI6MjA1MTQ4MDA3M30.lP7_dkwlSjTzlwcJy6VBPmDNEy_nCVS-nQ-8cQKW5gU",
+      "type": "string"
+    }
+  ]
+}

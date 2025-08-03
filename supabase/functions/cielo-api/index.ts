@@ -6,14 +6,19 @@ const CIELO_CONFIG = {
   baseUrl: 'https://feed-api.cielo.finance/v1',
   headers: {
     'Api-Key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0aW1lc3RhbXAiOjE3NTM1NTAxNjV9.auH6IR4uqg8NlkhyT82sEpav6mvvvRnMMf6hjOnSd0w',
-    'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhZGRyZXNzIjoiNkhQRVQ3UkxZZHZ6Z0hTVHVhRWNWbTRoTTV3VkxYa3Z2OTVOWm4yYW0xNGkiLCJpc3MiOiJodHRwczovL2FwaS51bml3aGFsZXMuaW8vIiwic3ViIjoidXNlciIsInBsYW4iOiJiYXNpYyIsImJhbGFuY2UiOjAsImlhdCI6MTc1MzU1MDAxNywiZXhwIjoxNzUzNTYwODE3fQ.t99299sp1pEKJnr8B61GLdj4e6f3bs29uM4xCLUpqVE',
+    'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhZGRyZXNzIjoiNkhQRVQ3UkxZZHZ6Z0hTVHVhRWNWbTRoTTV3VkxYa3Z2OTVOWm4yYW0xNGkiLCJpc3MiOiJodHRwczovL2FwaS51bml3aGFsZXMuaW8vIiwic3ViIjoidXNlciIsInBsYW5iOiJiYXNpYyIsImJhbGFuY2UiOjAsImlhdCI6MTc1MzU1MDAxNywiZXhwIjoxNzUzNTYwODE3fQ.t99299sp1pEKJnr8B61GLdj4e6f3bs29uM4xCLUpqVE',
     'Content-Type': 'application/json'
   }
 };
 
+// Configuration Supabase pour la persistance
+const SUPABASE_FUNCTION_URL = 'https://xkndddxqqlxqknbqtefv.supabase.co/functions/v1';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhrbmRkZHhxcWx4cWtuYnF0ZWZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwMTY3MTEsImV4cCI6MjA2ODU5MjcxMX0.1JfLmuXhKZLhSpIVkoubfaaE9M1jAANoPjKcXZTgPgU';
+
 // Configuration API Geckoterminal
 const GECKOTERMINAL_CONFIG = {
-  baseUrl: 'https://app.geckoterminal.com/api/p1',
+  baseUrl: 'https://api.geckoterminal.com/api/v2',
+  baseUrlP1: 'https://app.geckoterminal.com/api/p1', // API p1 pour données enrichies
   headers: {
     'Accept': 'application/json',
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
@@ -129,34 +134,145 @@ async function geckoterminalRequest(endpoint: string): Promise<any> {
 }
 
 /**
- * Enrichir les données avec Geckoterminal (prix, market cap, etc.)
+ * Fonction utilitaire pour faire des requêtes à l'API Geckoterminal P1 (données enrichies)
  */
-async function enrichTokenWithGecko(token: any, network: string = 'solana'): Promise<any> {
-  if (!token.token_address) {
-    return token;
-  }
+async function geckoterminalP1Request(endpoint: string): Promise<any> {
+  const fullUrl = `${GECKOTERMINAL_CONFIG.baseUrlP1}${endpoint}`;
+  
+  try {
+    console.log(`🦎 [GECKO P1 REQUEST] ${fullUrl}`);
+    console.log(`📤 [GECKO P1 HEADERS]`, JSON.stringify(GECKOTERMINAL_CONFIG.headers, null, 2));
+    
+    const startTime = Date.now();
+    
+    const response = await fetch(fullUrl, {
+      method: 'GET',
+      headers: GECKOTERMINAL_CONFIG.headers
+    });
 
-  const cacheKey = `gecko_${network}_${token.token_address}`;
+    const duration = Date.now() - startTime;
+    console.log(`⏱️ [GECKO P1 RESPONSE] ${response.status} ${response.statusText} (${duration}ms)`);
+
+    if (!response.ok) {
+      console.log(`⚠️ [GECKO P1 WARNING] HTTP ${response.status}: ${response.statusText}`);
+      console.log(`🔗 [GECKO P1 WARNING URL] ${fullUrl}`);
+      
+      // Gérer les erreurs 404 spécialement (token/pool non trouvé)
+      if (response.status === 404) {
+        console.log(`🔍 [GECKO P1 404] Token/Pool non trouvé sur Geckoterminal P1`);
+        return { data: null, error: 'not_found' };
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log(`📥 [GECKO P1 RESPONSE DATA] Taille: ${JSON.stringify(data).length} caractères`);
+    console.log(`🔍 [GECKO P1 RESPONSE STRUCTURE]:`, Object.keys(data));
+    
+    return data;
+  } catch (error) {
+    // Ne pas logger les erreurs 404 comme des erreurs
+    if (!error.message.includes('404')) {
+      console.error(`💥 [GECKO P1 ERROR] ${fullUrl}:`, error.message);
+    }
+    throw error;
+  }
+}
+
+/**
+ * Enrichir un token avec les données détaillées du pool P1 si l'adresse du pool est connue
+ */
+async function enrichTokenWithGeckoP1Pool(token: any, poolAddress: string, network: string = 'solana'): Promise<any> {
+  console.log(`🚀 [GECKO P1 POOL] Enrichissement avancé pour ${token.token_symbol || 'Unknown'} via pool ${poolAddress}`);
+  
+  const cacheKey = `gecko_p1_pool_${network}_${poolAddress}`;
   const cachedData = cache.get(cacheKey);
   
   if (cachedData && (Date.now() - cachedData.timestamp) < CACHE_DURATION) {
-    console.log(`📦 [GECKO CACHE HIT] ${token.token_address}`);
+    console.log(`📦 [GECKO P1 CACHE HIT] ${poolAddress}`);
     return { ...token, ...cachedData.data };
   }
 
   try {
-    const endpoint = `/${network}/tokens/${token.token_address}`;
-    const geckoData = await geckoterminalRequest(endpoint);
+    // Utiliser l'API P1 avec tous les paramètres d'inclusion pour le maximum de données
+    const p1Endpoint = `/${network}/pools/${poolAddress}?include=dex%2Cdex.network.explorers%2Cdex_link_services%2Cnetwork_link_services%2Cpairs%2Ctoken_link_services%2Ctokens.token_security_metric%2Ctokens.tags%2Cpool_locked_liquidities&base_token=0`;
     
-    if (geckoData && geckoData.data && geckoData.data.attributes) {
-      const attrs = geckoData.data.attributes;
-      const enrichedData = {
-        gecko_price_usd: attrs.price_usd,
-        gecko_market_cap_usd: attrs.market_cap_usd,
-        gecko_volume_24h: attrs.volume_24h,
-        gecko_price_change_24h: attrs.price_change_percentage?.['24h'],
-        gecko_fdv_usd: attrs.fdv_usd,
-        gecko_updated_at: attrs.updated_at
+    console.log(`🌐 [GECKO P1] Appel API P1 pour pool ${poolAddress}`);
+    const p1Data = await geckoterminalP1Request(p1Endpoint);
+    
+    if (p1Data && p1Data.data && p1Data.data.attributes) {
+      const poolAttrs = p1Data.data.attributes;
+      
+      console.log(`📊 [GECKO P1] Pool enrichi - Prix: $${poolAttrs.price_in_usd}, FDV: $${poolAttrs.fully_diluted_valuation}`);
+      
+      // Trouver le token correspondant dans les données incluses
+      let tokenData: any = null;
+      if (p1Data.included && Array.isArray(p1Data.included)) {
+        tokenData = p1Data.included.find((item: any) => 
+          item.type === 'token' && 
+          item.attributes?.address === token.token_address
+        );
+      }
+      
+      // Enrichissement maximal avec toutes les données P1
+      const enrichedData: any = {
+        // Flags d'enrichissement
+        gecko_enriched: true,
+        gecko_data_source: 'pools_api_p1_advanced',
+        gecko_updated_at: new Date().toISOString(),
+        
+        // Identifiants
+        gecko_pool_id: p1Data.data.id,
+        gecko_pool_address: poolAddress,
+        gecko_name: tokenData?.attributes?.name || poolAttrs.name || token.token_symbol,
+        gecko_symbol: tokenData?.attributes?.symbol || token.token_symbol,
+        
+        // Prix et valeurs principales (P1 plus précis)
+        price_usd: poolAttrs.price_in_usd ? parseFloat(poolAttrs.price_in_usd) : null,
+        market_cap_usd: tokenData?.attributes?.market_cap_in_usd ? parseFloat(tokenData.attributes.market_cap_in_usd) : null,
+        fdv_usd: poolAttrs.fully_diluted_valuation ? parseFloat(poolAttrs.fully_diluted_valuation) : null,
+        liquidity_usd: poolAttrs.reserve_in_usd ? parseFloat(poolAttrs.reserve_in_usd) : null,
+        
+        // Volume et trading (P1)
+        from_volume_in_usd: poolAttrs.from_volume_in_usd ? parseFloat(poolAttrs.from_volume_in_usd) : null,
+        to_volume_in_usd: poolAttrs.to_volume_in_usd ? parseFloat(poolAttrs.to_volume_in_usd) : null,
+        swap_count_24h: poolAttrs.swap_count_24h || null,
+        
+        // Variations de prix (P1 structure différente)
+        price_change_percentage_1h: poolAttrs.price_percent_changes?.h1 ? parseFloat(poolAttrs.price_percent_changes.h1) : null,
+        price_change_percentage_6h: poolAttrs.price_percent_changes?.h6 ? parseFloat(poolAttrs.price_percent_changes.h6) : null,
+        price_change_percentage_24h: poolAttrs.price_percent_changes?.h24 ? parseFloat(poolAttrs.price_percent_changes.h24) : null,
+        
+        // Données avancées P1
+        gt_score: poolAttrs.gt_score || null,
+        gt_score_details: poolAttrs.gt_score_details || null,
+        pool_fee: poolAttrs.pool_fee || null,
+        is_nsfw: poolAttrs.is_nsfw || false,
+        reserve_threshold_met: poolAttrs.reserve_threshold_met || false,
+        security_indicators: poolAttrs.security_indicators || null,
+        
+        // Informations du pool
+        pool_address: poolAttrs.address || poolAddress,
+        pool_created_at: poolAttrs.pool_created_at || null,
+        latest_swap_timestamp: poolAttrs.latest_swap_timestamp || null,
+        
+        // Données du token si disponibles
+        gecko_token_image_url: tokenData?.attributes?.image_url || null,
+        gecko_banner_image_url: tokenData?.attributes?.banner_image_url || null,
+        gecko_description: tokenData?.attributes?.description || null,
+        gecko_circulating_supply: tokenData?.attributes?.circulating_supply || null,
+        gecko_decimals: tokenData?.attributes?.decimals || null,
+        gecko_coingecko_id: tokenData?.attributes?.cg_coin_id || null,
+        gecko_on_coingecko: tokenData?.attributes?.on_coingecko || false,
+        gecko_on_pump_fun: tokenData?.attributes?.on_pump_fun || false,
+        gecko_supports_bubblemaps: tokenData?.attributes?.supports_bubblemaps || false,
+        gecko_links: tokenData?.attributes?.links || null,
+        
+        // Adresses et tokens
+        base_token_address: token.token_address,
+        token_reserves: poolAttrs.token_reserves || null,
+        token_value_data: poolAttrs.token_value_data || null,
+        token_weightages: poolAttrs.token_weightages || null
       };
       
       // Mettre en cache
@@ -165,14 +281,243 @@ async function enrichTokenWithGecko(token: any, network: string = 'solana'): Pro
         timestamp: Date.now()
       });
       
-      console.log(`✅ [GECKO ENRICHED] ${token.token_address} - Prix: $${attrs.price_usd}`);
+      console.log(`✅ [GECKO P1 ENRICHED] ${token.token_address} - Prix: $${poolAttrs.price_in_usd}, FDV: $${poolAttrs.fully_diluted_valuation} - Source: pools_api_p1`);
       return { ...token, ...enrichedData };
+      
+    } else {
+      console.log(`⚠️ [GECKO P1] Aucune données P1 pour pool ${poolAddress}`);
+      return { ...token, gecko_enriched: false };
     }
+    
+  } catch (error) {
+    console.log(`⚠️ [GECKO P1 SKIP] Pool ${poolAddress}: ${error.message}`);
+    return { ...token, gecko_enriched: false };
+  }
+}
+/**
+ * Enrichir les données avec Geckoterminal (prix, market cap, etc.)
+ * APPROCHE MÉTHODIQUE:
+ * 1. Chercher les pools via API V2 pour obtenir l'adresse du pool
+ * 2. Utiliser cette adresse pour un appel P1 avec données complètes
+ */
+async function enrichTokenWithGecko(token: any, network: string = 'solana'): Promise<any> {
+  console.log(`🔄 [GECKO START] Début enrichissement pour ${token.token_symbol || 'Unknown'} (${token.token_address})`);
+  
+  if (!token.token_address) {
+    console.log(`⚠️ [GECKO] Pas d'adresse token pour ${token.token_symbol || 'Unknown'}`);
+    return token;
+  }
+
+  const cacheKey = `gecko_enriched_${network}_${token.token_address}`;
+  const cachedData = cache.get(cacheKey);
+  
+  if (cachedData && (Date.now() - cachedData.timestamp) < CACHE_DURATION) {
+    console.log(`📦 [GECKO CACHE HIT] ${token.token_address}`);
+    return { ...token, ...cachedData.data };
+  }
+
+  try {
+    // ÉTAPE 1 : Chercher les pools avec l'API V2 pour identifier l'adresse du pool principal
+    let poolsEndpoint = `/networks/${network}/tokens/${token.token_address}/pools?include=dex,base_token&page=1&limit=3`;
+    console.log(`🌐 [GECKO STEP 1] Recherche pools V2 pour ${token.token_address}`);
+    
+    let poolsData;
+    try {
+      poolsData = await geckoterminalRequest(poolsEndpoint);
+    } catch (poolError) {
+      console.log(`⚠️ [GECKO] Pools API V2 failed: ${poolError.message}`);
+      poolsData = null;
+    }
+    
+    // ÉTAPE 2 : Si un pool est trouvé, extraire son adresse et utiliser l'API P1
+    if (poolsData && poolsData.data && Array.isArray(poolsData.data) && poolsData.data.length > 0) {
+      // Prendre le pool avec le plus de liquidité (le premier dans la liste triée)
+      const mainPool = poolsData.data[0];
+      const poolAddress = mainPool.attributes?.address;
+      
+      if (poolAddress) {
+        console.log(`🚀 [GECKO STEP 2] Pool trouvé: ${poolAddress}, appel API P1 pour données complètes`);
+        
+        // Nettoyer l'adresse du pool (retirer le préfixe network s'il existe)
+        const poolId = mainPool.id; // Format: "solana_8MsMB9zGkescT7r3mSA6uJdFthtgx3JHAn93b8swQicT"
+        const poolIdParts = poolId.split('_');
+        const cleanPoolAddress = poolIdParts.length > 1 ? poolIdParts.slice(1).join('_') : poolAddress;
+        
+        console.log(`🔍 [GECKO] Adresse pool nettoyée: ${cleanPoolAddress}`);
+        
+        // ÉTAPE 3 : Utiliser l'API P1 avec l'adresse du pool pour récupérer TOUTES les données
+        try {
+          const enrichedWithP1 = await enrichTokenWithGeckoP1Pool(token, cleanPoolAddress, network);
+          
+          if (enrichedWithP1.gecko_enriched) {
+            console.log(`✅ [GECKO SUCCESS] Token enrichi avec API P1 - FDV: $${enrichedWithP1.fdv_usd}`);
+            
+            // Ajouter l'adresse du pool dans les données enrichies
+            const finalEnrichedData = {
+              ...enrichedWithP1,
+              gecko_pool_address: cleanPoolAddress, // Stocker l'adresse du pool utilisée
+              gecko_pool_id: mainPool.id, // Stocker l'ID complet du pool
+              gecko_enrichment_method: 'v2_pool_discovery_then_p1_enrichment'
+            };
+            
+            // Mettre en cache
+            cache.set(cacheKey, {
+              data: finalEnrichedData,
+              timestamp: Date.now()
+            });
+            
+            return finalEnrichedData;
+          } else {
+            console.log(`⚠️ [GECKO] P1 enrichissement failed, fallback to V2 pools data`);
+            // Continuer vers le fallback V2 ci-dessous
+          }
+        } catch (p1Error) {
+          console.log(`⚠️ [GECKO] P1 API error: ${p1Error.message}, fallback to V2`);
+          // Continuer vers le fallback V2 ci-dessous
+        }
+      }
+      
+      // FALLBACK V2 : Utiliser les données de pools V2 si P1 non disponible
+      const poolAttrs = mainPool.attributes;
+      console.log(`📊 [GECKO V2 FALLBACK] Pool trouvé - Prix: $${poolAttrs.base_token_price_usd}, Liquidité: $${poolAttrs.reserve_in_usd}`);
+      
+      // Enrichissement V2 (version actuelle)
+      const enrichedData: any = {
+        // Flags d'enrichissement
+        gecko_enriched: true,
+        gecko_data_source: 'pools_api_v2_fallback',
+        gecko_updated_at: new Date().toISOString(),
+        gecko_enrichment_method: 'v2_pools_only',
+        
+        // Identifiants
+        gecko_id: mainPool.id,
+        gecko_name: poolAttrs.name || token.token_symbol,
+        gecko_symbol: poolAttrs.base_token_symbol || token.token_symbol,
+        gecko_pool_address: mainPool.attributes?.address || null, // Stocker l'adresse du pool
+        gecko_pool_id: mainPool.id,
+        
+        // Prix et valeurs principales
+        price_usd: poolAttrs.base_token_price_usd ? parseFloat(poolAttrs.base_token_price_usd) : null,
+        market_cap_usd: poolAttrs.market_cap_usd ? parseFloat(poolAttrs.market_cap_usd) : null,
+        fdv_usd: poolAttrs.fdv_usd ? parseFloat(poolAttrs.fdv_usd) : null,
+        liquidity_usd: poolAttrs.reserve_in_usd ? parseFloat(poolAttrs.reserve_in_usd) : null,
+        
+        // Volume sur différentes périodes
+        volume_24h_usd: poolAttrs.volume_usd?.h24 ? parseFloat(poolAttrs.volume_usd.h24) : null,
+        volume_1h_usd: poolAttrs.volume_usd?.h1 ? parseFloat(poolAttrs.volume_usd.h1) : null,
+        volume_6h_usd: poolAttrs.volume_usd?.h6 ? parseFloat(poolAttrs.volume_usd.h6) : null,
+        
+        // Variations de prix
+        price_change_percentage_1h: poolAttrs.price_change_percentage?.h1 ? parseFloat(poolAttrs.price_change_percentage.h1) : null,
+        price_change_percentage_6h: poolAttrs.price_change_percentage?.h6 ? parseFloat(poolAttrs.price_change_percentage.h6) : null,
+        price_change_percentage_24h: poolAttrs.price_change_percentage?.h24 ? parseFloat(poolAttrs.price_change_percentage.h24) : null,
+        
+        // Données de trading/transactions
+        transactions_24h_buys: poolAttrs.transactions?.h24?.buys || null,
+        transactions_24h_sells: poolAttrs.transactions?.h24?.sells || null,
+        transactions_1h_buys: poolAttrs.transactions?.h1?.buys || null,
+        transactions_1h_sells: poolAttrs.transactions?.h1?.sells || null,
+        
+        // Informations du pool
+        pool_address: poolAttrs.address || null,
+        dex: mainPool.relationships?.dex?.data?.id || null,
+        base_token_address: poolAttrs.base_token_address || token.token_address,
+        quote_token_address: poolAttrs.quote_token_address || null,
+        pool_created_at: poolAttrs.pool_created_at || null,
+        
+        // Métadonnées supplémentaires si disponibles
+        gecko_total_supply: poolAttrs.total_supply || null,
+        gecko_circulating_supply: poolAttrs.circulating_supply || null,
+        gecko_max_supply: poolAttrs.max_supply || null,
+        gecko_token_image_url: null
+      };
+      
+      // Ajouter les données du token inclus si disponibles
+      if (poolsData.included) {
+        const baseTokenData = poolsData.included.find((item: any) => 
+          item.type === 'token' && item.attributes?.address === token.token_address
+        );
+        
+        if (baseTokenData) {
+          enrichedData.gecko_name = baseTokenData.attributes.name || enrichedData.gecko_name;
+          enrichedData.gecko_symbol = baseTokenData.attributes.symbol || enrichedData.gecko_symbol;
+          enrichedData.gecko_token_image_url = baseTokenData.attributes.image_url || null;
+          enrichedData.gecko_total_supply = baseTokenData.attributes.total_supply || enrichedData.gecko_total_supply;
+        }
+      }
+      
+      // Mettre en cache
+      cache.set(cacheKey, {
+        data: enrichedData,
+        timestamp: Date.now()
+      });
+      
+      console.log(`✅ [GECKO V2 ENRICHED] ${token.token_address} - Prix: $${poolAttrs.base_token_price_usd} - Source: pools_api_v2`);
+      return { ...token, ...enrichedData };
+      
+    } else {
+      console.log(`⚠️ [GECKO] Aucun pool trouvé pour ${token.token_address}, fallback vers API tokens`);
+      
+      // FALLBACK FINAL : Utiliser l'API tokens classique V2
+      const tokenEndpoint = `/networks/${network}/tokens/${token.token_address}`;
+      const tokenData = await geckoterminalRequest(tokenEndpoint);
+      
+      if (tokenData && tokenData.data && tokenData.data.attributes) {
+        const attrs = tokenData.data.attributes;
+        console.log(`📊 [GECKO TOKEN FALLBACK] Prix: ${attrs.price_usd}, MarketCap: ${attrs.market_cap_usd}`);
+        
+        const enrichedData = {
+          // Flags d'enrichissement
+          gecko_enriched: true,
+          gecko_data_source: 'tokens_api_v2_fallback',
+          gecko_updated_at: new Date().toISOString(),
+          gecko_enrichment_method: 'v2_tokens_only',
+          
+          // Identifiants
+          gecko_id: tokenData.data.id,
+          gecko_name: attrs.name || token.token_symbol,
+          gecko_symbol: attrs.symbol || token.token_symbol,
+          
+          // Prix et valeurs
+          price_usd: attrs.price_usd ? parseFloat(attrs.price_usd) : null,
+          market_cap_usd: attrs.market_cap_usd ? parseFloat(attrs.market_cap_usd) : null,
+          fdv_usd: attrs.fdv_usd ? parseFloat(attrs.fdv_usd) : null,
+          
+          // Volume
+          volume_24h_usd: attrs.volume_usd?.h24 ? parseFloat(attrs.volume_usd.h24) : null,
+          volume_1h_usd: attrs.volume_usd?.h1 ? parseFloat(attrs.volume_usd.h1) : null,
+          volume_6h_usd: attrs.volume_usd?.h6 ? parseFloat(attrs.volume_usd.h6) : null,
+          
+          // Variations
+          price_change_percentage_1h: attrs.price_change_percentage?.h1 ? parseFloat(attrs.price_change_percentage.h1) : null,
+          price_change_percentage_6h: attrs.price_change_percentage?.h6 ? parseFloat(attrs.price_change_percentage.h6) : null,
+          price_change_percentage_24h: attrs.price_change_percentage?.h24 ? parseFloat(attrs.price_change_percentage.h24) : null,
+          
+          // Adresses
+          base_token_address: token.token_address,
+          
+          // Métadonnées
+          pool_created_at: attrs.created_at || null,
+          gecko_token_image_url: attrs.image_url || null,
+          gecko_total_supply: attrs.total_supply || null
+        };
+        
+        cache.set(cacheKey, {
+          data: enrichedData,
+          timestamp: Date.now()
+        });
+        
+        console.log(`✅ [GECKO TOKEN FALLBACK ENRICHED] ${token.token_address} - Prix: $${attrs.price_usd} - Source: tokens_api_v2`);
+        return { ...token, ...enrichedData };
+      }
+    }
+    
   } catch (error) {
     console.log(`⚠️ [GECKO SKIP] ${token.token_address}: ${error.message}`);
   }
   
-  return token;
+  console.log(`🔚 [GECKO END] Enrichissement terminé pour ${token.token_address} - Pas d'enrichissement`);
+  return { ...token, gecko_enriched: false };
 }
 
 /**
@@ -305,7 +650,7 @@ serve(async (req) => {
 
     console.log(`🎯 [CIELO API] action="${action}", wallet="${walletAddress || 'none'}"`);
 
-    // Le health check ne nécessite pas d'adresse de wallet
+    // Le health check et test-gecko ne nécessitent pas d'adresse de wallet
     if (action === 'health') {
       return new Response(JSON.stringify({
         status: 'healthy',
@@ -314,7 +659,677 @@ serve(async (req) => {
         cielo_base_url: CIELO_CONFIG.baseUrl,
         test_wallet: 'ABdAsGjQv1bLLvzgcqEWJmAuwNbUJyfNUausyTVe7STB',
         data_source: 'REAL_CIELO_API_WITH_FALLBACK',
-        available_endpoints: ['portfolio', 'stats', 'stats-7d', 'profitability', 'profitability-7d', 'track-status', 'tokens-pnl', 'pnl', 'pnl-complete', 'complete', 'health']
+        available_endpoints: ['portfolio', 'stats', 'stats-7d', 'profitability', 'profitability-7d', 'track-status', 'tokens-pnl', 'pnl', 'pnl-complete', 'complete', 'health', 'test-gecko', 'gecko-api-test', 'debug-tokens', 'debug-enrich-one', 'demo-p1-enrichment'],
+        behavioral_analysis: 'Integrated ChatGPT copy trading analysis in /complete endpoint',
+        copy_trading_criteria: 'Win rate 85%+, Anti-bot detection, Position sizing, Token strategy, Practical copy trading'
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Endpoint pour tester l'enrichissement Gecko directement
+    if (action === 'test-gecko') {
+      const testToken = {
+        token_address: walletAddress || '25PwuUsuJ4PHtZ4TCprvmrVkbNQNvYuWj1CZd2xqbonk',
+        token_symbol: 'SDOG',
+        token_name: 'SDOG Test'
+      };
+      
+      console.log(`🧪 [TEST GECKO] Test avec token: ${testToken.token_symbol} (${testToken.token_address})`);
+      const enriched = await enrichTokenWithGecko(testToken);
+      
+      return new Response(JSON.stringify({
+        success: true,
+        test_type: walletAddress ? 'custom_token' : 'fixed_token',
+        token_used: testToken.token_address,
+        original: testToken,
+        enriched: enriched,
+        has_price: !!enriched.gecko_price_usd,
+        price_found: enriched.gecko_price_usd,
+        timestamp: new Date().toISOString()
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Endpoint complet pour tester l'API GeckoTerminal directement
+    if (action === 'gecko-api-test') {
+      const testType = pathParts[2]; // pools, token, networks, trending, etc.
+      const tokenAddress = pathParts[3]; // adresse du token (optionnel)
+      const network = pathParts[4] || 'solana'; // réseau (défaut: solana)
+      
+      console.log(`🦎 [GECKO API TEST] Type: ${testType}, Token: ${tokenAddress || 'none'}, Network: ${network}`);        if (!testType) {
+        return new Response(JSON.stringify({
+          error: 'Type de test requis',
+          usage: '/cielo-api/gecko-api-test/{type}/{tokenAddress?}/{network?}',
+          available_types: ['pools', 'token', 'networks', 'trending', 'dexes', 'pool-specific', 'pool-p1'],
+          examples: [
+            '/cielo-api/gecko-api-test/pools/25PwuUsuJ4PHtZ4TCprvmrVkbNQNvYuWj1CZd2xqbonk/solana',
+            '/cielo-api/gecko-api-test/token/25PwuUsuJ4PHtZ4TCprvmrVkbNQNvYuWj1CZd2xqbonk/solana',
+            '/cielo-api/gecko-api-test/networks',
+            '/cielo-api/gecko-api-test/trending/solana',
+            '/cielo-api/gecko-api-test/pool-p1/8MsMB9zGkescT7r3mSA6uJdFthtgx3JHAn93b8swQicT/solana'
+          ]
+        }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+      
+      try {
+        let endpoint = '';
+        let description = '';
+        
+        switch (testType) {
+          case 'pools':
+            if (!tokenAddress) {
+              return new Response(JSON.stringify({
+                error: 'Token address requis pour le test pools',
+                usage: '/cielo-api/gecko-api-test/pools/{tokenAddress}/{network?}'
+              }), {
+                status: 400,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+              });
+            }
+            endpoint = `/networks/${network}/tokens/${tokenAddress}/pools?include=dex,base_token&page=1&limit=5`;
+            description = `Récupération des pools pour le token ${tokenAddress} sur ${network}`;
+            break;
+            
+          case 'token':
+            if (!tokenAddress) {
+              return new Response(JSON.stringify({
+                error: 'Token address requis pour le test token',
+                usage: '/cielo-api/gecko-api-test/token/{tokenAddress}/{network?}'
+              }), {
+                status: 400,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+              });
+            }
+            endpoint = `/networks/${network}/tokens/${tokenAddress}`;
+            description = `Récupération des données du token ${tokenAddress} sur ${network}`;
+            break;
+            
+          case 'networks':
+            endpoint = '/networks';
+            description = 'Liste des réseaux supportés par GeckoTerminal';
+            break;
+            
+          case 'trending':
+            const trendingNetwork = tokenAddress || network;
+            endpoint = `/networks/${trendingNetwork}/trending_pools`;
+            description = `Pools tendance sur ${trendingNetwork}`;
+            break;
+            
+          case 'dexes':
+            const dexNetwork = tokenAddress || network;
+            endpoint = `/networks/${dexNetwork}/dexes`;
+            description = `Liste des DEX sur ${dexNetwork}`;
+            break;
+            
+          case 'pool-specific':
+            if (!tokenAddress) {
+              return new Response(JSON.stringify({
+                error: 'Pool address requis pour le test pool-specific',
+                usage: '/cielo-api/gecko-api-test/pool-specific/{poolAddress}/{network?}'
+              }), {
+                status: 400,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+              });
+            }
+            endpoint = `/networks/${network}/pools/${tokenAddress}`;
+            description = `Données spécifiques du pool ${tokenAddress} sur ${network}`;
+            break;
+            
+          case 'pool-p1':
+            if (!tokenAddress) {
+              return new Response(JSON.stringify({
+                error: 'Pool address requis pour le test pool-p1',
+                usage: '/cielo-api/gecko-api-test/pool-p1/{poolAddress}/{network?}',
+                example: '/cielo-api/gecko-api-test/pool-p1/8MsMB9zGkescT7r3mSA6uJdFthtgx3JHAn93b8swQicT/solana'
+              }), {
+                status: 400,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+              });
+            }
+            
+            // Utiliser l'API P1 avec tous les paramètres d'inclusion
+            endpoint = `/${network}/pools/${tokenAddress}?include=dex%2Cdex.network.explorers%2Cdex_link_services%2Cnetwork_link_services%2Cpairs%2Ctoken_link_services%2Ctokens.token_security_metric%2Ctokens.tags%2Cpool_locked_liquidities&base_token=0`;
+            description = `Test API P1 avancé pour pool ${tokenAddress} sur ${network} avec enrichissement complet`;
+            
+            // Pour pool-p1, utiliser la fonction spécialisée P1
+            console.log(`🌐 [GECKO P1 TEST] ${description}`);
+            console.log(`🔗 [GECKO P1 TEST] Endpoint: ${endpoint}`);
+            
+            const startTimeP1 = Date.now();
+            const geckoP1Data = await geckoterminalP1Request(endpoint);
+            const durationP1 = Date.now() - startTimeP1;
+            
+            // Analyser la structure spécifique P1
+            const p1ResponseAnalysis: any = {
+              duration_ms: durationP1,
+              api_source: 'geckoterminal_p1',
+              has_data: !!geckoP1Data.data,
+              data_type: typeof geckoP1Data.data,
+              pool_id: geckoP1Data.data?.id,
+              pool_type: geckoP1Data.data?.type,
+              has_attributes: !!geckoP1Data.data?.attributes,
+              top_level_keys: Object.keys(geckoP1Data),
+              has_included: !!geckoP1Data.included,
+              included_count: geckoP1Data.included ? geckoP1Data.included.length : 0,
+              included_types: geckoP1Data.included ? [...new Set(geckoP1Data.included.map((item: any) => item.type))] : []
+            };
+            
+            // Analyser les attributs du pool P1
+            if (geckoP1Data.data?.attributes) {
+              const attrs = geckoP1Data.data.attributes;
+              p1ResponseAnalysis.pool_attributes = {
+                has_price: !!attrs.price_in_usd,
+                has_fdv: !!attrs.fully_diluted_valuation,
+                has_liquidity: !!attrs.reserve_in_usd,
+                has_volume: !!(attrs.from_volume_in_usd || attrs.to_volume_in_usd),
+                has_price_changes: !!attrs.price_percent_changes,
+                has_gt_score: !!attrs.gt_score,
+                main_metrics: {
+                  price_usd: attrs.price_in_usd,
+                  fdv_usd: attrs.fully_diluted_valuation,
+                  liquidity_usd: attrs.reserve_in_usd,
+                  gt_score: attrs.gt_score
+                }
+              };
+            }
+            
+            // Analyser les tokens inclus
+            if (geckoP1Data.included) {
+              const tokens = geckoP1Data.included.filter((item: any) => item.type === 'token');
+              p1ResponseAnalysis.tokens_included = {
+                count: tokens.length,
+                tokens: tokens.map((token: any) => ({
+                  id: token.id,
+                  address: token.attributes?.address,
+                  name: token.attributes?.name,
+                  symbol: token.attributes?.symbol,
+                  has_market_cap: !!token.attributes?.market_cap_in_usd
+                }))
+              };
+            }
+            
+            return new Response(JSON.stringify({
+              success: true,
+              test_type: 'pool-p1',
+              description,
+              endpoint,
+              analysis: p1ResponseAnalysis,
+              raw_data: geckoP1Data,
+              url_used: `${GECKOTERMINAL_CONFIG.baseUrlP1}${endpoint}`
+            }), {
+              status: 200,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+            
+          default:
+            return new Response(JSON.stringify({
+              error: `Type de test "${testType}" non supporté`,
+              available_types: ['pools', 'token', 'networks', 'trending', 'dexes', 'pool-specific', 'pool-p1']
+            }), {
+              status: 400,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+        }
+        
+        console.log(`🌐 [GECKO API TEST] ${description}`);
+        console.log(`🔗 [GECKO API TEST] Endpoint: ${endpoint}`);
+        
+        const startTime = Date.now();
+        const geckoData = await geckoterminalRequest(endpoint);
+        const duration = Date.now() - startTime;
+        
+        // Analyser la structure de la réponse
+        const responseAnalysis: any = {
+          duration_ms: duration,
+          has_data: !!geckoData.data,
+          data_type: Array.isArray(geckoData.data) ? 'array' : typeof geckoData.data,
+          data_count: Array.isArray(geckoData.data) ? geckoData.data.length : (geckoData.data ? 1 : 0),
+          top_level_keys: Object.keys(geckoData),
+          has_included: !!geckoData.included,
+          included_count: geckoData.included ? geckoData.included.length : 0
+        };
+        
+        // Preview des premières données
+        let dataPreview: any = null;
+        if (geckoData.data) {
+          if (Array.isArray(geckoData.data)) {
+            dataPreview = {
+              total_items: geckoData.data.length,
+              first_item_keys: geckoData.data[0] ? Object.keys(geckoData.data[0]) : null,
+              first_item_id: geckoData.data[0]?.id,
+              first_item_type: geckoData.data[0]?.type,
+              first_item_attributes_keys: geckoData.data[0]?.attributes ? Object.keys(geckoData.data[0].attributes) : null
+            };
+          } else {
+            dataPreview = {
+              item_keys: Object.keys(geckoData.data),
+              item_id: geckoData.data.id,
+              item_type: geckoData.data.type,
+              attributes_keys: geckoData.data.attributes ? Object.keys(geckoData.data.attributes) : null
+            };
+          }
+        }
+        
+        // Preview des données included
+        let includedPreview: any = null;
+        if (geckoData.included && Array.isArray(geckoData.included)) {
+          const groupedByType = geckoData.included.reduce((acc: any, item: any) => {
+            const type = item.type || 'unknown';
+            if (!acc[type]) acc[type] = 0;
+            acc[type]++;
+            return acc;
+          }, {});
+          
+          includedPreview = {
+            total_included: geckoData.included.length,
+            types_breakdown: groupedByType,
+            first_included_keys: geckoData.included[0] ? Object.keys(geckoData.included[0]) : null
+          };
+        }
+        
+        return new Response(JSON.stringify({
+          success: true,
+          test_type: testType,
+          description: description,
+          endpoint_tested: endpoint,
+          full_url: `${GECKOTERMINAL_CONFIG.baseUrl}${endpoint}`,
+          network: network,
+          token_address: tokenAddress,
+          response_analysis: responseAnalysis,
+          data_preview: dataPreview,
+          included_preview: includedPreview,
+          raw_response: geckoData, // Réponse complète pour debug
+          timestamp: new Date().toISOString()
+        }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+        
+      } catch (error) {
+        console.error(`❌ [GECKO API TEST] Erreur: ${error.message}`);
+        return new Response(JSON.stringify({
+          success: false,
+          test_type: testType,
+          error: error.message,
+          endpoint_attempted: 'error_before_endpoint_set',
+          timestamp: new Date().toISOString()
+        }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+    }
+
+    // Endpoint pour examiner la structure des tokens TRPC SANS enrichissement
+    if (action === 'debug-tokens') {
+      console.log(`🔍 [DEBUG TOKENS] Examen structure tokens pour ${walletAddress}`);
+      
+      const trpcInput = {
+        "0": {
+          "json": {
+            "wallet": walletAddress,
+            "chains": "",
+            "timeframe": "",
+            "sortBy": "",
+            "page": "1",
+            "tokenFilter": ""
+          }
+        }
+      };
+      
+      const encodedInput = encodeURIComponent(JSON.stringify(trpcInput));
+      const trpcUrl = `https://app.cielo.finance/api/trpc/profile.fetchTokenPnlSlow?batch=1&input=${encodedInput}`;
+      
+      try {
+        const trpcResponse = await fetch(trpcUrl, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Referer': 'https://app.cielo.finance/',
+            'Origin': 'https://app.cielo.finance'
+          }
+        });
+        
+        if (!trpcResponse.ok) {
+          throw new Error(`TRPC request failed: ${trpcResponse.status} ${trpcResponse.statusText}`);
+        }
+        
+        const trpcData = await trpcResponse.json();
+        console.log(`🔍 [DEBUG TOKENS] Réponse TRPC brute:`, JSON.stringify(trpcData, null, 2));
+        console.log(`🔍 [DEBUG TOKENS] Structure trpcData:`, Object.keys(trpcData));
+        console.log(`🔍 [DEBUG TOKENS] trpcData[0]:`, trpcData[0] ? Object.keys(trpcData[0]) : 'null');
+        console.log(`🔍 [DEBUG TOKENS] trpcData[0]?.result:`, trpcData[0]?.result ? Object.keys(trpcData[0].result) : 'null');
+        console.log(`🔍 [DEBUG TOKENS] trpcData[0]?.result?.data:`, trpcData[0]?.result?.data ? Object.keys(trpcData[0].result.data) : 'null');
+        
+        const tokenData = trpcData[0]?.result?.data;
+        
+        if (!tokenData) {
+          return new Response(JSON.stringify({
+            success: false,
+            error: 'Format de réponse TRPC invalide',
+            debug_type: 'tokens_structure_analysis',
+            raw_trpc_response: trpcData,
+            trpc_structure: {
+              is_array: Array.isArray(trpcData),
+              length: trpcData?.length,
+              first_element_keys: trpcData[0] ? Object.keys(trpcData[0]) : null,
+              has_result: !!trpcData[0]?.result,
+              has_data: !!trpcData[0]?.result?.data
+            },
+            timestamp: new Date().toISOString()
+          }), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
+        // CORRECTION CRITIQUE : Les données sont dans data.json.data.tokens !
+        const realTokenData = tokenData.json?.data;
+        const tokens = realTokenData?.tokens || [];
+        console.log(`🔍 [DEBUG TOKENS] ${tokens.length} tokens trouvés`);
+        
+        // Analyser les 3 premiers tokens en détail
+        const tokenAnalysis = tokens.slice(0, 3).map((token, index) => {
+          return {
+            index: index,
+            keys: Object.keys(token),
+            token_address: token.token_address,
+            token_symbol: token.token_symbol,
+            token_name: token.token_name,
+            has_address: !!token.token_address,
+            address_type: typeof token.token_address,
+            address_length: token.token_address?.length || 0,
+            sample_data: {
+              pnl: token.pnl,
+              realized_pnl: token.realized_pnl,
+              unrealized_pnl: token.unrealized_pnl
+            }
+          };
+        });
+        
+        return new Response(JSON.stringify({
+          success: true,
+          debug_type: 'tokens_structure_analysis',
+          wallet_address: walletAddress,
+          total_tokens: tokens.length,
+          token_analysis: tokenAnalysis,
+          first_token_full: tokens[0] || null,
+          data_structure: {
+            top_level_keys: Object.keys(tokenData),
+            has_json_key: !!tokenData.json,
+            json_keys: tokenData.json ? Object.keys(tokenData.json) : null,
+            has_tokens_array: Array.isArray(realTokenData?.tokens),
+            tokens_count: tokens.length
+          },
+          timestamp: new Date().toISOString()
+        }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+        
+      } catch (error) {
+        return new Response(JSON.stringify({
+          success: false,
+          error: error.message,
+          debug_type: 'tokens_structure_analysis',
+          timestamp: new Date().toISOString()
+        }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+    }
+
+    // Endpoint pour tester l'enrichissement d'UN SEUL token avec debug détaillé
+    if (action === 'debug-enrich-one') {
+      console.log(`🧪 [DEBUG ENRICH ONE] Test enrichissement d'un token pour ${walletAddress}`);
+      
+      // D'abord récupérer les tokens TRPC
+      const trpcInput = {
+        "0": {
+          "json": {
+            "wallet": walletAddress,
+            "chains": "",
+            "timeframe": "",
+            "sortBy": "",
+            "page": "1",
+            "tokenFilter": ""
+          }
+        }
+      };
+      
+      const encodedInput = encodeURIComponent(JSON.stringify(trpcInput));
+      const trpcUrl = `https://app.cielo.finance/api/trpc/profile.fetchTokenPnlSlow?batch=1&input=${encodedInput}`;
+      
+      try {
+        console.log(`🔗 [DEBUG ENRICH ONE] Appel TRPC: ${trpcUrl}`);
+        const trpcResponse = await fetch(trpcUrl, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Referer': 'https://app.cielo.finance/',
+            'Origin': 'https://app.cielo.finance'
+          }
+        });
+        
+        if (!trpcResponse.ok) {
+          throw new Error(`TRPC request failed: ${trpcResponse.status} ${trpcResponse.statusText}`);
+        }
+        
+        const trpcData = await trpcResponse.json();
+        const tokenData = trpcData[0]?.result?.data;
+        const realTokenData = tokenData?.json?.data; // CORRECTION CRITIQUE
+        const tokens = realTokenData?.tokens || [];
+        
+        if (tokens.length === 0) {
+          return new Response(JSON.stringify({
+            success: false,
+            error: 'Aucun token trouvé dans la réponse TRPC',
+            debug_type: 'single_token_enrichment',
+            timestamp: new Date().toISOString()
+          }), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
+        // Prendre le premier token pour test
+        const originalToken = tokens[0];
+        console.log(`🎯 [DEBUG ENRICH ONE] Token sélectionné: ${originalToken.token_symbol} (${originalToken.token_address})`);
+        console.log(`📋 [DEBUG ENRICH ONE] Token original keys:`, Object.keys(originalToken));
+        console.log(`🔍 [DEBUG ENRICH ONE] Token original data:`, JSON.stringify({
+          token_address: originalToken.token_address,
+          token_symbol: originalToken.token_symbol,
+          token_name: originalToken.token_name,
+          has_address: !!originalToken.token_address,
+          address_valid: originalToken.token_address && originalToken.token_address.length > 20
+        }));
+        
+        // Préparer le token pour enrichissement (comme dans le vrai code)
+        const tokenToEnrich = {
+          token_address: originalToken.token_address,
+          token_symbol: originalToken.token_symbol,
+          token_name: originalToken.token_name,
+          ...originalToken
+        };
+        
+        console.log(`🔄 [DEBUG ENRICH ONE] Début enrichissement...`);
+        const startTime = Date.now();
+        
+        // Enrichir le token
+        const enrichedToken = await enrichTokenWithGecko(tokenToEnrich);
+        
+        const enrichmentDuration = Date.now() - startTime;
+        console.log(`⏱️ [DEBUG ENRICH ONE] Enrichissement terminé en ${enrichmentDuration}ms`);
+        
+        // Analyser le résultat
+        const wasEnriched = !!enrichedToken.gecko_price_usd;
+        const enrichedKeys = Object.keys(enrichedToken);
+        const newKeys = enrichedKeys.filter(key => !Object.keys(originalToken).includes(key));
+        
+        console.log(`📊 [DEBUG ENRICH ONE] Résultat: enrichi=${wasEnriched}, nouvelles clés=${newKeys.length}`);
+        
+        return new Response(JSON.stringify({
+          success: true,
+          debug_type: 'single_token_enrichment',
+          wallet_address: walletAddress,
+          enrichment_result: {
+            was_enriched: wasEnriched,
+            duration_ms: enrichmentDuration,
+            original_keys_count: Object.keys(originalToken).length,
+            enriched_keys_count: enrichedKeys.length,
+            new_keys: newKeys,
+            gecko_price_found: enrichedToken.gecko_price_usd,
+            gecko_market_cap_found: enrichedToken.gecko_market_cap_usd
+          },
+          original_token: {
+            token_address: originalToken.token_address,
+            token_symbol: originalToken.token_symbol,
+            token_name: originalToken.token_name,
+            sample_keys: Object.keys(originalToken).slice(0, 10)
+          },
+          enriched_token: {
+            token_address: enrichedToken.token_address,
+            token_symbol: enrichedToken.token_symbol,
+            gecko_price_usd: enrichedToken.gecko_price_usd,
+            gecko_market_cap_usd: enrichedToken.gecko_market_cap_usd,
+            gecko_updated_at: enrichedToken.gecko_updated_at
+          },
+          timestamp: new Date().toISOString()
+        }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+        
+      } catch (error) {
+        console.error(`❌ [DEBUG ENRICH ONE] Erreur: ${error.message}`);
+        return new Response(JSON.stringify({
+          success: false,
+          error: error.message,
+          debug_type: 'single_token_enrichment',
+          timestamp: new Date().toISOString()
+        }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+    }
+
+    // Endpoint pour démontrer l'enrichissement P1 avec tokens de test
+    if (action === 'demo-p1-enrichment') {
+      console.log(`🎯 [DEMO P1] Démonstration enrichissement P1 pour ${walletAddress || 'tokens de test'}`);
+      
+      // Tokens de test populaires avec leurs pools connus
+      const testTokens = [
+        {
+          token_address: '25PwuUsuJ4PHtZ4TCprvmrVkbNQNvYuWj1CZd2xqbonk',
+          token_symbol: 'SDOG',
+          token_name: 'Smiling Dog',
+          pool_address: '8MsMB9zGkescT7r3mSA6uJdFthtgx3JHAn93b8swQicT'
+        },
+        {
+          token_address: 'So11111111111111111111111111111111111111112',
+          token_symbol: 'SOL',
+          token_name: 'Wrapped SOL',
+          pool_address: '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
+        },
+        {
+          token_address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+          token_symbol: 'USDC',
+          token_name: 'USD Coin',
+          pool_address: '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
+        }
+      ];
+      
+      const enrichmentResults: any[] = [];
+      let successCount = 0;
+      let totalTime = 0;
+      
+      console.log(`🔄 [DEMO P1] Enrichissement de ${testTokens.length} tokens avec API P1...`);
+      
+      for (const token of testTokens) {
+        try {
+          const startTime = Date.now();
+          
+          // Utiliser l'enrichissement P1 direct
+          const enriched = await enrichTokenWithGeckoP1Pool(token, token.pool_address, 'solana');
+          
+          const duration = Date.now() - startTime;
+          totalTime += duration;
+          
+          const wasEnriched = !!enriched.fdv_usd;
+          if (wasEnriched) successCount++;
+          
+          enrichmentResults.push({
+            original: {
+              address: token.token_address,
+              symbol: token.token_symbol,
+              name: token.token_name
+            },
+            enriched: {
+              gecko_enriched: wasEnriched,
+              gecko_data_source: enriched.gecko_data_source,
+              price_usd: enriched.price_usd,
+              fdv_usd: enriched.fdv_usd,
+              market_cap_usd: enriched.market_cap_usd,
+              liquidity_usd: enriched.liquidity_usd,
+              gt_score: enriched.gt_score,
+              gt_score_details: enriched.gt_score_details,
+              pool_fee: enriched.pool_fee,
+              swap_count_24h: enriched.swap_count_24h,
+              is_nsfw: enriched.is_nsfw
+            },
+            metrics: {
+              enrichment_duration_ms: duration,
+              pool_used: token.pool_address,
+              success: wasEnriched
+            }
+          });
+          
+          console.log(`✅ [DEMO P1] ${token.token_symbol}: ${wasEnriched ? 'ENRICHI' : 'SKIP'} (${duration}ms)`);
+          
+        } catch (error) {
+          console.log(`❌ [DEMO P1] ${token.token_symbol}: ERROR - ${error.message}`);
+          enrichmentResults.push({
+            original: {
+              address: token.token_address,
+              symbol: token.token_symbol,
+              name: token.token_name
+            },
+            enriched: null,
+            metrics: {
+              error: error.message,
+              success: false
+            }
+          });
+        }
+      }
+      
+      return new Response(JSON.stringify({
+        success: true,
+        demo_type: 'p1_enrichment_showcase',
+        summary: {
+          total_tokens: testTokens.length,
+          successfully_enriched: successCount,
+          success_rate: `${Math.round((successCount / testTokens.length) * 100)}%`,
+          total_duration_ms: totalTime,
+          average_duration_ms: Math.round(totalTime / testTokens.length)
+        },
+        api_capabilities: {
+          price_usd: 'Prix en USD haute précision',
+          fdv_usd: 'Fully Diluted Valuation (indisponible en V2)',
+          market_cap_usd: 'Market Cap par token',
+          gt_score: 'Score de qualité GeckoTerminal (0-100)',
+          gt_score_details: 'Détail du score par catégorie',
+          liquidity_usd: 'Liquidité totale du pool',
+          pool_fee: 'Frais du pool',
+          swap_count_24h: 'Nombre de swaps 24h',
+          security_metrics: 'Métriques de sécurité avancées',
+          tags_and_metadata: 'Tags et métadonnées enrichies'
+        },
+        enrichment_results: enrichmentResults,
+        p1_api_url: 'https://app.geckoterminal.com/api/p1/{network}/pools/{poolAddress}?include=dex%2Cdex.network.explorers%2Cdex_link_services%2Cnetwork_link_services%2Cpairs%2Ctoken_link_services%2Ctokens.token_security_metric%2Ctokens.tags%2Cpool_locked_liquidities&base_token=0',
+        timestamp: new Date().toISOString()
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -325,7 +1340,7 @@ serve(async (req) => {
         error: 'Wallet address required',
         example: '/cielo-api/portfolio/ABdAsGjQv1bLLvzgcqEWJmAuwNbUJyfNUausyTVe7STB',
         received_action: action,
-        available_actions: ['portfolio', 'stats', 'stats-7d', 'pnl', 'pnl-complete', 'complete', 'health']
+        available_actions: ['portfolio', 'stats', 'stats-7d', 'pnl', 'pnl-complete', 'complete', 'health', 'test-gecko', 'debug-tokens', 'debug-enrich-one']
       }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -500,7 +1515,7 @@ serve(async (req) => {
               throw new Error('Format de réponse TRPC invalide');
             }
             
-            return trpcData[0].result.data;
+            return trpcData[0].result.data.json?.data; // CORRECTION CRITIQUE
           };
           
           // Appeler tous les endpoints découverts dans les requêtes TRPC + tokens-pnl TRPC
@@ -558,15 +1573,67 @@ serve(async (req) => {
 
           // Ajouter les données TRPC tokens-pnl
           if (tokensPnlData.status === 'fulfilled') {
+            // Enrichir les tokens TRPC avec Geckoterminal (limité à 5 pour éviter timeout)
+            let enrichedTokens = [...(tokensPnlData.value.tokens || [])]; // Copie de l'array original
+            let actuallyEnrichedCount = 0;
+            
+            if (enrichedTokens.length > 0) {
+              console.log(`🔄 [COMPLETE] Enrichissement Gecko de ${Math.min(enrichedTokens.length, 5)} tokens TRPC`);
+              
+              // Préparer les tokens à enrichir (max 5 pour éviter timeout)
+              const tokensToEnrich = enrichedTokens.slice(0, 5).filter(token => token.token_address);
+              
+              // Enrichir en parallèle avec Promise.all
+              const enrichmentPromises = tokensToEnrich.map(async (token, index) => {
+                try {
+                  const tokenToEnrich = {
+                    token_address: token.token_address,
+                    symbol: token.token_symbol,
+                    name: token.token_name,
+                    ...token
+                  };
+                  const enrichedToken = await enrichTokenWithGecko(tokenToEnrich);
+                  
+                  // Vérifier si le token a été enrichi (si il a des données Gecko)
+                  if (enrichedToken.gecko_price_usd) {
+                    console.log(`✅ [COMPLETE] Token ${index+1}/5 enrichi: ${token.token_symbol} - Prix: $${enrichedToken.gecko_price_usd}`);
+                    return { enriched: enrichedToken, success: true };
+                  } else {
+                    console.log(`⚠️ [COMPLETE] Token ${index+1}/5 non enrichi: ${token.token_symbol}`);
+                    return { enriched: enrichedToken, success: false };
+                  }
+                } catch (enrichError) {
+                  console.log(`⚠️ [COMPLETE] Erreur enrichissement token ${index}: ${enrichError.message}`);
+                  return { enriched: token, success: false };
+                }
+              });
+              
+              // Attendre tous les enrichissements
+              const enrichmentResults = await Promise.all(enrichmentPromises);
+              
+              // Appliquer les résultats
+              enrichmentResults.forEach((result, index) => {
+                enrichedTokens[index] = result.enriched;
+                if (result.success) {
+                  actuallyEnrichedCount++;
+                }
+              });
+            }
+            
             result.tokens_pnl = {
               source: 'TRPC_DIRECT',
-              data: tokensPnlData.value,
+              data: {
+                ...tokensPnlData.value,
+                tokens: enrichedTokens
+              },
               total_tokens: tokensPnlData.value.total_tokens_traded || 0,
               total_pnl_usd: tokensPnlData.value.total_pnl_usd || 0,
               winrate: tokensPnlData.value.winrate || 0,
-              tokens_count: tokensPnlData.value.tokens?.length || 0
+              tokens_count: tokensPnlData.value.tokens?.length || 0,
+              enriched_with_gecko: true,
+              enriched_tokens_count: actuallyEnrichedCount
             };
-            console.log(`✅ [COMPLETE] Tokens PnL TRPC: ${tokensPnlData.value.tokens?.length || 0} tokens`);
+            console.log(`✅ [COMPLETE] Tokens PnL TRPC: ${tokensPnlData.value.tokens?.length || 0} tokens (${actuallyEnrichedCount} enrichis avec succès)`);
           } else {
             console.log(`⚠️ [COMPLETE] Tokens PnL TRPC failed: ${tokensPnlData.reason}`);
             result.tokens_pnl_error = tokensPnlData.reason.message;
@@ -614,6 +1681,173 @@ serve(async (req) => {
               };
               console.log(`🔄 [COMPLETE] Tokens PnL fallback: ${uniqueTokens.length} tokens`);
             }
+          }
+
+          // 🗄️ PERSISTENCE AUTOMATIQUE EN BASE DE DONNÉES
+          try {
+            console.log(`💾 [COMPLETE] Sauvegarde automatique des tokens en base pour ${walletAddress}`);
+            
+            // Récupérer les tokens depuis TRPC ou fallback avec la bonne structure
+            let tokensToSave = [];
+            
+            // Vérifier la structure TRPC directe (tokens-pnl endpoint)
+            if (result.tokens_pnl && result.tokens_pnl.data && result.tokens_pnl.data.tokens) {
+              tokensToSave = result.tokens_pnl.data.tokens;
+              console.log(`💾 [COMPLETE] Tokens TRPC directs détectés: ${tokensToSave.length} tokens`);
+            }
+            // Vérifier la structure fallback
+            else if (result.tokens_pnl && result.tokens_pnl.tokens) {
+              tokensToSave = result.tokens_pnl.tokens;
+              console.log(`💾 [COMPLETE] Tokens fallback détectés: ${tokensToSave.length} tokens`);
+            }
+            // Vérifier l'ancienne structure (legacy)
+            else if (result.tokens_pnl && result.tokens_pnl.data && result.tokens_pnl.data.json && result.tokens_pnl.data.json.data && result.tokens_pnl.data.json.data.tokens) {
+              tokensToSave = result.tokens_pnl.data.json.data.tokens;
+              console.log(`💾 [COMPLETE] Tokens legacy détectés: ${tokensToSave.length} tokens`);
+            }
+            else {
+              console.log(`💾 [COMPLETE] Structure tokens_pnl:`, Object.keys(result.tokens_pnl || {}));
+              console.log(`💾 [COMPLETE] Aucune structure de tokens reconnue`);
+            }
+            
+            if (tokensToSave.length > 0) {
+              const saveTokensUrl = `${SUPABASE_FUNCTION_URL}/save-tokens-simple`;
+              const saveTokensResponse = await fetch(saveTokensUrl, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                },
+                body: JSON.stringify({
+                  walletAddress: walletAddress,
+                  tokensData: tokensToSave
+                })
+              });
+
+              if (saveTokensResponse.ok) {
+                const saveData = await saveTokensResponse.json();
+                console.log(`✅ [COMPLETE] Tokens sauvegardés: ${saveData.tokens_saved} tokens dans wallet_tokens_extended`);
+                result.database_save = {
+                  success: true,
+                  tokens_saved: saveData.tokens_saved,
+                  table: 'wallet_tokens_extended',
+                  wallet_address: walletAddress,
+                  timestamp: saveData.timestamp
+                };
+              } else {
+                const errorText = await saveTokensResponse.text();
+                console.log(`⚠️ [COMPLETE] Échec sauvegarde tokens: ${saveTokensResponse.status} - ${errorText}`);
+                result.database_save = {
+                  success: false,
+                  error: `HTTP ${saveTokensResponse.status}`,
+                  timestamp: new Date().toISOString()
+                };
+              }
+            } else {
+              console.log(`⚠️ [COMPLETE] Aucun token à sauvegarder`);
+              result.database_save = {
+                success: false,
+                error: 'No tokens to save',
+                timestamp: new Date().toISOString()
+              };
+            }
+          } catch (saveError) {
+            console.log(`⚠️ [COMPLETE] Erreur sauvegarde: ${saveError.message}`);
+            result.database_save = {
+              success: false,
+              error: saveError.message,
+              timestamp: new Date().toISOString()
+            };
+          }
+
+          // 🤖 ANALYSE COMPORTEMENTALE CHATGPT - COPY TRADING SOLANA
+          try {
+            console.log(`🤖 [COMPLETE] Démarrage analyse comportementale ChatGPT pour copy trading...`);
+            
+            // Préparer les données du wallet pour l'analyse ChatGPT
+            const walletDataForAnalysis = {
+              // Données principales du wallet
+              wallet_address: walletAddress,
+              
+              // Données de tokens (priorité aux tokens TRPC)
+              tokens: result.tokens_pnl?.data?.tokens || result.tokens_pnl?.tokens || [],
+              total_tokens_traded: result.tokens_pnl?.total_tokens || result.tokens_pnl?.tokens_count || 0,
+              
+              // Métriques de performance
+              total_pnl_usd: result.tokens_pnl?.total_pnl_usd || result.stats_aggregated?.total_pnl || 0,
+              winrate: result.tokens_pnl?.winrate || result.stats_aggregated?.winrate || 0,
+              total_roi_percentage: result.tokens_pnl?.data?.total_roi_percentage || result.stats_aggregated?.total_roi_percentage || 0,
+              
+              // Données aggregées
+              stats_aggregated: result.stats_aggregated,
+              profitability: result.profitability,
+              period_stats: result.period_stats,
+              
+              // Métadonnées
+              enriched_tokens_count: result.tokens_pnl?.enriched_tokens_count || 0,
+              data_source: result.source,
+              timestamp: result.timestamp
+            };
+            
+            console.log(`📊 [COMPLETE] Données préparées pour ChatGPT:`, {
+              tokens_count: walletDataForAnalysis.tokens.length,
+              total_pnl_usd: walletDataForAnalysis.total_pnl_usd,
+              winrate: walletDataForAnalysis.winrate,
+              total_trades: walletDataForAnalysis.total_tokens_traded
+            });
+            
+            // Appel à l'API d'analyse ChatGPT
+            const analyzeWalletUrl = `${SUPABASE_FUNCTION_URL}/analyze-wallet-behavior`;
+            const startAnalysisTime = Date.now();
+            
+            const analysisResponse = await fetch(analyzeWalletUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+              },
+              body: JSON.stringify({
+                walletData: walletDataForAnalysis,
+                walletAddress: walletAddress
+              })
+            });
+
+            const analysisTime = Date.now() - startAnalysisTime;
+            
+            if (analysisResponse.ok) {
+              const analysisData = await analysisResponse.json();
+              console.log(`✅ [COMPLETE] Analyse ChatGPT réussie en ${analysisTime}ms`);
+              console.log(`🎯 [COMPLETE] Score copy trading: ${analysisData.copyTradingScore}/100, Recommandation: ${analysisData.recommendation}`);
+              
+              result.behavioral_analysis = {
+                success: true,
+                analysis: analysisData,
+                analysis_duration_ms: analysisTime,
+                analyzed_at: new Date().toISOString(),
+                version: 'copy_trading_solana_v2.0'
+              };
+              
+            } else {
+              const errorText = await analysisResponse.text();
+              console.log(`⚠️ [COMPLETE] Échec analyse ChatGPT: ${analysisResponse.status} - ${errorText}`);
+              
+              result.behavioral_analysis = {
+                success: false,
+                error: `HTTP ${analysisResponse.status}: ${errorText}`,
+                analysis_duration_ms: analysisTime,
+                attempted_at: new Date().toISOString(),
+                fallback_reason: 'ChatGPT API call failed'
+              };
+            }
+            
+          } catch (analysisError) {
+            console.log(`❌ [COMPLETE] Erreur analyse ChatGPT: ${analysisError.message}`);
+            result.behavioral_analysis = {
+              success: false,
+              error: analysisError.message,
+              attempted_at: new Date().toISOString(),
+              fallback_reason: 'Network or parsing error'
+            };
           }
 
           return new Response(JSON.stringify(result), {
@@ -693,40 +1927,82 @@ serve(async (req) => {
             }
             
             const tokenData = trpcData[0].result.data;
-            console.log(`📊 [TOKENS PNL] ${tokenData.tokens?.length || 0} tokens reçus`);
+            const realTokenData = tokenData.json?.data; // CORRECTION CRITIQUE
+            console.log(`📊 [TOKENS PNL] ${realTokenData?.tokens?.length || 0} tokens reçus`);
+            console.log(`🔍 [TOKENS PNL] Structure tokenData:`, Object.keys(tokenData));
+            console.log(`🔍 [TOKENS PNL] Structure realTokenData:`, realTokenData ? Object.keys(realTokenData) : 'null');
+            console.log(`🔍 [TOKENS PNL] Premier token structure:`, realTokenData?.tokens?.[0] ? Object.keys(realTokenData.tokens[0]) : 'Aucun token');
             
             // Enrichir les tokens avec Geckoterminal (limité pour éviter timeout)
-            let enrichedTokens = tokenData.tokens || [];
+            let enrichedTokens = [...(realTokenData?.tokens || [])]; // Copie de l'array original
+            let actuallyEnrichedCount = 0;
+            
+            // TEST FORCÉ : Enrichir au moins le premier token pour déboguer
             if (enrichedTokens.length > 0) {
-              console.log(`🔄 [TOKENS PNL] Enrichissement Gecko de ${Math.min(enrichedTokens.length, 10)} tokens`);
+              console.log(`🧪 [TOKENS PNL] TEST FORCÉ - Enrichissement du premier token: ${enrichedTokens[0].token_symbol}`);
               
-              for (let i = 0; i < Math.min(enrichedTokens.length, 10); i++) {
-                if (enrichedTokens[i].token_address) {
-                  try {
-                    // Adapter le format pour enrichTokenWithGecko
-                    const tokenToEnrich = {
-                      token_address: enrichedTokens[i].token_address,
-                      symbol: enrichedTokens[i].symbol,
-                      name: enrichedTokens[i].name,
-                      ...enrichedTokens[i]
-                    };
-                    enrichedTokens[i] = await enrichTokenWithGecko(tokenToEnrich);
-                  } catch (enrichError) {
-                    console.log(`⚠️ [TOKENS PNL] Erreur enrichissement token ${i}: ${enrichError.message}`);
-                    // Continuer sans enrichissement pour ce token
-                  }
-                }
+              const firstToken = {
+                token_address: enrichedTokens[0].token_address,
+                token_symbol: enrichedTokens[0].token_symbol,
+                token_name: enrichedTokens[0].token_name,
+                ...enrichedTokens[0]
+              };
+              
+              console.log(`🧪 [TOKENS PNL] Structure premier token avant enrichissement:`, JSON.stringify({
+                token_address: firstToken.token_address,
+                token_symbol: firstToken.token_symbol,
+                has_address: !!firstToken.token_address
+              }));
+              
+              const enrichedFirstToken = await enrichTokenWithGecko(firstToken);
+              console.log(`🧪 [TOKENS PNL] Résultat enrichissement premier token:`, JSON.stringify({
+                token_address: enrichedFirstToken.token_address,
+                token_symbol: enrichedFirstToken.token_symbol,
+                gecko_price_usd: enrichedFirstToken.gecko_price_usd,
+                was_enriched: !!enrichedFirstToken.gecko_price_usd
+              }));
+              
+              // Remplacer le premier token par sa version enrichie
+              enrichedTokens[0] = enrichedFirstToken;
+              
+              if (enrichedFirstToken.gecko_price_usd) {
+                actuallyEnrichedCount = 1;
+                console.log(`✅ [TOKENS PNL] TEST FORCÉ RÉUSSI - Premier token enrichi avec prix: $${enrichedFirstToken.gecko_price_usd}`);
+              } else {
+                console.log(`❌ [TOKENS PNL] TEST FORCÉ ÉCHOUÉ - Premier token non enrichi`);
               }
             }
             
-            console.log(`✅ [TOKENS PNL] Données complètes récupérées et enrichies`);
+            console.log(`✅ [TOKENS PNL] Données complètes récupérées et enrichies (${actuallyEnrichedCount} tokens enrichis avec succès)`);
+            console.log(`🔍 [TOKENS PNL] Structure finale enrichedTokens[0]:`, enrichedTokens[0] ? Object.keys(enrichedTokens[0]) : 'Aucun token');
+            console.log(`🔍 [TOKENS PNL] Premier token enrichi - gecko_price_usd:`, enrichedTokens[0]?.gecko_price_usd);
+            
+            // Garder seulement les données essentielles de realTokenData et les tokens enrichis
+            const responseData = {
+              total_pnl_usd: realTokenData.total_pnl_usd,
+              total_unrealized_pnl_usd: realTokenData.total_unrealized_pnl_usd,
+              winrate: realTokenData.winrate,
+              total_tokens_traded: realTokenData.total_tokens_traded,
+              total_roi_percentage: realTokenData.total_roi_percentage,
+              total_unrealized_roi_percentage: realTokenData.total_unrealized_roi_percentage,
+              combined_pnl_usd: realTokenData.combined_pnl_usd,
+              combined_roi_percentage: realTokenData.combined_roi_percentage,
+              combined_average_hold_time: realTokenData.combined_average_hold_time,
+              combined_median_hold_time: realTokenData.combined_median_hold_time,
+              tokens: enrichedTokens,  // Nos tokens enrichis
+              json: {
+                data: {
+                  ...realTokenData,
+                  tokens: enrichedTokens  // Aussi dans la structure json pour compatibilité
+                }
+              }
+            };
+            console.log(`🔍 [TOKENS PNL] Structure response data:`, Object.keys(responseData));
+            console.log(`🔍 [TOKENS PNL] Response tokens count: ${responseData.tokens.length}, json tokens count: ${responseData.json.data.tokens.length}`);
             
             return new Response(JSON.stringify({
               success: true,
-              data: {
-                ...tokenData,
-                tokens: enrichedTokens
-              },
+              data: responseData,
               source: 'CIELO_TRPC_DIRECT',
               endpoint_used: 'profile.fetchTokenPnlSlow',
               trpc_equivalent: 'profile.fetchTokenPnlSlow',
@@ -735,6 +2011,7 @@ serve(async (req) => {
                 wallet: walletAddress,
                 parameters: { page, chains, timeframe, sortBy, tokenFilter },
                 enriched_with_gecko: true,
+                enriched_tokens_count: actuallyEnrichedCount,
                 trpc_direct_call: true
               },
               timestamp: new Date().toISOString()
@@ -792,6 +2069,54 @@ serve(async (req) => {
             }
             
             throw error;
+          }
+        }
+
+        // Nouvel endpoint pour tester l'enrichissement Geckoterminal
+        if (action === 'test-gecko') {
+          if (!walletAddress) {
+            // Test avec un token fixe si pas d'adresse fournie
+            const testToken = {
+              token_address: '25PwuUsuJ4PHtZ4TCprvmrVkbNQNvYuWj1CZd2xqbonk',
+              token_symbol: 'SDOG',
+              token_name: 'SDOG Test'
+            };
+            
+            console.log(`🧪 [TEST GECKO] Test avec token fixe: ${testToken.token_symbol}`);
+            const enriched = await enrichTokenWithGecko(testToken);
+            
+            return new Response(JSON.stringify({
+              success: true,
+              test_type: 'fixed_token',
+              original: testToken,
+              enriched: enriched,
+              has_price: !!enriched.gecko_price_usd,
+              timestamp: new Date().toISOString()
+            }), {
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+          } else {
+            // Utiliser le walletAddress comme token_address pour test direct
+            const testToken = {
+              token_address: walletAddress,
+              token_symbol: 'TEST',
+              token_name: 'Test Token'
+            };
+            
+            console.log(`🧪 [TEST GECKO] Test avec token custom: ${walletAddress}`);
+            const enriched = await enrichTokenWithGecko(testToken);
+            
+            return new Response(JSON.stringify({
+              success: true,
+              test_type: 'custom_token',
+              token_address: walletAddress,
+              original: testToken,
+              enriched: enriched,
+              has_price: !!enriched.gecko_price_usd,
+              timestamp: new Date().toISOString()
+            }), {
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
           }
         }
 
