@@ -1,0 +1,24 @@
+{
+  "name": "dune-scraper-server",
+  "version": "1.0.0",
+  "description": "Serveur API pour lancer le scraping Dune",
+  "main": "scraping-server.js",
+  "scripts": {
+    "start": "node scraping-server.js",
+    "dev": "nodemon scraping-server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "puppeteer": "^21.5.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": ["scraping", "dune", "solana", "wallets"],
+  "author": "Your Name",
+  "license": "MIT"
+}
