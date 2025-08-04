@@ -1,5 +1,7 @@
 // @ts-ignore: Deno import
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+// @ts-ignore: Deno import  
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 // Configuration API Cielo
 const CIELO_CONFIG = {
@@ -202,15 +204,8 @@ async function enrichTokenWithGeckoP1Pool(token: any, poolAddress: string, netwo
     
     if (p1Data && p1Data.data && p1Data.data.attributes) {
       const poolAttrs = p1Data.data.attributes;
-      const poolPrice = poolAttrs.price_in_usd ? parseFloat(poolAttrs.price_in_usd) : null;
       
-      console.log(`📊 [GECKO P1] Pool enrichi - Prix: $${poolPrice}, FDV: $${poolAttrs.fully_diluted_valuation}`);
-      
-      // Ne marquer comme enrichi que si on a un prix valide
-      if (!poolPrice || poolPrice <= 0) {
-        console.log(`⚠️ [GECKO P1] Prix invalide (${poolPrice}), pas d'enrichissement`);
-        return { ...token, gecko_enriched: false };
-      }
+      console.log(`📊 [GECKO P1] Pool enrichi - Prix: $${poolAttrs.price_in_usd}, FDV: $${poolAttrs.fully_diluted_valuation}`);
       
       // Trouver le token correspondant dans les données incluses
       let tokenData: any = null;
@@ -223,7 +218,7 @@ async function enrichTokenWithGeckoP1Pool(token: any, poolAddress: string, netwo
       
       // Enrichissement maximal avec toutes les données P1
       const enrichedData: any = {
-        // Flags d'enrichissement - marqué comme enrichi seulement si prix valide
+        // Flags d'enrichissement
         gecko_enriched: true,
         gecko_data_source: 'pools_api_p1_advanced',
         gecko_updated_at: new Date().toISOString(),
@@ -234,9 +229,8 @@ async function enrichTokenWithGeckoP1Pool(token: any, poolAddress: string, netwo
         gecko_name: tokenData?.attributes?.name || poolAttrs.name || token.token_symbol,
         gecko_symbol: tokenData?.attributes?.symbol || token.token_symbol,
         
-        // Prix et valeurs principales (P1 plus précis) - avec validation
-        price_usd: poolPrice,
-        gecko_price_usd: poolPrice, // Champ principal pour les checks
+        // Prix et valeurs principales (P1 plus précis)
+        price_usd: poolAttrs.price_in_usd ? parseFloat(poolAttrs.price_in_usd) : null,
         market_cap_usd: tokenData?.attributes?.market_cap_in_usd ? parseFloat(tokenData.attributes.market_cap_in_usd) : null,
         fdv_usd: poolAttrs.fully_diluted_valuation ? parseFloat(poolAttrs.fully_diluted_valuation) : null,
         liquidity_usd: poolAttrs.reserve_in_usd ? parseFloat(poolAttrs.reserve_in_usd) : null,
@@ -304,16 +298,16 @@ async function enrichTokenWithGeckoP1Pool(token: any, poolAddress: string, netwo
 }
 /**
  * Enrichir les données avec Geckoterminal (prix, market cap, etc.)
- * APPROCHE MÉTHODIQUE:
- * 1. Chercher les pools via API V2 pour obtenir l'adresse du pool
- * 2. Utiliser cette adresse pour un appel P1 avec données complètes
+ * APPROCHE SIMPLIFIÉE ET ROBUSTE:
+ * 1. Essayer d'abord l'API directe du token
+ * 2. En fallback, utiliser l'API des pools
  */
 async function enrichTokenWithGecko(token: any, network: string = 'solana'): Promise<any> {
   console.log(`🔄 [GECKO START] Début enrichissement pour ${token.token_symbol || 'Unknown'} (${token.token_address})`);
   
   if (!token.token_address) {
     console.log(`⚠️ [GECKO] Pas d'adresse token pour ${token.token_symbol || 'Unknown'}`);
-    return token;
+    return { ...token, gecko_enriched: false };
   }
 
   const cacheKey = `gecko_enriched_${network}_${token.token_address}`;
@@ -325,42 +319,132 @@ async function enrichTokenWithGecko(token: any, network: string = 'solana'): Pro
   }
 
   try {
-    // ÉTAPE 1 : Chercher les pools avec l'API V2 pour identifier l'adresse du pool principal
-    let poolsEndpoint = `/networks/${network}/tokens/${token.token_address}/pools?include=dex,base_token&page=1&limit=3`;
-    console.log(`🌐 [GECKO STEP 1] Recherche pools V2 pour ${token.token_address}`);
+    // MÉTHODE 1 : API directe du token (plus simple et fiable)
+    console.log(`🌐 [GECKO METHOD 1] API directe token pour ${token.token_address}`);
+    const tokenEndpoint = `/networks/${network}/tokens/${token.token_address}`;
+    
+    let tokenData;
+    try {
+      tokenData = await geckoterminalRequest(tokenEndpoint);
+      
+      if (tokenData && tokenData.data && tokenData.data.attributes) {
+        const attrs = tokenData.data.attributes;
+        console.log(`✅ [GECKO METHOD 1] Token trouvé - Prix: $${attrs.price_usd}, FDV: $${attrs.fdv_usd}`);
+        
+        // Construire les données enrichies depuis l'API directe
+        const enrichedData = {
+          ...token,
+          gecko_enriched: true,
+          gecko_data_source: 'token_api_direct',
+          gecko_updated_at: new Date().toISOString(),
+          gecko_enrichment_method: 'token_api_v2',
+          
+          // Données de prix et marché
+          gecko_price_usd: attrs.price_usd ? parseFloat(attrs.price_usd) : null,
+          price_usd: attrs.price_usd ? parseFloat(attrs.price_usd) : null,
+          gecko_fdv_usd: attrs.fdv_usd ? parseFloat(attrs.fdv_usd) : null,
+          fdv_usd: attrs.fdv_usd ? parseFloat(attrs.fdv_usd) : null,
+          gecko_market_cap_usd: attrs.market_cap_usd ? parseFloat(attrs.market_cap_usd) : null,
+          market_cap_usd: attrs.market_cap_usd ? parseFloat(attrs.market_cap_usd) : null,
+          gecko_volume_24h_usd: attrs.volume_usd?.h24 ? parseFloat(attrs.volume_usd.h24) : null,
+          volume_24h_usd: attrs.volume_usd?.h24 ? parseFloat(attrs.volume_usd.h24) : null,
+          gecko_liquidity_usd: attrs.total_reserve_in_usd ? parseFloat(attrs.total_reserve_in_usd) : null,
+          liquidity_usd: attrs.total_reserve_in_usd ? parseFloat(attrs.total_reserve_in_usd) : null,
+          
+          // Métadonnées token
+          gecko_name: attrs.name || token.token_name,
+          gecko_symbol: attrs.symbol || token.token_symbol,
+          gecko_decimals: attrs.decimals,
+          gecko_image_url: attrs.image_url,
+          gecko_coingecko_id: attrs.coingecko_coin_id,
+          gecko_total_supply: attrs.total_supply,
+          
+          // ID et liens
+          gecko_id: tokenData.data.id,
+          gecko_token_address: attrs.address
+        };
+        
+        // Mettre en cache et retourner
+        cache.set(cacheKey, {
+          data: enrichedData,
+          timestamp: Date.now()
+        });
+        
+        console.log(`✅ [GECKO SUCCESS] Token enrichi avec API directe - Prix: $${enrichedData.gecko_price_usd}`);
+        return enrichedData;
+      }
+    } catch (tokenError) {
+      console.log(`⚠️ [GECKO METHOD 1] API token failed: ${tokenError.message}`);
+    }
+    
+    // MÉTHODE 2 : FALLBACK via API des pools
+    console.log(`🌐 [GECKO METHOD 2] Fallback pools pour ${token.token_address}`);
+    const poolsEndpoint = `/networks/${network}/tokens/${token.token_address}/pools?include=dex,base_token&page=1&limit=3`;
     
     let poolsData;
     try {
       poolsData = await geckoterminalRequest(poolsEndpoint);
-    } catch (poolError) {
-      console.log(`⚠️ [GECKO] Pools API V2 failed: ${poolError.message}`);
-      poolsData = null;
+      
+      if (poolsData && poolsData.data && Array.isArray(poolsData.data) && poolsData.data.length > 0) {
+        const mainPool = poolsData.data[0];
+        const poolAttrs = mainPool.attributes;
+        console.log(`✅ [GECKO METHOD 2] Pool trouvé - Prix: $${poolAttrs.base_token_price_usd}`);
+        
+        // Construire les données enrichies depuis les pools
+        const enrichedData = {
+          ...token,
+          gecko_enriched: true,
+          gecko_data_source: 'pools_api_v2',
+          gecko_updated_at: new Date().toISOString(),
+          gecko_enrichment_method: 'pools_api_v2',
+          
+          // Données de prix depuis le pool
+          gecko_price_usd: poolAttrs.base_token_price_usd ? parseFloat(poolAttrs.base_token_price_usd) : null,
+          price_usd: poolAttrs.base_token_price_usd ? parseFloat(poolAttrs.base_token_price_usd) : null,
+          gecko_fdv_usd: poolAttrs.fdv_usd ? parseFloat(poolAttrs.fdv_usd) : null,
+          fdv_usd: poolAttrs.fdv_usd ? parseFloat(poolAttrs.fdv_usd) : null,
+          gecko_market_cap_usd: poolAttrs.market_cap_usd ? parseFloat(poolAttrs.market_cap_usd) : null,
+          market_cap_usd: poolAttrs.market_cap_usd ? parseFloat(poolAttrs.market_cap_usd) : null,
+          gecko_liquidity_usd: poolAttrs.reserve_in_usd ? parseFloat(poolAttrs.reserve_in_usd) : null,
+          liquidity_usd: poolAttrs.reserve_in_usd ? parseFloat(poolAttrs.reserve_in_usd) : null,
+          gecko_volume_24h_usd: poolAttrs.volume_usd?.h24 ? parseFloat(poolAttrs.volume_usd.h24) : null,
+          volume_24h_usd: poolAttrs.volume_usd?.h24 ? parseFloat(poolAttrs.volume_usd.h24) : null,
+          
+          // Métadonnées pool
+          gecko_pool_address: poolAttrs.address,
+          gecko_pool_id: mainPool.id,
+          gecko_pool_name: poolAttrs.name,
+          
+          // ID
+          gecko_id: mainPool.id
+        };
+        
+        // Mettre en cache et retourner
+        cache.set(cacheKey, {
+          data: enrichedData,
+          timestamp: Date.now()
+        });
+        
+        console.log(`✅ [GECKO SUCCESS] Token enrichi avec pools - Prix: $${enrichedData.gecko_price_usd}`);
+        return enrichedData;
+      }
+    } catch (poolsError) {
+      console.log(`⚠️ [GECKO METHOD 2] Pools failed: ${poolsError.message}`);
     }
     
-    // ÉTAPE 2 : Si un pool est trouvé, extraire son adresse et utiliser l'API P1
-    if (poolsData && poolsData.data && Array.isArray(poolsData.data) && poolsData.data.length > 0) {
-      // Prendre le pool avec le plus de liquidité (le premier dans la liste triée)
-      const mainPool = poolsData.data[0];
-      const poolAddress = mainPool.attributes?.address;
-      
-      if (poolAddress) {
-        console.log(`🚀 [GECKO STEP 2] Pool trouvé: ${poolAddress}, appel API P1 pour données complètes`);
-        
-        // Nettoyer l'adresse du pool (retirer le préfixe network s'il existe)
-        const poolId = mainPool.id; // Format: "solana_8MsMB9zGkescT7r3mSA6uJdFthtgx3JHAn93b8swQicT"
-        const poolIdParts = poolId.split('_');
-        const cleanPoolAddress = poolIdParts.length > 1 ? poolIdParts.slice(1).join('_') : poolAddress;
-        
-        console.log(`🔍 [GECKO] Adresse pool nettoyée: ${cleanPoolAddress}`);
-        
-        // ÉTAPE 3 : Utiliser l'API P1 avec l'adresse du pool pour récupérer TOUTES les données
-        try {
-          const enrichedWithP1 = await enrichTokenWithGeckoP1Pool(token, cleanPoolAddress, network);
-          
-          if (enrichedWithP1.gecko_enriched) {
-            console.log(`✅ [GECKO SUCCESS] Token enrichi avec API P1 - FDV: $${enrichedWithP1.fdv_usd}`);
-            
-            // Ajouter l'adresse du pool dans les données enrichies
+    // Si tout échoue
+    console.log(`❌ [GECKO FAILED] Aucune méthode n'a fonctionné pour ${token.token_address}`);
+    return { ...token, gecko_enriched: false };
+    
+  } catch (error) {
+    console.error(`💥 [GECKO ERROR] Erreur inattendue pour ${token.token_address}:`, error.message);
+    return { ...token, gecko_enriched: false };
+  }
+}
+
+/**
+ * Calculer les statistiques de période (7j, all time)
+ */
             const finalEnrichedData = {
               ...enrichedWithP1,
               gecko_pool_address: cleanPoolAddress, // Stocker l'adresse du pool utilisée
@@ -387,19 +471,11 @@ async function enrichTokenWithGecko(token: any, network: string = 'solana'): Pro
       
       // FALLBACK V2 : Utiliser les données de pools V2 si P1 non disponible
       const poolAttrs = mainPool.attributes;
-      const baseTokenPrice = poolAttrs.base_token_price_usd ? parseFloat(poolAttrs.base_token_price_usd) : null;
-      
-      console.log(`📊 [GECKO V2 FALLBACK] Pool trouvé - Prix: $${baseTokenPrice}, Liquidité: $${poolAttrs.reserve_in_usd}`);
-      
-      // Ne marquer comme enrichi que si on a un prix valide
-      if (!baseTokenPrice || baseTokenPrice <= 0) {
-        console.log(`⚠️ [GECKO V2 FALLBACK] Prix invalide (${baseTokenPrice}), pas d'enrichissement`);
-        return { ...token, gecko_enriched: false };
-      }
+      console.log(`📊 [GECKO V2 FALLBACK] Pool trouvé - Prix: $${poolAttrs.base_token_price_usd}, Liquidité: $${poolAttrs.reserve_in_usd}`);
       
       // Enrichissement V2 (version actuelle)
       const enrichedData: any = {
-        // Flags d'enrichissement - marqué comme enrichi seulement si prix valide
+        // Flags d'enrichissement
         gecko_enriched: true,
         gecko_data_source: 'pools_api_v2_fallback',
         gecko_updated_at: new Date().toISOString(),
@@ -409,12 +485,11 @@ async function enrichTokenWithGecko(token: any, network: string = 'solana'): Pro
         gecko_id: mainPool.id,
         gecko_name: poolAttrs.name || token.token_symbol,
         gecko_symbol: poolAttrs.base_token_symbol || token.token_symbol,
-        gecko_pool_address: mainPool.attributes?.address || null,
+        gecko_pool_address: mainPool.attributes?.address || null, // Stocker l'adresse du pool
         gecko_pool_id: mainPool.id,
         
-        // Prix et valeurs principales (avec validation)
-        price_usd: baseTokenPrice,
-        gecko_price_usd: baseTokenPrice, // Champ principal pour les checks
+        // Prix et valeurs principales
+        price_usd: poolAttrs.base_token_price_usd ? parseFloat(poolAttrs.base_token_price_usd) : null,
         market_cap_usd: poolAttrs.market_cap_usd ? parseFloat(poolAttrs.market_cap_usd) : null,
         fdv_usd: poolAttrs.fdv_usd ? parseFloat(poolAttrs.fdv_usd) : null,
         liquidity_usd: poolAttrs.reserve_in_usd ? parseFloat(poolAttrs.reserve_in_usd) : null,
@@ -469,7 +544,7 @@ async function enrichTokenWithGecko(token: any, network: string = 'solana'): Pro
         timestamp: Date.now()
       });
       
-      console.log(`✅ [GECKO V2 ENRICHED] ${token.token_address} - Prix: $${baseTokenPrice} - Source: pools_api_v2`);
+      console.log(`✅ [GECKO V2 ENRICHED] ${token.token_address} - Prix: $${poolAttrs.base_token_price_usd} - Source: pools_api_v2`);
       return { ...token, ...enrichedData };
       
     } else {
@@ -481,18 +556,10 @@ async function enrichTokenWithGecko(token: any, network: string = 'solana'): Pro
       
       if (tokenData && tokenData.data && tokenData.data.attributes) {
         const attrs = tokenData.data.attributes;
-        const tokenPrice = attrs.price_usd ? parseFloat(attrs.price_usd) : null;
-        
-        console.log(`📊 [GECKO TOKEN FALLBACK] Prix: ${tokenPrice}, MarketCap: ${attrs.market_cap_usd}`);
-        
-        // Ne marquer comme enrichi que si on a un prix valide
-        if (!tokenPrice || tokenPrice <= 0) {
-          console.log(`⚠️ [GECKO TOKEN FALLBACK] Prix invalide (${tokenPrice}), pas d'enrichissement`);
-          return { ...token, gecko_enriched: false };
-        }
+        console.log(`📊 [GECKO TOKEN FALLBACK] Prix: ${attrs.price_usd}, MarketCap: ${attrs.market_cap_usd}`);
         
         const enrichedData = {
-          // Flags d'enrichissement - marqué comme enrichi seulement si prix valide
+          // Flags d'enrichissement
           gecko_enriched: true,
           gecko_data_source: 'tokens_api_v2_fallback',
           gecko_updated_at: new Date().toISOString(),
@@ -503,9 +570,8 @@ async function enrichTokenWithGecko(token: any, network: string = 'solana'): Pro
           gecko_name: attrs.name || token.token_symbol,
           gecko_symbol: attrs.symbol || token.token_symbol,
           
-          // Prix et valeurs (avec validation)
-          price_usd: tokenPrice,
-          gecko_price_usd: tokenPrice, // Champ principal pour les checks
+          // Prix et valeurs
+          price_usd: attrs.price_usd ? parseFloat(attrs.price_usd) : null,
           market_cap_usd: attrs.market_cap_usd ? parseFloat(attrs.market_cap_usd) : null,
           fdv_usd: attrs.fdv_usd ? parseFloat(attrs.fdv_usd) : null,
           
@@ -533,7 +599,7 @@ async function enrichTokenWithGecko(token: any, network: string = 'solana'): Pro
           timestamp: Date.now()
         });
         
-        console.log(`✅ [GECKO TOKEN FALLBACK ENRICHED] ${token.token_address} - Prix: $${tokenPrice} - Source: tokens_api_v2`);
+        console.log(`✅ [GECKO TOKEN FALLBACK ENRICHED] ${token.token_address} - Prix: $${attrs.price_usd} - Source: tokens_api_v2`);
         return { ...token, ...enrichedData };
       }
     }
@@ -639,6 +705,264 @@ function getStableWalletData(walletAddress: string): any {
   };
 }
 
+// === FONCTION UTILITAIRE - MISE À JOUR WALLET SUMMARY ===
+async function updateWalletSummary(walletAddress: string, walletData: any, supabase: any) {
+  try {
+    console.log(`📊 [WALLET SUMMARY] Calcul des métriques pour ${walletAddress}`);
+    
+    // Extraire les métriques depuis les données Cielo
+    const statsAggregated = walletData.stats_aggregated || {};
+    const tokensPnl = walletData.tokens_pnl || {};
+    const portfolio = walletData.portfolio || {};
+    const stats = walletData.stats || {}; // Données stats détaillées
+    const statsData = stats.data || {}; // Données des stats depuis /enhanced-stats
+    
+    // Calculer les métriques agrégées de base
+    const totalPnl = tokensPnl.total_pnl_usd || statsAggregated.total_pnl || statsData.total_pnl || 0;
+    const winRate = tokensPnl.winrate || statsAggregated.winrate || statsData.winrate || 0;
+    const totalTokensTraded = tokensPnl.total_tokens_traded || statsAggregated.total_tokens_traded || 0;
+    const totalValue = portfolio.data?.total_usd || 0;
+    const tokenCount = portfolio.data?.portfolio?.length || 0;
+    
+    // Extraire les nouvelles métriques de trading demandées
+    const averageHoldingTime = statsData.average_holding_time || statsAggregated.average_holding_time || 0;
+    const totalRoiPercentage = statsData.total_roi_percentage || statsAggregated.total_roi_percentage || tokensPnl.total_roi_percentage || 0;
+    const swapCount = statsData.swap_count || statsAggregated.swap_count || 0;
+    const firstSwapTimestamp = statsData.first_swap_timestamp || statsAggregated.first_swap_timestamp || null;
+    const lastSwapTimestamp = statsData.last_swap_timestamp || statsAggregated.last_swap_timestamp || null;
+    const uniqueTradingDays = statsData.unique_trading_days || statsAggregated.unique_trading_days || 0;
+    const consecutiveTradingDays = statsData.consecutive_trading_days || statsAggregated.consecutive_trading_days || 0;
+    const averageTradesPerToken = statsData.average_trades_per_token || statsAggregated.average_trades_per_token || 0;
+    
+    // Récupérer le nombre de tokens depuis wallet_tokens_extended si portfolio est vide
+    let actualTokenCount = tokenCount;
+    if (tokenCount === 0) {
+      try {
+        const { data: tokensExtended, error: tokensError } = await supabase
+          .from('wallet_tokens_extended')
+          .select('id', { count: 'exact' })
+          .eq('wallet_address', walletAddress);
+        
+        if (!tokensError && tokensExtended) {
+          actualTokenCount = tokensExtended.length;
+          console.log(`📊 [WALLET SUMMARY] Tokens trouvés dans wallet_tokens_extended: ${actualTokenCount}`);
+        }
+      } catch (error) {
+        console.log(`⚠️ [WALLET SUMMARY] Erreur récupération tokens: ${error.message}`);
+      }
+    }
+    
+    // Calculer des métriques additionnelles depuis les tokens
+    let avgMarketCap = 0;
+    let avgReliabilityScore = 0;
+    let tokensWithMarketCap = 0;
+    let top5Concentration = 0;
+    
+    if (portfolio.data?.portfolio && Array.isArray(portfolio.data.portfolio)) {
+      const tokens = portfolio.data.portfolio;
+      const marketCaps = tokens
+        .map(t => t.geckoterminal_complete_data?.market_cap_usd || 0)
+        .filter(mc => mc > 0);
+      
+      const reliabilityScores = tokens
+        .map(t => t.geckoterminal_complete_data?.reliability_score?.total_score || 0)
+        .filter(rs => rs > 0);
+      
+      avgMarketCap = marketCaps.length > 0 ? 
+        marketCaps.reduce((sum, mc) => sum + mc, 0) / marketCaps.length : 0;
+      
+      avgReliabilityScore = reliabilityScores.length > 0 ? 
+        reliabilityScores.reduce((sum, rs) => sum + rs, 0) / reliabilityScores.length : 0;
+      
+      tokensWithMarketCap = marketCaps.length;
+      
+      // Calculer la concentration des top 5 tokens
+      const tokenValues = tokens
+        .map(t => t.total_usd_value || 0)
+        .sort((a, b) => b - a);
+      const top5Value = tokenValues.slice(0, 5).reduce((sum, val) => sum + val, 0);
+      top5Concentration = totalValue > 0 ? (top5Value / totalValue) * 100 : 0;
+    }
+    
+    // Calculer un score de performance global
+    const performanceScore = Math.min(Math.max(
+      (totalPnl / 1000) * 10 + // PnL factor
+      (winRate / 10) + // Win rate factor  
+      (totalTokensTraded / 5) - // Diversification factor
+      Math.max(0, (top5Concentration - 50) / 10), // Concentration penalty
+      0), 100);
+    
+    // Préparer les données à sauvegarder (incluant les nouvelles métriques)
+    const walletSummary = {
+      wallet_address: walletAddress,
+      total_pnl: totalPnl,
+      total_value_usd: totalValue,
+      win_rate: winRate,
+      token_count: actualTokenCount,
+      total_trades: totalTokensTraded,
+      performance_score: performanceScore,
+      avg_token_market_cap: avgMarketCap,
+      avg_reliability_score: avgReliabilityScore,
+      tokens_with_market_cap: tokensWithMarketCap,
+      top_5_tokens_concentration_pct: top5Concentration,
+      last_updated: new Date().toISOString(),
+      api_total_tokens_traded: totalTokensTraded,
+      api_total_pnl_usd: totalPnl,
+      api_winrate: winRate,
+      analysis_score: performanceScore,
+      enriched_tokens_count: tokensWithMarketCap,
+      enriched_tokens_percentage: actualTokenCount > 0 ? (tokensWithMarketCap / actualTokenCount) * 100 : 0,
+      
+      // ✨ NOUVELLES MÉTRIQUES DE TRADING DEMANDÉES
+      average_holding_time: averageHoldingTime,
+      total_roi_percentage: totalRoiPercentage,
+      swap_count: swapCount,
+      first_swap_timestamp: firstSwapTimestamp,
+      last_swap_timestamp: lastSwapTimestamp,
+      unique_trading_days: uniqueTradingDays,
+      consecutive_trading_days: consecutiveTradingDays,
+      average_trades_per_token: averageTradesPerToken
+    };
+    
+    console.log(`💾 [WALLET SUMMARY] Métriques calculées:`, {
+      totalPnl: totalPnl.toLocaleString(),
+      winRate: winRate.toFixed(1) + '%',
+      tokenCount: actualTokenCount,
+      performanceScore: performanceScore.toFixed(1),
+      averageHoldingTime: averageHoldingTime,
+      swapCount: swapCount,
+      uniqueTradingDays: uniqueTradingDays
+    });
+    
+    // Sauvegarder dans wallets_extended avec upsert
+    const { data, error } = await supabase
+      .from('wallets_extended')
+      .upsert(walletSummary, {
+        onConflict: 'wallet_address'
+      })
+      .select();
+    
+    if (error) {
+      console.error(`❌ [WALLET SUMMARY] Erreur sauvegarde: ${error.message}`);
+      return { success: false, error: error.message };
+    }
+    
+    console.log(`✅ [WALLET SUMMARY] Métriques sauvegardées pour ${walletAddress}`);
+    return { success: true, data: walletSummary };
+    
+  } catch (error) {
+    console.error(`❌ [WALLET SUMMARY] Erreur: ${error.message}`);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Fonction pour persister les tokens enrichis en base de données
+ */
+async function persistEnrichedTokens(walletAddress: string, enrichedTokens: any[]): Promise<{ success: boolean; tokens_saved: number; enriched_tokens_saved?: number; error?: string }> {
+  console.log(`💾 [DB PERSIST] Début persistance de ${enrichedTokens.length} tokens enrichis pour ${walletAddress}`);
+  
+  if (!enrichedTokens || enrichedTokens.length === 0) {
+    console.log(`⚠️ [DB PERSIST] Aucun token à persister`);
+    return { success: true, tokens_saved: 0 };
+  }
+
+  try {
+    // Créer le client Supabase
+    const supabaseUrl = 'https://xkndddxqqlxqknbqtefv.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhrbmRkZHhxcWx4cWtuYnF0ZWZ2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzAxNjcxMSwiZXhwIjoyMDY4NTkyNzExfQ.k6ckJjZEpaNF2nwttZTg1iJ9i2SfzAXU75SLFYp3yDQ';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Préparer les données pour insertion/mise à jour
+    const tokensToSave = enrichedTokens.map(token => ({
+      wallet_address: walletAddress,
+      token_address: token.token_address,
+      symbol: token.token_symbol || token.symbol,
+      name: token.token_name || token.name,
+      chain: token.chain || 'solana',
+      
+      // Données de trading PnL
+      total_pnl_usd: token.total_pnl_usd || 0,
+      unrealized_pnl_usd: token.unrealized_pnl_usd || 0,
+      roi_percentage: token.roi_percentage || 0,
+      unrealized_roi_percentage: token.unrealized_roi_percentage || 0,
+      num_swaps: token.num_swaps || 0,
+      total_buy_usd: token.total_buy_usd || 0,
+      total_sell_usd: token.total_sell_usd || 0,
+      total_buy_amount: token.total_buy_amount || 0,
+      total_sell_amount: token.total_sell_amount || 0,
+      average_buy_price: token.average_buy_price || 0,
+      average_sell_price: token.average_sell_price || 0,
+      first_trade: token.first_trade || null,
+      last_trade: token.last_trade || null,
+      hold_time: token.hold_time || 0,
+      holding_amount: token.holding_amount || 0,
+      holding_amount_usd: token.holding_amount_usd || 0,
+      token_price_usd: token.token_price_usd || 0,
+      chart_link: token.chart_link || null,
+      is_honeypot: token.is_honeypot || false,
+      
+      // Données d'enrichissement Gecko
+      gecko_enriched: token.gecko_enriched || false,
+      gecko_price_usd: token.gecko_price_usd || null,
+      gecko_market_cap_usd: token.gecko_market_cap_usd || null,
+      gecko_fdv_usd: token.fdv_usd || token.gecko_fdv_usd || null,
+      gecko_liquidity_usd: token.liquidity_usd || token.gecko_liquidity_usd || null,
+      gecko_volume_24h_usd: token.volume_24h_usd || token.gecko_volume_24h_usd || null,
+      gecko_price_change_24h: token.price_change_24h || token.gecko_price_change_24h || null,
+      gecko_gt_score: token.gt_score || token.gecko_gt_score || null,
+      gecko_data_source: token.gecko_data_source || null,
+      gecko_updated_at: token.gecko_updated_at || (token.gecko_enriched ? new Date().toISOString() : null),
+      gecko_pool_address: token.gecko_pool_address || null,
+      gecko_pool_id: token.gecko_pool_id || null,
+      gecko_enrichment_method: token.gecko_enrichment_method || null,
+      
+      // Métadonnées
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }));
+
+    console.log(`💾 [DB PERSIST] Préparation de ${tokensToSave.length} tokens pour upsert`);
+
+    // Utiliser upsert pour insérer/mettre à jour
+    const { data, error } = await supabase
+      .from('wallet_tokens_extended')
+      .upsert(tokensToSave, {
+        onConflict: 'wallet_address,token_address',
+        ignoreDuplicates: false
+      })
+      .select('wallet_address, token_address, gecko_enriched');
+
+    if (error) {
+      console.error(`❌ [DB PERSIST] Erreur Supabase:`, error);
+      return { 
+        success: false, 
+        tokens_saved: 0, 
+        error: error.message 
+      };
+    }
+
+    const savedCount = data?.length || tokensToSave.length;
+    const enrichedCount = tokensToSave.filter(t => t.gecko_enriched).length;
+    
+    console.log(`✅ [DB PERSIST] ${savedCount} tokens sauvegardés (${enrichedCount} enrichis avec Gecko)`);
+    
+    return { 
+      success: true, 
+      tokens_saved: savedCount,
+      enriched_tokens_saved: enrichedCount
+    };
+
+  } catch (error) {
+    console.error(`❌ [DB PERSIST] Erreur inattendue:`, error);
+    return { 
+      success: false, 
+      tokens_saved: 0, 
+      error: error instanceof Error ? error.message : 'Erreur inconnue' 
+    };
+  }
+}
+
 serve(async (req) => {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -649,6 +973,12 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
+
+  // Initialiser le client Supabase
+  const supabase = createClient(
+    'https://xkndddxqqlxqknbqtefv.supabase.co',
+    SUPABASE_ANON_KEY
+  );
 
   try {
     const url = new URL(req.url);
@@ -1261,7 +1591,7 @@ serve(async (req) => {
         },
         {
           token_address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-          token_symbol: 'USDC',
+                   token_symbol: 'USDC',
           token_name: 'USD Coin',
           pool_address: '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
         }
@@ -1604,7 +1934,7 @@ serve(async (req) => {
             let actuallyEnrichedCount = 0;
             
             if (enrichedTokens.length > 0) {
-              console.log(`🔄 [COMPLETE] Enrichissement Gecko de ${enrichedTokens.length} tokens TRPC (TOUS les tokens)`);
+              console.log(`🔄 [COMPLETE] Enrichissement Gecko de ${enrichedTokens.length} tokens TRPC (tous les tokens)`);
               
               // Préparer TOUS les tokens à enrichir
               const tokensToEnrich = enrichedTokens.filter(token => token.token_address);
@@ -1622,10 +1952,10 @@ serve(async (req) => {
                   
                   // Vérifier si le token a été enrichi (si il a des données Gecko)
                   if (enrichedToken.gecko_price_usd) {
-                    console.log(`✅ [COMPLETE] Token ${index+1}/5 enrichi: ${token.token_symbol} - Prix: $${enrichedToken.gecko_price_usd}`);
+                    console.log(`✅ [COMPLETE] Token ${index+1}/${tokensToEnrich.length} enrichi: ${token.token_symbol} - Prix: $${enrichedToken.gecko_price_usd}`);
                     return { enriched: enrichedToken, success: true };
                   } else {
-                    console.log(`⚠️ [COMPLETE] Token ${index+1}/5 non enrichi: ${token.token_symbol}`);
+                    console.log(`⚠️ [COMPLETE] Token ${index+1}/${tokensToEnrich.length} non enrichi: ${token.token_symbol}`);
                     return { enriched: enrichedToken, success: false };
                   }
                 } catch (enrichError) {
@@ -1644,6 +1974,19 @@ serve(async (req) => {
                   actuallyEnrichedCount++;
                 }
               });
+              
+              // Persister les tokens enrichis en base de données
+              try {
+                console.log(`💾 [COMPLETE] Persistance de ${enrichedTokens.length} tokens en DB`);
+                const persistResult = await persistEnrichedTokens(walletAddress, enrichedTokens);
+                if (persistResult.success) {
+                  console.log(`✅ [COMPLETE] ${persistResult.tokens_saved} tokens persistés (${persistResult.enriched_tokens_saved || 0} enrichis)`);
+                } else {
+                  console.log(`⚠️ [COMPLETE] Erreur persistance: ${persistResult.error}`);
+                }
+              } catch (persistError) {
+                console.log(`⚠️ [COMPLETE] Erreur inattendue persistance: ${persistError.message}`);
+              }
             }
             
             result.tokens_pnl = {
@@ -1876,8 +2219,34 @@ serve(async (req) => {
             };
           }
 
-          // Ajouter enriched_tokens_count au niveau principal de la réponse
-          result.enriched_tokens_count = result.tokens_pnl?.enriched_tokens_count || 0;
+          // 📊 MISE À JOUR DES MÉTRIQUES WALLET SUMMARY
+          try {
+            console.log(`📊 [COMPLETE] Mise à jour des métriques wallet summary...`);
+            const summaryResult = await updateWalletSummary(walletAddress, result, supabase);
+            
+            if (summaryResult.success) {
+              console.log(`✅ [COMPLETE] Métriques wallet sauvegardées avec succès`);
+              result.wallet_summary_update = {
+                success: true,
+                metrics_updated: summaryResult.data,
+                updated_at: new Date().toISOString()
+              };
+            } else {
+              console.log(`⚠️ [COMPLETE] Échec mise à jour métriques: ${summaryResult.error}`);
+              result.wallet_summary_update = {
+                success: false,
+                error: summaryResult.error,
+                attempted_at: new Date().toISOString()
+              };
+            }
+          } catch (summaryError) {
+            console.log(`❌ [COMPLETE] Erreur mise à jour métriques: ${summaryError.message}`);
+            result.wallet_summary_update = {
+              success: false,
+              error: summaryError.message,
+              attempted_at: new Date().toISOString()
+            };
+          }
 
           return new Response(JSON.stringify(result), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -1967,51 +2336,88 @@ serve(async (req) => {
             let actuallyEnrichedCount = 0;
             
             if (enrichedTokens.length > 0) {
-              console.log(`🔄 [TOKENS PNL] Enrichissement de ${enrichedTokens.length} tokens avec Geckoterminal (TOUS)`);
+              console.log(`🔄 [TOKENS PNL] Enrichissement de ${enrichedTokens.length} tokens avec Geckoterminal`);
               
               // Préparer tous les tokens à enrichir
               const tokensToEnrich = enrichedTokens.filter(token => token.token_address);
               
-              // Enrichir en séquence pour éviter les timeouts et rate limits
-              console.log(`🔄 [TOKENS PNL] Traitement séquentiel de ${tokensToEnrich.length} tokens`);
+              // Enrichir en parallèle avec Promise.all (par batches pour éviter timeout)
+              const batchSize = 10; // Traiter par batches de 10 tokens
+              const batches: any[] = [];
               
-              for (let i = 0; i < tokensToEnrich.length; i++) {
-                const token = tokensToEnrich[i];
-                try {
-                  const tokenToEnrich = {
-                    token_address: token.token_address,
-                    token_symbol: token.token_symbol,
-                    token_name: token.token_name,
-                    ...token
-                  };
-                  
-                  console.log(`🔄 [TOKENS PNL] Enrichissement token ${i + 1}/${tokensToEnrich.length}: ${token.token_symbol}`);
-                  const enrichedToken = await enrichTokenWithGecko(tokenToEnrich);
-                  
-                  // Trouver l'index dans l'array original et remplacer
-                  const originalIndex = enrichedTokens.findIndex(t => 
-                    t.token_address === token.token_address
-                  );
-                  
-                  if (originalIndex !== -1) {
-                    enrichedTokens[originalIndex] = enrichedToken;
+              for (let i = 0; i < tokensToEnrich.length; i += batchSize) {
+                const batch = tokensToEnrich.slice(i, i + batchSize);
+                batches.push(batch);
+              }
+              
+              console.log(`🔄 [TOKENS PNL] Traitement en ${batches.length} batches de ${batchSize} tokens max`);
+              
+              for (const [batchIndex, batch] of batches.entries()) {
+                console.log(`🔄 [TOKENS PNL] Batch ${batchIndex + 1}/${batches.length}: Enrichissement de ${batch.length} tokens`);
+                
+                const enrichmentPromises = batch.map(async (token, indexInBatch) => {
+                  try {
+                    const tokenToEnrich = {
+                      token_address: token.token_address,
+                      token_symbol: token.token_symbol,
+                      token_name: token.token_name,
+                      ...token
+                    };
+                    
+                    const enrichedToken = await enrichTokenWithGecko(tokenToEnrich);
+                    
+                    const globalIndex = batchIndex * batchSize + indexInBatch;
                     
                     if (enrichedToken.gecko_price_usd) {
-                      actuallyEnrichedCount++;
-                      console.log(`✅ [TOKENS PNL] Token ${i + 1}/${tokensToEnrich.length} enrichi: ${token.token_symbol} - Prix: $${enrichedToken.gecko_price_usd}`);
+                      console.log(`✅ [TOKENS PNL] Token ${globalIndex + 1}/${tokensToEnrich.length} enrichi: ${token.token_symbol} - Prix: $${enrichedToken.gecko_price_usd}`);
+                      return { index: globalIndex, enriched: enrichedToken, success: true };
                     } else {
-                      console.log(`⚠️ [TOKENS PNL] Token ${i + 1}/${tokensToEnrich.length} non enrichi: ${token.token_symbol}`);
+                      console.log(`⚠️ [TOKENS PNL] Token ${globalIndex + 1}/${tokensToEnrich.length} non enrichi: ${token.token_symbol}`);
+                      return { index: globalIndex, enriched: enrichedToken, success: false };
+                    }
+                  } catch (enrichError) {
+                    const globalIndex = batchIndex * batchSize + indexInBatch;
+                    console.log(`⚠️ [TOKENS PNL] Erreur enrichissement token ${globalIndex + 1}: ${enrichError.message}`);
+                    return { index: globalIndex, enriched: token, success: false };
+                  }
+                });
+                
+                // Attendre le batch complet
+                const batchResults = await Promise.all(enrichmentPromises);
+                
+                // Appliquer les résultats
+                batchResults.forEach(result => {
+                  const originalIndex = enrichedTokens.findIndex(t => 
+                    t.token_address === tokensToEnrich[result.index].token_address
+                  );
+                  if (originalIndex !== -1) {
+                    enrichedTokens[originalIndex] = result.enriched;
+                    if (result.success) {
+                      actuallyEnrichedCount++;
                     }
                   }
-                } catch (enrichError) {
-                  console.log(`⚠️ [TOKENS PNL] Erreur enrichissement token ${i + 1}: ${enrichError.message}`);
-                }
+                });
+                
+                console.log(`✅ [TOKENS PNL] Batch ${batchIndex + 1}/${batches.length} terminé`);
               }
             }
             
             console.log(`✅ [TOKENS PNL] Données complètes récupérées et enrichies (${actuallyEnrichedCount} tokens enrichis avec succès)`);
             console.log(`🔍 [TOKENS PNL] Structure finale enrichedTokens[0]:`, enrichedTokens[0] ? Object.keys(enrichedTokens[0]) : 'Aucun token');
             console.log(`🔍 [TOKENS PNL] Premier token enrichi - gecko_price_usd:`, enrichedTokens[0]?.gecko_price_usd);
+            
+            // Persister les tokens enrichis en base de données
+            try {
+              console.log(`💾 [TOKENS PNL] Persistance de ${enrichedTokens.length} tokens en DB`);
+              const persistResult = await persistEnrichedTokens(walletAddress, enrichedTokens);
+              if (persistResult.success) {
+                console.log(`✅ [TOKENS PNL] ${persistResult.tokens_saved} tokens persistés (${persistResult.enriched_tokens_saved || 0} enrichis)`);
+              } else {
+                console.log(`⚠️ [TOKENS PNL] Erreur persistance: ${persistResult.error}`);
+              }
+            } catch (persistError) {
+              console.log(`⚠️ [TOKENS PNL] Erreur inattendue persistance: ${persistError.message}`);
+            }
             
             // Garder seulement les données essentielles de realTokenData et les tokens enrichis
             const responseData = {
@@ -2150,7 +2556,7 @@ serve(async (req) => {
               enriched: enriched,
               has_price: !!enriched.gecko_price_usd,
               timestamp: new Date().toISOString()
-            }), {
+            }, null, 2), {
               headers: { ...corsHeaders, 'Content-Type': 'application/json' }
             });
           }

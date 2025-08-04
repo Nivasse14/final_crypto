@@ -36,17 +36,39 @@ async function saveTokensToDatabase(walletAddress: string, tokensData: any[]) {
       console.log(`✅ Wallet ${walletAddress} créé/mis à jour`);
     }
 
-    // 2. Préparer les tokens avec seulement les colonnes de base
+    // 2. Préparer les tokens avec tous les champs importants
     const tokenRecords = tokensData.map(token => ({
       wallet_address: walletAddress,
       token_address: token.token_address,
       token_symbol: token.symbol || token.token_symbol || null,
       token_name: token.name || token.token_name || null,
       chain: 'solana',
-      pnl: token.pnl_usd || 0,
-      current_price_usd: token.gecko_price_usd || 0,
-      market_cap_usd: token.market_cap_usd || null,
-      geckoterminal_enriched: !!token.gecko_price_usd,
+      
+      // PnL et financier - mapping correct selon les données reçues
+      pnl: token.total_pnl_usd || token.pnl_usd || 0,
+      current_price_usd: token.price_usd || token.gecko_price_usd || token.token_price_usd || 0,
+      market_cap_usd: token.market_cap_usd || token.fdv_usd || null,
+      
+      // Trading stats
+      balance: token.holding_amount || 0,
+      value_usd: token.holding_amount_usd || 0,
+      pnl_percentage: token.roi_percentage || 0,
+      
+      // Prix moyens
+      buy_price_avg: token.average_buy_price || 0,
+      avg_sell_price: token.average_sell_price || 0,
+      
+      // Stats de trading
+      token_trade_count: token.num_swaps || 0,
+      token_total_pnl: token.total_pnl_usd || 0,
+      
+      // Enrichissement GeckoTerminal
+      geckoterminal_enriched: !!token.gecko_enriched || !!token.gecko_price_usd,
+      gt_price_usd: token.price_usd || token.gecko_price_usd || null,
+      gt_market_cap_usd: token.market_cap_usd || null,
+      // Note: gt_score peut nécessiter une conversion ou être stocké dans un autre champ
+      
+      // Timestamps
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     }));
