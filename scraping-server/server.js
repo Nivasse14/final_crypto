@@ -32,7 +32,9 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     endpoints: {
       'GET /health': 'Statut du serveur',
-      'POST /api/start-scraping': 'Démarrer un job de scraping',
+      'POST /api/start-scraping': 'Démarrer un job de scraping simple',
+      'POST /api/start-complete-workflow': 'Démarrer un workflow complet (scraping + enrichissement)',
+      'POST /api/enrich-job/:jobId': 'Enrichir un job existant',
       'GET /api/job-status/:jobId': 'Statut d\'un job',
       'GET /api/job-results/:jobId': 'Résultats d\'un job terminé',
       'GET /api/jobs': 'Liste de tous les jobs'
@@ -206,6 +208,28 @@ app.get('/dashboard', (req, res) => {
                     <div style="margin-top: 15px;">
                         <h4>📈 Résultats (${job.wallets_count} portefeuilles)</h4>
                         <p><strong>Pages scrapées:</strong> ${job.total_pages || 1}</p>
+                        
+                        ${job.workflow_type === 'complete' && job.stages ? `
+                            <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin: 10px 0;">
+                                <h5>🔄 Workflow complet</h5>
+                                <div style="display: flex; gap: 20px;">
+                                    <div>
+                                        <strong>1. Scraping:</strong> 
+                                        <span style="color: ${job.stages.scraping.status === 'completed' ? '#48bb78' : job.stages.scraping.status === 'running' ? '#ed8936' : '#666'}">
+                                            ${job.stages.scraping.status.toUpperCase()}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <strong>2. Enrichissement:</strong> 
+                                        <span style="color: ${job.stages.enrichment.status === 'completed' ? '#48bb78' : job.stages.enrichment.status === 'running' ? '#ed8936' : '#666'}">
+                                            ${job.stages.enrichment.status.toUpperCase()}
+                                        </span>
+                                        ${job.enrichment_results ? ` (${job.enrichment_results.enriched_count}/${job.enrichment_results.total_wallets} réussis)` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+                        
                         ${job.supabase_saved || job.supabase_updated ? `
                             <p><strong>💾 Supabase:</strong> 
                                 ${job.supabase_saved || 0} nouveaux + ${job.supabase_updated || 0} mis à jour = ${job.supabase_total_processed || (job.supabase_saved || 0)} wallets traités
@@ -796,3 +820,260 @@ async function scrapeDuneWallets(jobId) {
     throw error;
   }
 }
+
+// Fonction de workflow complet : scraping + enrichissement
+async function runCompleteWorkflow(jobId) {
+  const job = jobs.get(jobId);
+  if (!job) return;
+
+  console.log(`🚀 [${jobId}] Démarrage du workflow complet...`);
+  job.status = 'running';
+  job.started_at = new Date().toISOString();
+
+  try {
+    // Étape 1 : Scraping Dune
+    console.log(`📊 [${jobId}] Étape 1/3 : Scraping Dune...`);
+    job.stages.scraping.status = 'running';
+    job.stages.scraping.started_at = new Date().toISOString();
+    
+    await scrapeDuneWallets(jobId);
+    
+    job.stages.scraping.status = 'completed';
+    job.stages.scraping.completed_at = new Date().toISOString();
+    console.log(`✅ [${jobId}] Scraping terminé: ${job.wallets_count} wallets`);
+
+    // Attendre le délai configuré avant enrichissement
+    if (job.enrich_delay > 0) {
+      console.log(`⏳ [${jobId}] Attente de ${job.enrich_delay}s avant enrichissement...`);
+      await new Promise(resolve => setTimeout(resolve, job.enrich_delay * 1000));
+    }
+
+    // Étape 2 : Enrichissement (si activé)
+    if (job.auto_enrich && job.wallets && job.wallets.length > 0) {
+      console.log(`🔍 [${jobId}] Étape 2/3 : Enrichissement de ${job.wallets.length} wallets...`);
+      job.stages.enrichment.status = 'running';
+      job.stages.enrichment.started_at = new Date().toISOString();
+      
+      await enrichWallets(jobId);
+      
+      job.stages.enrichment.status = 'completed';
+      job.stages.enrichment.completed_at = new Date().toISOString();
+      console.log(`✅ [${jobId}] Enrichissement terminé`);
+    } else {
+      console.log(`⏭️ [${jobId}] Enrichissement désactivé ou aucun wallet à enrichir`);
+    }
+
+    // Workflow terminé
+    job.status = 'completed';
+    job.completed_at = new Date().toISOString();
+    console.log(`🎉 [${jobId}] Workflow complet terminé !`);
+
+  } catch (error) {
+    console.error(`❌ [${jobId}] Erreur workflow:`, error);
+    job.status = 'failed';
+    job.error = error.message;
+    job.completed_at = new Date().toISOString();
+    throw error;
+  }
+}
+
+// Fonction d'enrichissement des wallets via l'API complete
+async function enrichWallets(jobId) {
+  const job = jobs.get(jobId);
+  if (!job || !job.wallets) return;
+
+  console.log(`🔍 [${jobId}] Démarrage enrichissement de ${job.wallets.length} wallets...`);
+  
+  const supabaseUrl = 'https://xkndddxqqlxqknbqtefv.supabase.co';
+  const enrichmentApiUrl = 'https://xkndddxqqlxqknbqtefv.supabase.co/functions/v1/wallet-enrichment';
+  const apiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhrbmRkZHhxcWx4cWtuYnF0ZWZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwMTY3MTEsImV4cCI6MjA2ODU5MjcxMX0.1JfLmuXhKZLhSpIVkoubfaaE9M1jAANoPjKcXZTgPgU';
+
+  let enrichedCount = 0;
+  let errorCount = 0;
+  const errors = [];
+  
+  // Traiter les wallets par batch de 5 pour éviter la surcharge
+  const batchSize = 5;
+  const batches = [];
+  
+  for (let i = 0; i < job.wallets.length; i += batchSize) {
+    batches.push(job.wallets.slice(i, i + batchSize));
+  }
+
+  console.log(`📦 [${jobId}] Traitement par ${batches.length} batches de ${batchSize} wallets...`);
+
+  for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
+    const batch = batches[batchIndex];
+    console.log(`🔄 [${jobId}] Batch ${batchIndex + 1}/${batches.length} (${batch.length} wallets)...`);
+
+    // Traiter chaque wallet du batch en parallèle
+    const batchPromises = batch.map(async (wallet) => {
+      try {
+        console.log(`🔍 [${jobId}] Enrichissement ${wallet.wallet}...`);
+        
+        const response = await fetch(enrichmentApiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+            'apikey': apiKey
+          },
+          body: JSON.stringify({
+            wallet_address: wallet.wallet,
+            source: 'dune_scraper_workflow',
+            job_id: jobId
+          })
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log(`✅ [${jobId}] ${wallet.wallet} enrichi`);
+          enrichedCount++;
+          return { success: true, wallet: wallet.wallet, data: result };
+        } else {
+          const error = await response.text();
+          console.log(`⚠️ [${jobId}] Erreur ${wallet.wallet}: ${error}`);
+          errorCount++;
+          errors.push({ wallet: wallet.wallet, error: error });
+          return { success: false, wallet: wallet.wallet, error: error };
+        }
+      } catch (error) {
+        console.log(`❌ [${jobId}] Exception ${wallet.wallet}: ${error.message}`);
+        errorCount++;
+        errors.push({ wallet: wallet.wallet, error: error.message });
+        return { success: false, wallet: wallet.wallet, error: error.message };
+      }
+    });
+
+    // Attendre que tous les wallets du batch soient traités
+    await Promise.all(batchPromises);
+
+    // Pause entre les batches pour éviter la surcharge de l'API
+    if (batchIndex < batches.length - 1) {
+      console.log(`⏳ [${jobId}] Pause 2s entre batches...`);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+  }
+
+  console.log(`📊 [${jobId}] Enrichissement terminé: ${enrichedCount} réussis, ${errorCount} erreurs`);
+  
+  // Stocker les résultats dans le job
+  job.enrichment_results = {
+    total_wallets: job.wallets.length,
+    enriched_count: enrichedCount,
+    error_count: errorCount,
+    success_rate: Math.round((enrichedCount / job.wallets.length) * 100),
+    errors: errors.slice(0, 10) // Garder seulement les 10 premières erreurs
+  };
+
+  return {
+    enriched_count: enrichedCount,
+    error_count: errorCount,
+    total_wallets: job.wallets.length
+  };
+}
+
+// Endpoint pour déclencher le workflow complet : scraping + enrichissement
+app.post('/api/start-complete-workflow', authenticate, async (req, res) => {
+  const { jobId, url, callback_url, auto_enrich = true, enrich_delay = 30 } = req.body;
+  
+  if (!jobId || !url) {
+    return res.status(400).json({ error: 'jobId and url required' });
+  }
+
+  // Créer le job avec workflow complet
+  const job = {
+    id: jobId,
+    status: 'pending',
+    created_at: new Date().toISOString(),
+    url: url,
+    callback_url: callback_url,
+    workflow_type: 'complete', // scraping + enrichissement
+    auto_enrich: auto_enrich,
+    enrich_delay: enrich_delay, // délai en secondes avant enrichissement
+    stages: {
+      scraping: { status: 'pending', started_at: null, completed_at: null },
+      enrichment: { status: 'pending', started_at: null, completed_at: null }
+    }
+  };
+  
+  jobs.set(jobId, job);
+
+  // Démarrer le workflow complet en arrière-plan
+  runCompleteWorkflow(jobId).catch(error => {
+    console.error(`❌ Workflow ${jobId} failed:`, error);
+    const failedJob = jobs.get(jobId);
+    if (failedJob) {
+      failedJob.status = 'failed';
+      failedJob.error = error.message;
+      failedJob.completed_at = new Date().toISOString();
+    }
+  });
+
+  res.json({
+    success: true,
+    job_id: jobId,
+    status: 'started',
+    message: 'Workflow complet démarré (scraping + enrichissement)',
+    created_at: job.created_at,
+    url: job.url,
+    workflow_stages: {
+      '1': 'Scraping des wallets Dune',
+      '2': `Enrichissement via API (délai: ${enrich_delay}s)`,
+      '3': 'Persistance finale'
+    },
+    endpoints: {
+      status: `/api/job-status/${jobId}`,
+      results: `/api/job-results/${jobId}`,
+      estimated_duration: `${5 + Math.ceil(enrich_delay/60)} à ${10 + Math.ceil(enrich_delay/60)} minutes`
+    }
+  });
+});
+
+// Endpoint pour déclencher uniquement l'enrichissement d'un job existant
+app.post('/api/enrich-job/:jobId', authenticate, async (req, res) => {
+  const { jobId } = req.params;
+  const { force = false } = req.body;
+  
+  const job = jobs.get(jobId);
+  
+  if (!job) {
+    return res.status(404).json({ error: 'Job not found' });
+  }
+  
+  if (job.status !== 'completed' && !force) {
+    return res.status(400).json({ 
+      error: 'Job must be completed before enrichment. Use force=true to override.',
+      status: job.status 
+    });
+  }
+
+  if (!job.wallets || job.wallets.length === 0) {
+    return res.status(400).json({ error: 'No wallets found in job to enrich' });
+  }
+
+  // Marquer le job pour enrichissement
+  job.enrich_requested = true;
+  job.enrich_force = force;
+  job.stages = job.stages || {};
+  job.stages.enrichment = { status: 'pending', started_at: null, completed_at: null };
+
+  // Démarrer l'enrichissement en arrière-plan
+  enrichWallets(jobId).catch(error => {
+    console.error(`❌ Enrichment ${jobId} failed:`, error);
+    const failedJob = jobs.get(jobId);
+    if (failedJob && failedJob.stages) {
+      failedJob.stages.enrichment.status = 'failed';
+      failedJob.stages.enrichment.error = error.message;
+      failedJob.stages.enrichment.completed_at = new Date().toISOString();
+    }
+  });
+
+  res.json({
+    success: true,
+    job_id: jobId,
+    message: 'Enrichissement démarré',
+    wallets_to_enrich: job.wallets.length,
+    estimated_duration: `${Math.ceil(job.wallets.length / 10)} à ${Math.ceil(job.wallets.length / 5)} minutes`
+  });
+});
