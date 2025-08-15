@@ -2,6 +2,25 @@ const fs = require('fs');
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
+// Fonction pour parser une date de manière sécurisée
+function parseValidDate(dateString) {
+  if (!dateString || dateString === '' || dateString === '-') {
+    return null;
+  }
+  
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      console.warn(`⚠️ Date invalide ignorée: "${dateString}"`);
+      return null;
+    }
+    return date.toISOString();
+  } catch (error) {
+    console.warn(`⚠️ Erreur parsing date: "${dateString}"`, error.message);
+    return null;
+  }
+}
+
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
 
@@ -47,7 +66,7 @@ async function uploadWalletsToSupabase(filePath) {
         wins: parseInt(wallet.wins) || 0,
         losses: parseInt(wallet.losses) || 0,
         trade_count: parseInt(wallet.trade_nums) || 0,
-        last_trade_date: wallet.last_trade ? new Date(wallet.last_trade).toISOString() : null,
+        last_trade_date: wallet.last_trade ? parseValidDate(wallet.last_trade) : null,
         source: 'dune_scraper',
         status: 'pending',
         metadata: {

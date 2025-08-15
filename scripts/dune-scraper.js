@@ -4,16 +4,29 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 
 (async () => {
-  const browser = await puppeteer.launch({ headless: false }); // met true si tu ne veux pas voir le navigateur
-  const page = await browser.newPage();
+  try {
+    const browser = await puppeteer.launch({ 
+      headless: false,
+      executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', // Utilise Chrome au lieu de Chromium
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--no-first-run',
+        '--no-zygote',
+        '--disable-gpu'
+      ]
+    });
+    const page = await browser.newPage();
 
-  console.log('🔐 Chargement de la page Dune...');
-  await page.goto('https://dune.com/sunnypost/solana-top-trade-wallets-finder-last-days-v3', {
-    waitUntil: 'domcontentloaded',
-    timeout: 60000,
-  });
+    console.log('🔐 Chargement de la page Dune...');
+    await page.goto('https://dune.com/sunnypost/solana-top-trade-wallets-finder-last-days-v3', {
+      waitUntil: 'domcontentloaded',
+      timeout: 60000,
+    });
 
-  await page.waitForSelector('select[aria-label="Select page"]');
+    await page.waitForSelector('select[aria-label="Select page"]');
 
   const wallets = [];
 
@@ -80,4 +93,8 @@ puppeteer.use(StealthPlugin());
   }
 
   await browser.close();
+  } catch (error) {
+    console.error('❌ Erreur lors du scraping:', error);
+    process.exit(1);
+  }
 })();
