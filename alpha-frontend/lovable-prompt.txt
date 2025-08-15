@@ -1,0 +1,460 @@
+# PROMPT POUR LOVABLE - ALPHA HUNTER PLATFORM
+
+## VISION GLOBALE
+
+Développe une plateforme d'élite financière appelée "Alpha Hunter" qui permet aux investisseurs d'accéder à des données et stratégies utilisées seulement par le top 0,0000001% des traders et investisseurs institutionnels. Cette plateforme identifie et analyse les portefeuilles crypto les plus performants scrapés sur Dune Analytics, révélant les stratégies cachées qui génèrent des gains exceptionnels. L'objectif est de créer un outil qui transforme un investisseur ordinaire en maître de la génération de richesse à travers une expérience utilisateur ultra-premium, des analyses prédictives avancées et des signaux d'investissement exclusifs.
+
+## ARCHITECTURE TECHNIQUE
+
+Le système est composé de trois parties majeures:
+1. Backend de scraping et d'enrichissement (existant)
+2. APIs Supabase Edge Functions (déployées)
+3. Frontend Next.js ultra-premium (à développer)
+
+## APIS DÉPLOYÉES
+
+### 1. API Cielo - Analyse de Wallet
+
+#### Données Complètes
+```typescript
+GET /cielo-api/complete/{address}
+// Retourne toutes les données d'un wallet: portfolio, stats, PnL, behavioral analysis
+```
+
+#### Endpoints Spécialisés
+```typescript
+GET /cielo-api/portfolio/{address}  // Portfolio détaillé
+GET /cielo-api/stats/{address}      // Métriques de performance
+GET /cielo-api/pnl/{address}        // Profit & Loss analysis
+GET /cielo-api/tokens-pnl/{address} // PnL par token avec filtres
+```
+
+#### Analytics Avancées
+```typescript
+GET /cielo-api/stats-7d/{address}          // Stats court terme
+GET /cielo-api/stats-aggregated/{address}   // Stats long terme
+GET /cielo-api/profitability/{address}      // Analyse profitabilité
+GET /cielo-api/track-status/{address}       // Statut tracking
+```
+
+### 2. API Enrichissement
+
+#### Batch Processing
+```typescript
+POST /wallet-enrichment/batch-process
+// Process des wallets en batch avec paramètres customisables
+Body: {
+  batchSize: number,
+  status: string,
+  limit: number
+}
+```
+
+#### Statistiques
+```typescript
+GET /wallet-enrichment/stats
+// Stats d'enrichissement et métriques de qualité
+```
+
+### 3. API Monitoring
+
+#### System Health
+```typescript
+GET /system-monitoring/health    // État système
+GET /system-monitoring/stats     // Stats registry
+```
+
+#### Analytics
+```typescript
+GET /system-monitoring/priority-wallets
+// Wallets prioritaires (PnL > 10k USD)
+Params: {
+  limit: number,     // default: 50
+  min_pnl: number   // default: 10000
+}
+```
+
+#### Performance & Logs
+```typescript
+GET /system-monitoring/batch-logs
+GET /system-monitoring/api-performance
+// Métriques détaillées et logs système
+```
+
+### 4. API Scraping Dune
+
+#### Contrôle
+```typescript
+POST /dune-scraper-trigger/start         // Démarrer scraping
+GET /dune-scraper-trigger/status         // Vérifier statut
+GET /dune-scraper-trigger/pending-wallets // Liste d'attente
+```
+
+#### Webhooks
+```typescript
+POST /dune-scraper-trigger/webhook
+POST /dune-scraper-trigger/update-enrichment
+```
+
+## CARACTÉRISTIQUES PREMIUM
+
+1. Design Ultra-Premium
+   - Glassmorphism élégant
+   - Animations fluides
+   - Tableaux de bord interactifs
+   - Mode sombre sophistiqué
+
+2. Analyse Comportementale
+   - Détection de patterns d'élite
+   - Scoring sophistiqué des wallets
+   - Indicateurs de copytrade
+
+3. Intelligence Artificielle
+   - Prédiction de mouvements
+   - Clustering de stratégies
+   - Signaux en temps réel
+
+4. Social Trading Exclusif
+   - Suivi des top wallets
+   - Alertes de mouvements
+   - Stratégies détaillées
+
+5. Sécurité & Performance
+   - Temps réel via WebSocket
+   - Cache intelligent
+   - Haute disponibilité
+
+## EXEMPLES D'UTILISATION
+
+### 1. Analyse d'un Top Wallet
+```typescript
+// Récupérer données complètes
+const walletData = await fetch(`/cielo-api/complete/${address}`);
+
+// Analyser performance
+const stats = await fetch(`/cielo-api/stats/${address}`);
+
+// Tracker en temps réel
+const status = await fetch(`/cielo-api/track-status/${address}`);
+```
+
+### 2. Détection d'Alpha
+```typescript
+// Obtenir wallets prioritaires
+const topWallets = await fetch('/system-monitoring/priority-wallets?min_pnl=50000');
+
+// Analyser chaque wallet
+for (const wallet of topWallets) {
+  const analysis = await fetch(`/cielo-api/complete/${wallet.address}`);
+  // Détecter patterns d'élite
+}
+```
+
+### 3. Copy Trading
+```typescript
+// Suivre un wallet performant
+const tracking = await startTracking(address);
+
+// Recevoir alertes temps réel
+websocket.subscribe(`wallet_updates:${address}`);
+
+// Analyser chaque transaction
+websocket.on('new_transaction', async (tx) => {
+  const impact = await analyzeImpact(tx);
+  if (impact.score > 0.85) {
+    notifyUser('Opportunité Alpha détectée!');
+  }
+});
+```
+
+## LIBRAIRIES RECOMMANDÉES
+
+1. UI/UX Premium
+   - Radix UI (composants base)
+   - Framer Motion (animations)
+   - Three.js (effets 3D)
+   - @react-spring/web (transitions)
+
+2. Data Visualization
+   - Recharts (graphiques pro)
+   - react-financial-charts (charts trading)
+   - D3.js (visualisations custom)
+
+3. Real-time & État
+   - SWR (data fetching)
+   - Zustand (state management)
+   - @supabase/supabase-js (real-time)
+
+4. AI/ML
+   - TensorFlow.js (ML dans le navigateur)
+   - Brain.js (réseaux de neurones)
+   - ML5.js (ML simplifié)
+
+## CONSEILS D'IMPLÉMENTATION
+
+1. Focus Elite
+   - Design ultra-premium obligatoire
+   - Expérience utilisateur exceptionnelle
+   - Performance et réactivité maximales
+
+2. Intelligence
+   - Analyses comportementales poussées
+   - Prédictions basées sur l'historique
+   - Détection de patterns complexes
+
+3. Temps Réel
+   - Updates instantanées
+   - Notifications intelligentes
+   - Monitoring constant
+
+4. Personnalisation
+   - Filtres avancés
+   - Tableaux de bord customisables
+   - Alertes personnalisées
+
+## ENDPOINTS CRITIQUES À UTILISER
+
+1. Analyse Wallet
+```typescript
+const getWalletInsights = async (address) => {
+  const [complete, stats, pnl] = await Promise.all([
+    fetch(`/cielo-api/complete/${address}`),
+    fetch(`/cielo-api/stats/${address}`),
+    fetch(`/cielo-api/pnl/${address}`)
+  ]);
+  
+  return processWalletData(complete, stats, pnl);
+};
+```
+
+2. Copy Trading
+```typescript
+const setupCopyTrading = async (address) => {
+  // 1. Vérifier éligibilité
+  const stats = await fetch(`/cielo-api/stats/${address}`);
+  if (stats.winRate < 0.85) return false;
+
+  // 2. Activer tracking
+  await fetch(`/cielo-api/track-status/${address}`, {
+    method: 'POST',
+    body: JSON.stringify({ track: true })
+  });
+
+  // 3. Setup WebSocket
+  const ws = new WebSocket(SUPABASE_REALTIME_URL);
+  ws.subscribe(`wallet_updates:${address}`);
+  
+  return true;
+};
+```
+
+3. Alpha Discovery
+```typescript
+const findAlpha = async () => {
+  // 1. Get priority wallets
+  const wallets = await fetch('/system-monitoring/priority-wallets?min_pnl=100000');
+  
+  // 2. Analyze each
+  const analyses = await Promise.all(
+    wallets.map(w => fetch(`/cielo-api/complete/${w.address}`))
+  );
+  
+  // 3. Score and rank
+  return rankByAlpha(analyses);
+};
+```
+
+## OBJECTIFS DE PERFORMANCE
+
+1. Temps de Réponse
+   - API calls < 200ms
+   - WebSocket latency < 50ms
+   - UI renders < 16ms
+
+2. Disponibilité
+   - Uptime > 99.99%
+   - Failover automatique
+   - Cache intelligent
+
+3. Scalabilité
+   - 10k+ wallets trackés
+   - 1k+ utilisateurs simultanés
+   - Real-time sans lag
+
+## MESURES DE SUCCÈS
+
+1. Engagement
+   - Session duration > 30min
+   - Daily active users > 100
+   - Return rate > 80%
+
+2. Performance
+   - Win rate copies > 85%
+   - PnL moyen > 50%
+   - Alertes précises > 90%
+
+3. Croissance
+   - User growth > 20% /month
+   - Wallets analysés +1k /week
+   - Alpha score > 0.8
+
+# PROMPT POUR LOVABLE - ANALYSE DES MEILLEURS WALLETS
+
+## OBJECTIF PRINCIPAL
+
+Développe une interface ultra-premium qui permet de :
+1. Visualiser les meilleurs wallets de Dune Analytics
+2. Lancer et suivre des analyses automatiques
+3. Explorer les stratégies gagnantes
+4. Copier les trades des wallets d'élite
+
+## FLUX DE DONNÉES
+
+1. **Découverte des Wallets**
+```typescript
+// 1. Obtenir les wallets prioritaires
+GET /system-monitoring/priority-wallets?limit=50&min_pnl=50000
+
+// 2. Lancer une nouvelle analyse Dune
+POST /dune-scraper-trigger/start
+
+// 3. Vérifier le statut de l'analyse
+GET /dune-scraper-trigger/status?job_id=xxx
+```
+
+2. **Enrichissement des Données**
+```typescript
+// 1. Obtenir les données complètes d'un wallet
+GET /cielo-api/complete/{address}
+
+// 2. Analyser les performances
+GET /cielo-api/stats-aggregated/{address}?days=max
+
+// 3. Suivre les mouvements
+GET /cielo-api/track-status/{address}
+```
+
+3. **Temps Réel**
+- WebSocket pour les mises à jour instantanées
+- Notifications push pour les mouvements importants
+- Tracking live des wallets d'élite
+
+## FONCTIONNALITÉS CRITIQUES
+
+1. **Dashboard des Top Performers**
+- Filtre par PnL (>50k USD)
+- Tri par win rate (>85%)
+- Score alpha et risk
+- Dernière activité
+
+2. **Analyse On-Demand**
+- Bouton "Lancer Analyse Dune"
+- Progression en temps réel
+- Résultats instantanés
+- Enrichissement automatique
+
+3. **Copytrade Premium**
+- Détection des wallets d'élite
+- Signaux de trading
+- Alertes de mouvements
+- Métriques de performance
+
+## DESIGN ULTRA-PREMIUM
+
+1. **Interface**
+- Glassmorphism sophistiqué
+- Animations fluides
+- Mode sombre élégant
+- Typographie premium
+
+2. **Visualisations**
+- Graphiques de performance
+- Heat maps d'activité
+- Indicateurs temps réel
+- Patterns de trading
+
+## EXEMPLE DE WORKFLOW
+
+1. **Découverte d'Alpha**
+```typescript
+// Découvrir les meilleurs wallets
+const topWallets = await fetchTopWallets({
+  minPnl: 50000,
+  minWinRate: 0.85,
+  limit: 20
+});
+
+// Analyser chaque wallet
+for (const wallet of topWallets) {
+  // Données complètes
+  const analysis = await enrichWallet(wallet.address);
+  
+  // Vérifier critères d'élite
+  if (
+    analysis.alpha_score > 80 &&
+    analysis.risk_score < 30 &&
+    analysis.behavioral_analysis.strategy === 'sophisticated'
+  ) {
+    // Activer tracking
+    await enableTracking(wallet.address);
+  }
+}
+```
+
+2. **Suivi Temps Réel**
+```typescript
+// WebSocket pour updates
+websocket.subscribe(`wallet_updates:${address}`);
+
+// Réception des mouvements
+websocket.on('new_transaction', async (tx) => {
+  // Analyser l'impact
+  const impact = await analyzeTransaction(tx);
+  
+  // Notifier si pertinent
+  if (impact.significance > 0.8) {
+    notify({
+      title: "Mouvement Alpha Détecté",
+      description: impact.analysis,
+      urgency: "high"
+    });
+  }
+});
+```
+
+## EXPÉRIENCE UTILISATEUR
+
+1. **Landing View**
+- Top 20 wallets les plus performants
+- Métriques clés en temps réel
+- Bouton d'analyse proéminent
+- Statut système
+
+2. **Analyse View**
+- Progression du scraping
+- Résultats en direct
+- Filtres sophistiqués
+- Export des données
+
+3. **Detail View**
+- Profil complet du wallet
+- Historique des trades
+- Indicateurs avancés
+- Options de copytrade
+
+## CRITÈRES DE SUCCÈS
+
+1. **Performance**
+- Analyse < 5 minutes
+- Updates < 1 seconde
+- UI fluide 60fps
+
+2. **Qualité**
+- Win rate > 85%
+- Alpha score > 80
+- Risk score < 30
+
+3. **Utilisateur**
+- Setup simple
+- Navigation intuitive
+- Alertes pertinentes

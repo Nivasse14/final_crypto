@@ -55,7 +55,39 @@ async function cieloRequest(endpoint: string): Promise<any> {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data = await response.json();
+    // Vérifier si la réponse a un contenu avant de tenter de parser le JSON
+    const contentLength = response.headers.get('content-length');
+    const contentType = response.headers.get('content-type');
+    
+    console.log(`📏 [CIELO CONTENT] Length: ${contentLength}, Type: ${contentType}`);
+    
+    if (contentLength === '0' || contentLength === null) {
+      console.warn(`⚠️ [CIELO WARNING] Réponse vide détectée`);
+      return { data: null, warning: 'Empty response from Cielo API' };
+    }
+
+    if (!contentType || !contentType.includes('application/json')) {
+      console.warn(`⚠️ [CIELO WARNING] Content-Type non-JSON: ${contentType}`);
+      const textContent = await response.text();
+      console.log(`📝 [CIELO TEXT CONTENT] ${textContent}`);
+      return { data: null, warning: 'Non-JSON response from Cielo API', content: textContent };
+    }
+
+    const responseText = await response.text();
+    
+    if (!responseText || responseText.trim() === '') {
+      console.warn(`⚠️ [CIELO WARNING] Réponse JSON vide`);
+      return { data: null, warning: 'Empty JSON response from Cielo API' };
+    }
+
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (jsonError) {
+      console.error(`❌ [CIELO JSON ERROR] ${jsonError.message}`);
+      console.error(`📝 [CIELO RAW CONTENT] ${responseText.substring(0, 500)}...`);
+      throw new Error(`JSON parsing error: ${jsonError.message}`);
+    }
     console.log(`📥 [CIELO RESPONSE DATA] Taille: ${JSON.stringify(data).length} caractères`);
     console.log(`🔍 [CIELO RESPONSE STRUCTURE]:`, Object.keys(data));
     
@@ -119,7 +151,39 @@ async function geckoterminalRequest(endpoint: string): Promise<any> {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data = await response.json();
+    // Vérifier si la réponse a un contenu avant de tenter de parser le JSON
+    const contentLength = response.headers.get('content-length');
+    const contentType = response.headers.get('content-type');
+    
+    console.log(`📏 [GECKO CONTENT] Length: ${contentLength}, Type: ${contentType}`);
+    
+    if (contentLength === '0' || contentLength === null) {
+      console.warn(`⚠️ [GECKO WARNING] Réponse vide détectée`);
+      return { data: null, warning: 'Empty response from Geckoterminal API' };
+    }
+
+    if (!contentType || !contentType.includes('application/json')) {
+      console.warn(`⚠️ [GECKO WARNING] Content-Type non-JSON: ${contentType}`);
+      const textContent = await response.text();
+      console.log(`📝 [GECKO TEXT CONTENT] ${textContent}`);
+      return { data: null, warning: 'Non-JSON response from Geckoterminal API', content: textContent };
+    }
+
+    const responseText = await response.text();
+    
+    if (!responseText || responseText.trim() === '') {
+      console.warn(`⚠️ [GECKO WARNING] Réponse JSON vide`);
+      return { data: null, warning: 'Empty JSON response from Geckoterminal API' };
+    }
+
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (jsonError) {
+      console.error(`❌ [GECKO JSON ERROR] ${jsonError.message}`);
+      console.error(`📝 [GECKO RAW CONTENT] ${responseText.substring(0, 500)}...`);
+      throw new Error(`JSON parsing error: ${jsonError.message}`);
+    }
     console.log(`📥 [GECKO RESPONSE DATA] Taille: ${JSON.stringify(data).length} caractères`);
     console.log(`🔍 [GECKO RESPONSE STRUCTURE]:`, Object.keys(data));
     
