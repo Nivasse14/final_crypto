@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Système d'analyse de portefeuilles crypto avec traitement batch et IA",
   "main": "wallet-batch-processor.js",
+  "type": "module",
   "scripts": {
     "start": "node wallet-batch-processor.js process",
     "init": "node wallet-batch-processor.js init",
