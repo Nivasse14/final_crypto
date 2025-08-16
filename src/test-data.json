@@ -1,0 +1,68 @@
+[
+  {
+    "wallet_address": "7rZ8Kei2xQKJwYaprqwJXR7VBsWqHTKP7hfGnA8Tn1y1",
+    "tokens": [
+      {
+        "mint": "So11111111111111111111111111111111111111112",
+        "symbol": "SOL",
+        "name": "Solana",
+        "quantity": 5.5,
+        "value_usd": 550.0,
+        "entry_price": 100.0,
+        "current_price": 100.0,
+        "pnl_usd": 0.0,
+        "pnl_percentage": 0.0,
+        "timestamp": "2024-01-15T10:30:00Z"
+      },
+      {
+        "mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        "symbol": "USDC",
+        "name": "USD Coin",
+        "quantity": 1000.0,
+        "value_usd": 1000.0,
+        "entry_price": 1.0,
+        "current_price": 1.0,
+        "pnl_usd": 0.0,
+        "pnl_percentage": 0.0,
+        "timestamp": "2024-01-15T10:30:00Z"
+      }
+    ],
+    "total_value_usd": 1550.0,
+    "total_pnl_usd": 0.0,
+    "total_pnl_percentage": 0.0,
+    "last_updated": "2024-01-15T10:30:00Z"
+  },
+  {
+    "wallet_address": "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM",
+    "tokens": [
+      {
+        "mint": "So11111111111111111111111111111111111111112",
+        "symbol": "SOL",
+        "name": "Solana",
+        "quantity": 12.3,
+        "value_usd": 1230.0,
+        "entry_price": 95.0,
+        "current_price": 100.0,
+        "pnl_usd": 61.5,
+        "pnl_percentage": 5.26,
+        "timestamp": "2024-01-15T10:30:00Z"
+      },
+      {
+        "mint": "mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So",
+        "symbol": "mSOL",
+        "name": "Marinade staked SOL",
+        "quantity": 8.5,
+        "value_usd": 900.0,
+        "entry_price": 100.0,
+        "current_price": 105.88,
+        "pnl_usd": 50.0,
+        "pnl_percentage": 5.88,
+        "timestamp": "2024-01-15T10:30:00Z"
+      }
+    ],
+    "total_value_usd": 2130.0,
+    "total_pnl_usd": 111.5,
+    "total_pnl_percentage": 5.52,
+    "last_updated": "2024-01-15T10:30:00Z"
+  }
+]

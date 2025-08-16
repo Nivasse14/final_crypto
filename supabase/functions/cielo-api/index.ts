@@ -600,6 +600,58 @@ function calculateConsolidatedMetrics(extractedData: any) {
   }
 }
 
+// Fonction pour calculer les métriques de market cap DexScreener
+function calculateDexScreenerMarketCapMetrics(enrichedData: any) {
+  const MARKET_CAP_THRESHOLDS = {
+    MICRO: 1000000,       // < 1M USD
+    LOW: 10000000,        // 1M - 10M USD  
+    MIDDLE: 100000000,    // 10M - 100M USD
+    LARGE: 1000000000,    // 100M - 1B USD
+    MEGA: 1000000000      // > 1B USD
+  }
+
+  function categorizeMarketCap(marketCap: number | null) {
+    if (!marketCap || marketCap <= 0) return 'unknown'
+    if (marketCap < MARKET_CAP_THRESHOLDS.MICRO) return 'micro'
+    if (marketCap < MARKET_CAP_THRESHOLDS.LOW) return 'low'
+    if (marketCap < MARKET_CAP_THRESHOLDS.MIDDLE) return 'middle'
+    if (marketCap < MARKET_CAP_THRESHOLDS.LARGE) return 'large'
+    return 'mega'
+  }
+
+  const metrics = {
+    micro: 0,
+    low: 0,
+    middle: 0,
+    large: 0,
+    mega: 0,
+    unknown: 0,
+    total_analyzed: 0
+  }
+
+  // Analyser les tokens portfolio
+  if (enrichedData.enriched_portfolio?.enriched_tokens) {
+    enrichedData.enriched_portfolio.enriched_tokens.forEach((token: any) => {
+      const marketCap = token.dexscreener_data?.financial_data?.market_cap
+      const category = categorizeMarketCap(marketCap)
+      metrics[category]++
+      metrics.total_analyzed++
+    })
+  }
+
+  // Analyser les tokens PnL
+  if (enrichedData.enriched_pnl?.enriched_tokens) {
+    enrichedData.enriched_pnl.enriched_tokens.forEach((token: any) => {
+      const marketCap = token.dexscreener_data?.financial_data?.market_cap
+      const category = categorizeMarketCap(marketCap)
+      metrics[category]++
+      metrics.total_analyzed++
+    })
+  }
+
+  return metrics
+}
+
 // Fonction pour sauvegarder les données enrichies en base
 async function saveEnrichedWalletData(walletAddress: string, enrichedData: any) {
   try {
@@ -610,6 +662,9 @@ async function saveEnrichedWalletData(walletAddress: string, enrichedData: any) 
     const enhancedStats = enrichedData.extracted_data?.enhanced_stats || {}
     const portfolio = enrichedData.extracted_data?.portfolio || {}
     const enrichmentStats = enrichedData.extracted_data?.global_enrichment_stats || {}
+    
+    // Calculer les métriques de market cap DexScreener
+    const dexscreenerCapMetrics = calculateDexScreenerMarketCapMetrics(enrichedData)
     
     const updateData = {
       // Données brutes complètes
@@ -628,26 +683,35 @@ async function saveEnrichedWalletData(walletAddress: string, enrichedData: any) 
       enriched_ai_risk_level: consolidatedMetrics.risk_level || 'unknown',
       enriched_data_completeness_score: consolidatedMetrics.data_completeness || 0,
       
-      // Métriques d'enrichissement DexScreener
+      // Métriques d'enrichissement DexScreener globales
       dexscreener_enriched_portfolio_tokens: enrichmentStats.enriched_portfolio_tokens || 0,
       dexscreener_enriched_pnl_tokens: enrichmentStats.enriched_pnl_tokens || 0,
       dexscreener_tokens_with_market_cap: enrichmentStats.tokens_with_market_cap || 0,
       dexscreener_tokens_with_price_data: enrichmentStats.tokens_with_price_data || 0,
       dexscreener_average_reliability_score: enrichmentStats.average_reliability_score || 0,
       
+      // Métriques de market cap DexScreener détaillées
+      dexscreener_micro_cap_count: dexscreenerCapMetrics.micro,
+      dexscreener_low_cap_count: dexscreenerCapMetrics.low,
+      dexscreener_middle_cap_count: dexscreenerCapMetrics.middle,
+      dexscreener_large_cap_count: dexscreenerCapMetrics.large,
+      dexscreener_mega_cap_count: dexscreenerCapMetrics.mega,
+      dexscreener_unknown_cap_count: dexscreenerCapMetrics.unknown,
+      dexscreener_total_analyzed_count: dexscreenerCapMetrics.total_analyzed,
+      
       // Métadonnées de traitement
       last_processed_at: new Date().toISOString(),
       cielo_last_enriched_at: new Date().toISOString(),
       dexscreener_last_enriched_at: new Date().toISOString(),
       status: 'enriched',
-      processing_version: 'v4_trpc_complete_with_dexscreener'
+      processing_version: 'v4_trpc_complete_with_dexscreener_caps'
     }
     
     // Mettre à jour en base via l'API wallet-registry
     const updateResponse = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/wallet-registry/update`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`,
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhrbmRkZHhxcWx4cWtuYnF0ZWZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwMTY3MTEsImV4cCI6MjA2ODU5MjcxMX0.1JfLmuXhKZLhSpIVkoubfaaE9M1jAANoPjKcXZTgPgU',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({

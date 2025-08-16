@@ -195,6 +195,101 @@ serve(async (req) => {
       );
     }
 
+    // Route: Mettre à jour un wallet (INSERT ou UPDATE)
+    if (path === '/wallet-registry/update' && req.method === 'POST') {
+      try {
+        const body = await req.json();
+        const { wallet_address, updates } = body;
+
+        if (!wallet_address || !updates) {
+          return new Response(
+            JSON.stringify({ error: 'wallet_address and updates are required' }),
+            { 
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+              status: 400 
+            }
+          );
+        }
+
+        console.log(`💾 Updating wallet: ${wallet_address}`);
+
+        // Vérifier si le wallet existe déjà
+        const { data: existingWallet } = await supabaseAdmin
+          .from('wallet_registry')
+          .select('id')
+          .eq('wallet_address', wallet_address)
+          .single();
+
+        let result;
+
+        if (existingWallet) {
+          // UPDATE du wallet existant
+          console.log(`🔄 Updating existing wallet: ${wallet_address}`);
+          const { data, error } = await supabaseAdmin
+            .from('wallet_registry')
+            .update({
+              ...updates,
+              updated_at: new Date().toISOString()
+            })
+            .eq('wallet_address', wallet_address)
+            .select()
+            .single();
+
+          result = { data, error };
+        } else {
+          // INSERT d'un nouveau wallet
+          console.log(`➕ Inserting new wallet: ${wallet_address}`);
+          const { data, error } = await supabaseAdmin
+            .from('wallet_registry')
+            .insert({
+              wallet_address,
+              ...updates,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            })
+            .select()
+            .single();
+
+          result = { data, error };
+        }
+
+        if (result.error) {
+          console.error('❌ [UPDATE ERROR]:', result.error);
+          return new Response(
+            JSON.stringify({ error: result.error.message }),
+            { 
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+              status: 500 
+            }
+          );
+        }
+
+        console.log(`✅ Wallet updated successfully: ${wallet_address}`);
+
+        return new Response(
+          JSON.stringify({
+            success: true,
+            data: result.data,
+            message: existingWallet ? 'Wallet updated' : 'Wallet created'
+          }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200
+          }
+        );
+
+      } catch (error) {
+        console.error('❌ [UPDATE PARSE ERROR]:', error);
+        return new Response(
+          JSON.stringify({ error: 'Invalid JSON payload' }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 400 
+          }
+        );
+      }
+    }
+
     // Route par défaut: documentation
     return new Response(
       JSON.stringify({
@@ -203,6 +298,7 @@ serve(async (req) => {
         endpoints: [
           'GET /wallet-registry/list - Liste filtrée des wallets',
           'GET /wallet-registry/get/{address} - Détails d\'un wallet',
+          'POST /wallet-registry/update - Créer ou mettre à jour un wallet',
           'GET /wallet-registry/stats - Statistiques globales'
         ],
         filters_available: [
