@@ -189,14 +189,14 @@ async function getCompleteWalletData(walletAddress: string) {
     console.log(`📊 Fetching wallet portfolio...`)
     const portfolioResponse = await tRPCRequest(['profile.getWalletPortfolio'], [{ wallet: walletAddress }])
     
-    // Pause entre les requêtes
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    // Pause minimale entre les requêtes Cielo
+    await new Promise(resolve => setTimeout(resolve, 500))
     
     console.log(`📈 Fetching enhanced stats...`)
     const statsResponse = await tRPCRequest(['profile.getEnhancedStatsAggregated'], [{ wallet: walletAddress, days: 'max' }])
     
-    // Pause entre les requêtes
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    // Pause minimale entre les requêtes Cielo
+    await new Promise(resolve => setTimeout(resolve, 500))
     
     console.log(`💰 Fetching PnL data...`)
     const pnlResponse = await tRPCRequest(['profile.fetchTokenPnlFast'], [{
@@ -208,8 +208,8 @@ async function getCompleteWalletData(walletAddress: string) {
       tokenFilter: ''
     }])
     
-    // Pause entre les requêtes
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    // Pause minimale entre les requêtes Cielo
+    await new Promise(resolve => setTimeout(resolve, 500))
     
     console.log(`🎯 Fetching track status...`)
     const trackStatusResponse = await tRPCRequest(['profile.getWalletGlobalTrackStatus'], [{ wallet: walletAddress }])
@@ -295,7 +295,7 @@ async function getCompleteWalletData(walletAddress: string) {
     }
     
     if (pnlTokens && pnlTokens.length > 0) {
-      enrichedPnL = await enrichPnLTokens(pnlTokens, 15) // Limiter à 15 tokens pour éviter timeout
+      enrichedPnL = await enrichPnLTokens(pnlTokens) // Enrichir TOUS les tokens PnL sans limitation
     }
     
     console.log(`✅ DexScreener enrichment completed`)
@@ -934,8 +934,8 @@ async function enrichPortfolioTokens(portfolioTokens: any[]) {
   
   const enrichedTokens: any[] = []
   
-  // Traiter les tokens par batch de 3 pour éviter la surcharge
-  const batchSize = 3
+  // Traiter TOUS les tokens par batches maximaux de 20 pour performances optimales
+  const batchSize = 20
   for (let i = 0; i < portfolioTokens.length; i += batchSize) {
     const batch = portfolioTokens.slice(i, i + batchSize)
     
@@ -967,9 +967,9 @@ async function enrichPortfolioTokens(portfolioTokens: any[]) {
     const batchResults = await Promise.all(batchPromises)
     enrichedTokens.push(...batchResults)
     
-    // Pause entre les batches pour éviter rate limiting
+    // Délai minimal entre les batches (30ms pour performance maximale)
     if (i + batchSize < portfolioTokens.length) {
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await new Promise(resolve => setTimeout(resolve, 30))
     }
   }
   
@@ -991,19 +991,19 @@ async function enrichPortfolioTokens(portfolioTokens: any[]) {
   }
 }
 
-// Fonction pour enrichir les tokens PnL avec les données DexScreener
-async function enrichPnLTokens(pnlTokens: any[], maxTokens: number = 10) {
+// Fonction pour enrichir les tokens PnL avec les données DexScreener (SANS LIMITATION)
+async function enrichPnLTokens(pnlTokens: any[]) {
   if (!pnlTokens || pnlTokens.length === 0) {
     return []
   }
   
-  const tokensToProcess = pnlTokens.slice(0, maxTokens) // Limiter pour éviter les timeouts
-  console.log(`🔍 Enriching ${tokensToProcess.length} PnL tokens with DexScreener data (limited to ${maxTokens})...`)
+  const tokensToProcess = pnlTokens // Traiter TOUS les tokens PnL sans limitation
+  console.log(`🔍 Enriching ALL ${tokensToProcess.length} PnL tokens with DexScreener data (NO LIMITS)...`)
   
   const enrichedTokens: any[] = []
   
-  // Traiter les tokens par batch de 2 pour éviter la surcharge
-  const batchSize = 2
+  // Traiter TOUS les tokens par batches maximaux de 15 pour performances optimales
+  const batchSize = 15
   for (let i = 0; i < tokensToProcess.length; i += batchSize) {
     const batch = tokensToProcess.slice(i, i + batchSize)
     
@@ -1035,25 +1035,18 @@ async function enrichPnLTokens(pnlTokens: any[], maxTokens: number = 10) {
     const batchResults = await Promise.all(batchPromises)
     enrichedTokens.push(...batchResults)
     
-    // Pause entre les batches pour éviter rate limiting
+    // Délai minimal entre les batches (50ms pour performance maximale)
     if (i + batchSize < tokensToProcess.length) {
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await new Promise(resolve => setTimeout(resolve, 50))
     }
   }
   
-  // Ajouter les tokens non traités (sans enrichissement)
-  const remainingTokens = pnlTokens.slice(maxTokens).map(token => ({
-    ...token,
-    dexscreener_enriched: false,
-    dexscreener_data: null,
-    dexscreener_error: 'Not processed due to limit'
-  }))
-  
-  const allTokens = [...enrichedTokens, ...remainingTokens]
+  // TOUS les tokens sont traités - pas de tokens restants
+  const allTokens = enrichedTokens
   
   const enrichmentStats = {
     total_tokens: pnlTokens.length,
-    processed_tokens: tokensToProcess.length,
+    processed_tokens: tokensToProcess.length, // Tous traités maintenant
     enriched_tokens: enrichedTokens.filter(t => t.dexscreener_enriched).length,
     tokens_with_market_cap: enrichedTokens.filter(t => t.dexscreener_data?.financial_data?.market_cap).length,
     tokens_with_price_data: enrichedTokens.filter(t => t.dexscreener_data?.financial_data?.price_usd).length,
@@ -1062,7 +1055,7 @@ async function enrichPnLTokens(pnlTokens: any[], maxTokens: number = 10) {
       .reduce((sum, t, _, arr) => sum + t.dexscreener_data.reliability_score.total_score / arr.length, 0) || 0
   }
   
-  console.log(`✅ PnL enrichment complete: ${enrichmentStats.enriched_tokens}/${enrichmentStats.processed_tokens} tokens enriched`)
+  console.log(`✅ PnL enrichment complete: ${enrichmentStats.enriched_tokens}/${enrichmentStats.processed_tokens} tokens enriched (ALL PROCESSED)`)
   
   return {
     enriched_tokens: allTokens,
