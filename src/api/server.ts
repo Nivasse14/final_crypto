@@ -156,6 +156,108 @@ export class WalletAPIServer {
       }
     });
 
+    // POST /wallets/update - Mettre à jour un wallet avec les nouvelles métriques
+    this.app.post('/wallets/update', async (req, res) => {
+      try {
+        const { wallet_address, metrics } = req.body;
+        
+        if (!wallet_address) {
+          return res.status(400).json({
+            success: false,
+            error: 'wallet_address is required'
+          });
+        }
+
+        if (!metrics) {
+          return res.status(400).json({
+            success: false,
+            error: 'metrics are required'
+          });
+        }
+
+        // Préparer les données à insérer/mettre à jour
+        const query = `
+          INSERT INTO public.wallet_registry (
+            wallet_address,
+            enriched_total_pnl_usd,
+            enriched_winrate,
+            enriched_total_trades,
+            average_holding_time,
+            total_pnl,
+            winrate,
+            total_roi_percentage,
+            swap_count,
+            first_swap_timestamp,
+            last_swap_timestamp,
+            unique_trading_days,
+            consecutive_trading_days,
+            average_trades_per_token,
+            status,
+            processing_version,
+            updated_at,
+            created_at
+          )
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+          ON CONFLICT (wallet_address) DO UPDATE SET
+            enriched_total_pnl_usd = EXCLUDED.enriched_total_pnl_usd,
+            enriched_winrate = EXCLUDED.enriched_winrate,
+            enriched_total_trades = EXCLUDED.enriched_total_trades,
+            average_holding_time = EXCLUDED.average_holding_time,
+            total_pnl = EXCLUDED.total_pnl,
+            winrate = EXCLUDED.winrate,
+            total_roi_percentage = EXCLUDED.total_roi_percentage,
+            swap_count = EXCLUDED.swap_count,
+            first_swap_timestamp = EXCLUDED.first_swap_timestamp,
+            last_swap_timestamp = EXCLUDED.last_swap_timestamp,
+            unique_trading_days = EXCLUDED.unique_trading_days,
+            consecutive_trading_days = EXCLUDED.consecutive_trading_days,
+            average_trades_per_token = EXCLUDED.average_trades_per_token,
+            status = EXCLUDED.status,
+            processing_version = EXCLUDED.processing_version,
+            updated_at = EXCLUDED.updated_at
+          RETURNING *;
+        `;
+
+        const queryParams = [
+          wallet_address,
+          metrics.enriched_total_pnl_usd || null,
+          metrics.enriched_winrate || null,
+          metrics.enriched_total_trades || null,
+          metrics.average_holding_time || null,
+          metrics.total_pnl || null,
+          metrics.winrate || null,
+          metrics.total_roi_percentage || null,
+          metrics.swap_count || null,
+          metrics.first_swap_timestamp || null,
+          metrics.last_swap_timestamp || null,
+          metrics.unique_trading_days || null,
+          metrics.consecutive_trading_days || null,
+          metrics.average_trades_per_token || null,
+          metrics.status || 'enriched',
+          metrics.processing_version || 'v4_cielo_metrics',
+          new Date().toISOString(),
+          new Date().toISOString()
+        ];
+
+        const result = await this.db.query(query, queryParams);
+        const data = result.rows[0];
+
+        res.json({
+          success: true,
+          message: 'Wallet updated successfully',
+          wallet_address: wallet_address,
+          data: data
+        });
+      } catch (error) {
+        console.error('Error in /wallets/update:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Internal server error',
+          message: error.message
+        });
+      }
+    });
+
     // GET /health - État du système
     this.app.get('/health', async (req, res) => {
       try {
@@ -202,11 +304,37 @@ export class WalletAPIServer {
             }
           },
           'GET /wallets/:address/positions': 'Positions actuelles d\'un wallet',
-          'GET /wallets/:address/metrics?window=30d': 'Métriques d\'un wallet',
+          'GET /wallets/:address/metrics?window=30d': {
+            description: 'Métriques d\'un wallet',
+            returned_fields: {
+              performance_metrics: 'pnl_30d, roi_pct_30d, winrate_30d, profit_factor_30d',
+              risk_metrics: 'drawdown_max_usd_30d, expectancy_usd_30d',
+              behavioral_metrics: 'median_hold_min_30d, scalp_ratio_30d',
+              cielo_api_metrics: 'average_holding_time, total_pnl, winrate, total_roi_percentage, swap_count, first_swap_timestamp, last_swap_timestamp, unique_trading_days, consecutive_trading_days, average_trades_per_token',
+              market_cap_exposure: 'cap_exposure_*_pct_30d (nano, micro, low, mid, large, mega)',
+              composite_score: 'copy_trading_score (0-100)'
+            }
+          },
           'POST /wallets/process': 'Traiter un wallet via API Cielo',
+          'POST /wallets/update': 'Mettre à jour un wallet avec les nouvelles métriques',
           'GET /health': 'État du système et statistiques'
         },
-        example: '/wallets/top?min_winrate=0.7&min_pf=1.8&min_trades=30&max_drawdown=500&min_unrealized_value=1000&cap_focus=mid,large'
+        example: '/wallets/top?min_winrate=0.7&min_pf=1.8&min_trades=30&max_drawdown=500&min_unrealized_value=1000&cap_focus=mid,large',
+        new_metrics_added: {
+          description: 'Nouvelles métriques de l\'API Cielo ajoutées',
+          fields: {
+            average_holding_time: 'Temps de détention moyen en heures',
+            total_pnl: 'PnL total en USD',
+            winrate: 'Taux de réussite (0-1)',
+            total_roi_percentage: 'ROI total en pourcentage',
+            swap_count: 'Nombre total de swaps',
+            first_swap_timestamp: 'Timestamp du premier swap',
+            last_swap_timestamp: 'Timestamp du dernier swap',
+            unique_trading_days: 'Nombre de jours de trading uniques',
+            consecutive_trading_days: 'Jours de trading consécutifs',
+            average_trades_per_token: 'Nombre moyen de trades par token'
+          }
+        }
       });
     });
   }
@@ -434,6 +562,17 @@ export class WalletAPIServer {
         cap_exposure_large_pct_30d,
         cap_exposure_mega_pct_30d,
         copy_trading_score,
+        -- Nouvelles métriques API Cielo
+        average_holding_time,
+        total_pnl,
+        winrate,
+        total_roi_percentage,
+        swap_count,
+        first_swap_timestamp,
+        last_swap_timestamp,
+        unique_trading_days,
+        consecutive_trading_days,
+        average_trades_per_token,
         last_processed_at
       FROM public.wallet_registry
       WHERE wallet_address = $1
@@ -463,6 +602,3 @@ export class WalletAPIServer {
     await this.etl.close();
   }
 }
-
-// Export pour utilisation CLI
-export { WalletAPIServer };

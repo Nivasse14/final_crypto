@@ -1,5 +1,5 @@
-import { serve } from "std/server";
-import puppeteer from "puppeteer";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import puppeteer from "https://deno.land/x/puppeteer@16.2.0/mod.ts";
 
 serve(async (req) => {
   const { searchParams } = new URL(req.url);
