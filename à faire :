@@ -1,5 +1,70 @@
-à faire :
 
 
-connaitre la mise moyenne (ne pas récup les baleines)
-mise sur un même token entre plusieurs wallets
+prio =  maximum de filtre sur le front
+- à partir du first trade  récupérer le market cap 
+- la répartition des coef multiplicateurs sur les trades
+- branchement blockchain + alertes telegram 
+
+✅ TERMINÉ :
+- Scraping des données Dune (720 wallets) : ./simple-dune.sh scraping
+- Vérification des données : ./verify-dune-data.sh  
+- Enrichissement avec API Cielo : ./fix-enrichment.sh
+- Sauvegarde données DexScreener : ./save-dexscreener.sh
+- Script consolidé complet : ./enrichment-complete-workflow.sh 🆕
+- Script mise à jour globale : ./update-all-wallets.sh 🆕
+
+📊 STATUT ACTUEL BASE DE DONNÉES :
+- 720 wallets au total 
+- 69 avec DexScreener complet (market caps analysés) 🆕
+- 0 enrichis complets (tous migrés vers DexScreener)
+- 0 enrichis basiques (tous traités)
+- 0 scrapés seulement
+
+🚀 ENRICHISSEMENT MASSIF RÉUSSI ! ✅
+- 69 wallets enrichis avec données DexScreener complètes
+- Market caps analysés par catégorie (micro/low/middle/large/mega)
+- Métriques PnL, trading, et fiabilité DexScreener
+- Données portfolio et metrics complètes
+
+🚀 WORKFLOW CONSOLIDÉ (RECOMMANDÉ) :
+./enrichment-complete-workflow.sh
+- complete [scrape] [enrich] [dex] : Workflow complet
+- enrich [enrich] [dex] : Enrichissement seulement  
+- dexscreener [limit] : DexScreener seulement
+- status : Statut base de données
+- fix : Corrections uniquement
+
+🔄 MISE À JOUR GLOBALE (NOUVEAU) : 🆕
+./update-all-wallets.sh  
+- update [limit] [offset] [force] : Met à jour des wallets avec pagination
+- batch [taille] [max] : Traite par lots (recommandé)
+- status : Statut global uniquement
+⚠️ Met à jour TOUS les wallets avec des données fraîches de l'API
+
+🔄 WORKFLOWS HISTORIQUES :
+- Scraping + upload : ./simple-dune.sh scraping
+- Enrichissement complet : ./simple-dune.sh enrich [NOMBRE]
+- Vérification données : ./verify-dune-data.sh
+- DexScreener seul : ./save-dexscreener.sh [WALLET] [LIMIT]
+
+🎯 À FAIRE :
+- connaitre la mise moyenne (ne pas récup les baleines) 
+- mise sur un même token entre plusieurs wallets
+- batch pour automatiser tous les matins
+
+💡 COMMANDES RECOMMANDÉES :
+- Workflow complet : ./enrichment-complete-workflow.sh complete 100
+- Enrichissement : ./enrichment-complete-workflow.sh enrich 50
+- DexScreener : ./enrichment-complete-workflow.sh dexscreener 100
+- Statut : ./enrichment-complete-workflow.sh status
+- Corrections : ./enrichment-complete-workflow.sh fix
+
+🔄 MISE À JOUR GLOBALE (NOUVEAU) :
+- Tous les wallets par lots : ./update-all-wallets.sh batch 50 15
+- Mise à jour simple : ./update-all-wallets.sh update 100
+- Force tous : ./update-all-wallets.sh update 100 0 true
+
+🔧 COMMANDES HISTORIQUES :
+- Scraping : ./simple-dune.sh scraping
+- Enrichir 50 wallets : ./simple-dune.sh enrich 50  
+- Stats DexScreener : ./save-dexscreener.sh "" 20

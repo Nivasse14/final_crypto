@@ -86,10 +86,13 @@ puppeteer.use(StealthPlugin());
 
   // Upload automatique sur Supabase
   try {
+    console.log('🚀 Démarrage upload vers Supabase...');
     const uploadFile = require('./upload-to-supabase');
-    uploadFile('wallets.json');
+    const result = await uploadFile('wallets.json');
+    console.log(`✅ Upload terminé: ${result.processed} wallets traités, ${result.errors} erreurs`);
   } catch (e) {
-    console.error('Upload Supabase échoué:', e);
+    console.error('❌ Upload Supabase échoué:', e.message);
+    process.exit(1);
   }
 
   await browser.close();
