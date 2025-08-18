@@ -1,0 +1,105 @@
+{
+  "timestamp": "2025-08-18T15:24:07.408Z",
+  "summary": {
+    "safeToRemove": 11,
+    "reviewNeeded": 4,
+    "potentiallyObsolete": 23,
+    "totalCandidates": 15
+  },
+  "analysis": {
+    "safeToRemove": [
+      {
+        "category": "Volume Metrics (PnL)",
+        "columns": [
+          "pnl_total_volume_24h_usd",
+          "pnl_avg_volume_24h_usd",
+          "pnl_tokens_with_volume_data"
+        ],
+        "reason": "Métriques de volume calculées non maintenues, uniquement en lecture"
+      },
+      {
+        "category": "Volume Metrics (Portfolio)",
+        "columns": [
+          "portfolio_total_volume_24h_usd",
+          "portfolio_avg_volume_24h_usd",
+          "portfolio_tokens_with_volume_data"
+        ],
+        "reason": "Métriques de volume portfolio calculées non maintenues, uniquement en lecture"
+      },
+      {
+        "category": "ROI Distribution",
+        "columns": [
+          "roi_50_to_200",
+          "roi_0_to_50",
+          "roi_total_trades",
+          "roi_winning_trades",
+          "roi_losing_trades"
+        ],
+        "reason": "Distribution ROI calculées obsolètes, jamais mises à jour"
+      }
+    ],
+    "reviewNeeded": [
+      {
+        "category": "Dune Legacy",
+        "columns": [
+          "dune_mroi",
+          "dune_invalids"
+        ],
+        "reason": "Anciennes métriques Dune, potentiellement obsolètes mais à vérifier"
+      },
+      {
+        "category": "Advanced Analytics",
+        "columns": [
+          "streak_wins_max_90d",
+          "streak_losses_max_90d"
+        ],
+        "reason": "Métriques avancées qui pourraient être utilisées dans des analyses futures"
+      }
+    ],
+    "potentiallyObsolete": [
+      {
+        "category": "Dune API Legacy",
+        "columns": [
+          "dune_wallet_pnl",
+          "dune_total_bought_usd",
+          "dune_total_pnl_usd",
+          "dune_roi",
+          "dune_tokens",
+          "dune_nosells",
+          "dune_losses",
+          "dune_nulls",
+          "dune_wins",
+          "dune_winrate",
+          "dune_w2x",
+          "dune_w10x",
+          "dune_w100x",
+          "dune_scalps",
+          "dune_scalp_ratio",
+          "dune_bal",
+          "dune_bal_ratio",
+          "dune_last_trade",
+          "dune_trade_days"
+        ],
+        "reason": "API Dune potentiellement obsolète - vérifier si encore utilisée"
+      },
+      {
+        "category": "External URLs",
+        "columns": [
+          "solscan_url",
+          "gmgn_url",
+          "cielo_url",
+          "wallet_pnl_link"
+        ],
+        "reason": "URLs externes souvent non maintenues, peuvent être reconstruites dynamiquement"
+      }
+    ]
+  },
+  "recommendations": [
+    "Commencer par les 11 colonnes sûres à supprimer",
+    "Examiner les 4 colonnes nécessitant une review",
+    "Investiguer les colonnes Dune si l'API n'est plus utilisée",
+    "Considérer la suppression des URLs externes si elles peuvent être reconstruites",
+    "Tester après chaque suppression",
+    "Garder une sauvegarde complète"
+  ]
+}
