@@ -1,0 +1,3910 @@
+{
+  "totalColumns": 141,
+  "reallyUsedColumns": [
+    "id",
+    "wallet_address",
+    "solscan_url",
+    "gmgn_url",
+    "cielo_url",
+    "wallet_pnl_link",
+    "dune_wallet_pnl",
+    "dune_total_bought_usd",
+    "dune_total_pnl_usd",
+    "dune_roi",
+    "dune_mroi",
+    "dune_invalids",
+    "dune_tokens",
+    "dune_nosells",
+    "dune_losses",
+    "dune_nulls",
+    "dune_wins",
+    "dune_winrate",
+    "dune_w2x",
+    "dune_w10x",
+    "dune_w100x",
+    "dune_scalps",
+    "dune_scalp_ratio",
+    "dune_bal",
+    "dune_bal_ratio",
+    "dune_last_trade",
+    "dune_trade_days",
+    "status",
+    "last_processed_at",
+    "processing_attempts",
+    "last_error",
+    "enriched_analysis_score",
+    "enriched_total_value_usd",
+    "enriched_total_tokens",
+    "enriched_winrate",
+    "enriched_total_pnl_usd",
+    "enriched_ai_category",
+    "enriched_ai_risk_level",
+    "enriched_data_completeness_score",
+    "created_at",
+    "updated_at",
+    "data_source",
+    "metadata",
+    "roi",
+    "winrate",
+    "tokens_traded",
+    "wins",
+    "losses",
+    "trade_count",
+    "last_trade_date",
+    "source",
+    "total_pnl_usd",
+    "total_bought_usd",
+    "enriched_total_trades",
+    "enriched_roi_percentage",
+    "enriched_portfolio_value_usd",
+    "enriched_portfolio_tokens",
+    "dexscreener_enriched_portfolio_tokens",
+    "dexscreener_enriched_pnl_tokens",
+    "dexscreener_tokens_with_market_cap",
+    "dexscreener_tokens_with_price_data",
+    "dexscreener_average_reliability_score",
+    "cielo_complete_data",
+    "cielo_last_enriched_at",
+    "dexscreener_last_enriched_at",
+    "processing_version",
+    "pnl_low_cap_count",
+    "pnl_middle_cap_count",
+    "pnl_large_cap_count",
+    "pnl_mega_cap_count",
+    "pnl_unknown_cap_count",
+    "pnl_total_analyzed_count",
+    "pnl_total_volume_24h_usd",
+    "pnl_avg_volume_24h_usd",
+    "pnl_tokens_with_volume_data",
+    "portfolio_total_volume_24h_usd",
+    "portfolio_avg_volume_24h_usd",
+    "portfolio_tokens_with_volume_data",
+    "profit_factor_30d",
+    "expectancy_usd_30d",
+    "drawdown_max_usd_30d",
+    "median_hold_min_30d",
+    "scalp_ratio_30d",
+    "cap_exposure_micro_pct_30d",
+    "cap_exposure_low_pct_30d",
+    "cap_exposure_mid_pct_30d",
+    "cap_exposure_large_pct_30d",
+    "cap_exposure_mega_pct_30d",
+    "liquidity_median_usd_30d",
+    "recency_score_30d",
+    "streak_wins_max_90d",
+    "streak_losses_max_90d",
+    "copy_trading_score",
+    "pnl_30d",
+    "trade_count_30d",
+    "winrate_30d",
+    "roi_pct_30d",
+    "dexscreener_micro_cap_count",
+    "dexscreener_low_cap_count",
+    "dexscreener_middle_cap_count",
+    "dexscreener_large_cap_count",
+    "dexscreener_mega_cap_count",
+    "dexscreener_unknown_cap_count",
+    "dexscreener_total_analyzed_count",
+    "average_holding_time",
+    "total_pnl",
+    "total_roi_percentage",
+    "swap_count",
+    "first_swap_timestamp",
+    "last_swap_timestamp",
+    "unique_trading_days",
+    "consecutive_trading_days",
+    "average_trades_per_token",
+    "total_tokens_traded",
+    "total_unrealized_pnl_usd",
+    "combined_pnl_usd",
+    "combined_roi_percentage",
+    "combined_average_hold_time",
+    "combined_median_hold_time",
+    "average_buy_amount_usd",
+    "minimum_buy_amount_usd",
+    "maximum_buy_amount_usd",
+    "total_buy_amount_usd",
+    "total_buy_count",
+    "average_sell_amount_usd",
+    "minimum_sell_amount_usd",
+    "maximum_sell_amount_usd",
+    "total_sell_amount_usd",
+    "total_sell_count",
+    "roi_above_500",
+    "roi_200_to_500",
+    "roi_50_to_200",
+    "roi_0_to_50",
+    "roi_neg50_to_0",
+    "roi_below_neg50",
+    "roi_total_trades",
+    "roi_winning_trades",
+    "roi_losing_trades",
+    "roi_distribution_last_updated",
+    "total_unrealized_roi_percentage",
+    "pnl_data_last_updated"
+  ],
+  "migrationOnlyColumns": [],
+  "probablyUnusedColumns": [],
+  "usageDetails": {
+    "id": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "CLEAN/create-tables.sql",
+        "create-analysis-jobs-table.sql",
+        "create-and-fix-complete.sql",
+        "create-minimal.sql",
+        "create-scraped-wallets-table.sql",
+        "create-table-auto.js",
+        "create-tables-simple.sql",
+        "supabase/migrations/20250105000000_add_columns_wallet_tokens_extended.sql",
+        "supabase/migrations/20250804_update_wallet_tokens_extended_structure.sql"
+      ],
+      "inJsCode": [
+        "alpha-frontend/app/page.tsx",
+        "alpha-frontend/components/AIInsights.tsx",
+        "alpha-frontend/components/AutomatedStrategyEngine.tsx",
+        "alpha-frontend/components/ExecutiveDashboard.tsx",
+        "alpha-frontend/components/MarketIntelligence.tsx",
+        "alpha-frontend/components/RiskManagement.tsx",
+        "alpha-frontend/components/TopWallets.tsx",
+        "alpha-frontend/components/TradingSignals.tsx",
+        "alpha-frontend/lib/supabase.ts",
+        "alpha-frontend/lib/websocket-mock.ts",
+        "analyze-unused-columns.js",
+        "check-columns.js",
+        "check-schema.js",
+        "deep-column-analysis.js",
+        "dexscreener-token-enricher.js",
+        "fix-database-schema.js",
+        "local-api.js",
+        "scraping-server/server.js",
+        "scraping-server.js",
+        "scripts/api-gmgn.js",
+        "scripts/cielo-api.js",
+        "scripts/cielo.js",
+        "scripts/coingecko-terminal-api.js",
+        "scripts/complete-data-extractor.js",
+        "scripts/enrich-wallets.js",
+        "scripts/gecko-api.js",
+        "setup-analysis-table.js",
+        "src/lib/metrics.ts",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "supabase/functions/dune-automation/index.ts",
+        "supabase/functions/dune-scraper-trigger/index.ts",
+        "supabase/functions/table-info/index.ts",
+        "supabase/functions/wallet-registry/index.ts",
+        "test-database-save.js",
+        "test-dexscreener-integration.js",
+        "test-dexscreener-pnl.js",
+        "test-gecko-p1-complete.js",
+        "test-gecko-v2-enriched.js",
+        "test-single-token-enrichment.js"
+      ],
+      "inConfigFiles": [
+        "alpha-frontend/package-lock.json"
+      ],
+      "totalReferences": 50,
+      "isReallyUsed": true
+    },
+    "wallet_address": {
+      "inSelects": [
+        "check-database.cjs",
+        "complete-solution-fixed.sql",
+        "complete-solution.sql",
+        "summary-cielo-metrics.cjs"
+      ],
+      "inUpdates": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inInserts": [],
+      "inMigrations": [
+        "CLEAN/create-tables.sql",
+        "complete-solution-fixed.sql",
+        "complete-solution.sql",
+        "create-analysis-jobs-table.sql",
+        "create-and-fix-complete.sql",
+        "create-columns.cjs",
+        "create-minimal.sql",
+        "create-scraped-wallets-table.sql",
+        "create-table-auto.js",
+        "create-tables-simple.sql",
+        "fix-schema-complete.sql",
+        "fix-schema-simple.sql",
+        "run-migration-auto.cjs"
+      ],
+      "inJsCode": [
+        "CLEAN/quick-db-test.js",
+        "CLEAN/supabase/functions/batch-processor/index.ts",
+        "CLEAN/supabase/functions/wallet-enrichment/index.ts",
+        "CLEAN/test-column-types.js",
+        "alpha-frontend/app/page.tsx",
+        "alpha-frontend/components/AIInsights.tsx",
+        "alpha-frontend/components/AlphaDashboard.tsx",
+        "alpha-frontend/components/SocialTradingHub.tsx",
+        "alpha-frontend/components/TopWallets.tsx",
+        "alpha-frontend/components/TradingSignals.tsx",
+        "alpha-frontend/components/WalletAnalyzer.tsx",
+        "alpha-frontend/lib/supabase.ts",
+        "alpha-frontend/lib/utils.ts",
+        "analyze-empty-columns.cjs",
+        "analyze-market-cap-discrepancy.cjs",
+        "analyze-specific-wallet.cjs",
+        "analyze-unused-columns.js",
+        "auto-enrich-cielo.js",
+        "call-real-api.js",
+        "check-columns.js",
+        "check-database.cjs",
+        "check-schema.js",
+        "check-second-wallet.cjs",
+        "check-services.js",
+        "compare-analyzer-apis.js",
+        "database-audit.js",
+        "debug-market-cap-issue.cjs",
+        "debug-wallet-metrics.cjs",
+        "deep-column-analysis.js",
+        "deployment-report.cjs",
+        "enrich-cielo-metrics.js",
+        "explore-cielo-structure.js",
+        "fill-missing-columns.js",
+        "fix-database-schema.js",
+        "fix-dexscreener-metrics.cjs",
+        "inspect-stored-cielo-data.js",
+        "proposition-enrichissement-auto.js",
+        "quick-column-check.cjs",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js",
+        "scraping-server/test-supabase-connection.js",
+        "scripts/api-gmgn.js",
+        "scripts/cielo.js",
+        "scripts/complete-data-extractor.js",
+        "scripts/dashboard.js",
+        "scripts/demo-enrichment.js",
+        "scripts/enrich-wallets.js",
+        "scripts/simulate-new-wallets.js",
+        "scripts/test-enrichment.js",
+        "scripts/upload-to-supabase.js",
+        "setup-analysis-table.js",
+        "show-all-complete-data.js",
+        "simulate-enrichment.js",
+        "src/api/server.ts",
+        "src/cli/etl.ts",
+        "src/etl/index.ts",
+        "src/lib/metrics.ts",
+        "src/tests/metrics.unit.test.ts",
+        "supabase/functions/batch-processor/index.ts",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "supabase/functions/dune-automation/index.ts",
+        "supabase/functions/dune-scraper-trigger/index.ts",
+        "supabase/functions/save-tokens/index.ts",
+        "supabase/functions/save-tokens-simple/index.ts",
+        "supabase/functions/table-info/index.ts",
+        "supabase/functions/wallet-analyzer/index.ts",
+        "supabase/functions/wallet-enrichment/index.ts",
+        "supabase/functions/wallet-persistence/index.ts",
+        "supabase/functions/wallet-registry/index.ts",
+        "test-api-complete.js",
+        "test-auto-enrichment-api.js",
+        "test-cielo-api-anon.js",
+        "test-cielo-integration-complete.cjs",
+        "test-columns-simple.js",
+        "test-columns.js",
+        "test-complete-api.js",
+        "test-complete-system.js",
+        "test-database-save.js",
+        "test-deployed-api.js",
+        "test-new-analyzer-simple.js",
+        "test-new-cielo-metrics.cjs",
+        "test-new-wallet-analyzer.js",
+        "test-production.cjs",
+        "test-real-wallet-analyzer.js",
+        "test-real-wallet.js",
+        "test-table-columns.js",
+        "test-wallet-analyzer-complete.js",
+        "test-wallet-registry.cjs",
+        "test-with-real-data.cjs",
+        "validate-system.cjs",
+        "verify-cielo-metrics.js",
+        "verify-new-metrics.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 112,
+      "isReallyUsed": true
+    },
+    "solscan_url": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "create-scraped-wallets-table.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js",
+        "scripts/upload-to-supabase.js",
+        "supabase/functions/dune-scraper-trigger/index.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 7,
+      "isReallyUsed": true
+    },
+    "gmgn_url": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "create-scraped-wallets-table.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js",
+        "scripts/upload-to-supabase.js",
+        "supabase/functions/dune-scraper-trigger/index.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 7,
+      "isReallyUsed": true
+    },
+    "cielo_url": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "create-scraped-wallets-table.sql"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js",
+        "scripts/upload-to-supabase.js",
+        "supabase/functions/dune-scraper-trigger/index.ts",
+        "test-final-complet.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 9,
+      "isReallyUsed": true
+    },
+    "wallet_pnl_link": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "create-scraped-wallets-table.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js",
+        "scripts/dune-scraper.js",
+        "scripts/simulate-new-wallets.js",
+        "scripts/upload-to-supabase.js",
+        "supabase/functions/dune-scraper-trigger/index.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 9,
+      "isReallyUsed": true
+    },
+    "dune_wallet_pnl": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "CLEAN/supabase/functions/batch-processor/index.ts",
+        "CLEAN/supabase/functions/wallet-enrichment/index.ts",
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js",
+        "supabase/functions/batch-processor/index.ts",
+        "supabase/functions/wallet-enrichment/index.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 8,
+      "isReallyUsed": true
+    },
+    "dune_total_bought_usd": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 4,
+      "isReallyUsed": true
+    },
+    "dune_total_pnl_usd": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 4,
+      "isReallyUsed": true
+    },
+    "dune_roi": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 4,
+      "isReallyUsed": true
+    },
+    "dune_mroi": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 2,
+      "isReallyUsed": true
+    },
+    "dune_invalids": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 2,
+      "isReallyUsed": true
+    },
+    "dune_tokens": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 4,
+      "isReallyUsed": true
+    },
+    "dune_nosells": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 3,
+      "isReallyUsed": true
+    },
+    "dune_losses": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 4,
+      "isReallyUsed": true
+    },
+    "dune_nulls": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 3,
+      "isReallyUsed": true
+    },
+    "dune_wins": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 4,
+      "isReallyUsed": true
+    },
+    "dune_winrate": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 4,
+      "isReallyUsed": true
+    },
+    "dune_w2x": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 3,
+      "isReallyUsed": true
+    },
+    "dune_w10x": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 3,
+      "isReallyUsed": true
+    },
+    "dune_w100x": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 3,
+      "isReallyUsed": true
+    },
+    "dune_scalps": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 3,
+      "isReallyUsed": true
+    },
+    "dune_scalp_ratio": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 3,
+      "isReallyUsed": true
+    },
+    "dune_bal": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 3,
+      "isReallyUsed": true
+    },
+    "dune_bal_ratio": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 3,
+      "isReallyUsed": true
+    },
+    "dune_last_trade": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 3,
+      "isReallyUsed": true
+    },
+    "dune_trade_days": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 3,
+      "isReallyUsed": true
+    },
+    "status": {
+      "inSelects": [
+        "check-database.cjs"
+      ],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "CLEAN/create-tables.sql",
+        "add-missing-columns.sql",
+        "apply-migration.js",
+        "complete-solution-fixed.sql",
+        "complete-solution.sql",
+        "create-analysis-jobs-table.sql",
+        "create-and-fix-complete.sql",
+        "create-columns.cjs",
+        "create-minimal.sql",
+        "create-table-auto.js",
+        "create-tables-simple.sql",
+        "fix-schema-complete.sql",
+        "fix-schema-simple.sql",
+        "migration-dexscreener-caps.sql",
+        "run-migration-auto.cjs",
+        "run-migration-buy-sell.js",
+        "run-migration.js"
+      ],
+      "inJsCode": [
+        "CLEAN/quick-db-test.js",
+        "CLEAN/supabase/functions/batch-processor/index.ts",
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "CLEAN/supabase/functions/gmgn/index.ts",
+        "CLEAN/supabase/functions/system-monitoring/index.ts",
+        "CLEAN/supabase/functions/wallet-enrichment/index.ts",
+        "alpha-frontend/app/page.tsx",
+        "alpha-frontend/components/AutomatedStrategyEngine.tsx",
+        "alpha-frontend/components/RiskManagement.tsx",
+        "alpha-frontend/components/TopWallets.tsx",
+        "alpha-frontend/lib/supabase.ts",
+        "alpha-frontend/lib/websocket-mock.ts",
+        "analyze-real-wallet-complete.js",
+        "analyze-specific-wallet.cjs",
+        "analyze-token-data.js",
+        "analyze-unused-columns.js",
+        "analyze-wallet-structure.cjs",
+        "auto-enrich-cielo.js",
+        "call-real-api.js",
+        "check-columns.js",
+        "check-database.cjs",
+        "check-schema.js",
+        "check-second-wallet.cjs",
+        "check-services.js",
+        "check-wallet-columns.js",
+        "compare-analyzer-apis.js",
+        "dashboard-final-wallets-alpha.js",
+        "database-audit.js",
+        "debug-cielo-requests.js",
+        "debug-enrichment-flow.js",
+        "debug-wallet-metrics.cjs",
+        "deep-column-analysis.js",
+        "demo-alpha-detection.js",
+        "deployment-report.cjs",
+        "dexscreener-token-enricher.js",
+        "discover-endpoints.js",
+        "enrich-cielo-metrics.js",
+        "explore-cielo-structure.js",
+        "fill-missing-columns.js",
+        "final-demo.js",
+        "fix-dexscreener-metrics.cjs",
+        "inspect-api.js",
+        "inspect-cielo-data.js",
+        "inspect-stored-cielo-data.js",
+        "local-api.js",
+        "quick-column-check.cjs",
+        "quick-diagnosis.js",
+        "scraping-server/server.js",
+        "scraping-server/simple-test.js",
+        "scraping-server/test-persistence-fix.js",
+        "scraping-server/test-server.js",
+        "scraping-server/test-supabase-connection.js",
+        "scraping-server.js",
+        "scripts/api-gmgn.js",
+        "scripts/cielo-api.js",
+        "scripts/cielo.js",
+        "scripts/coingecko-terminal-api.js",
+        "scripts/complete-data-extractor.js",
+        "scripts/dashboard.js",
+        "scripts/demo-enrichment.js",
+        "scripts/enrich-wallets.js",
+        "scripts/gecko-api.js",
+        "scripts/simulate-new-wallets.js",
+        "scripts/test-cielo-api.js",
+        "scripts/test-enrichment.js",
+        "scripts/upload-to-supabase.js",
+        "setup-analysis-table.js",
+        "show-all-complete-data.js",
+        "simulate-enrichment.js",
+        "src/api/server.ts",
+        "src/etl/index.ts",
+        "src/lib/prices.ts",
+        "supabase/functions/analyze-wallet-behavior/index.ts",
+        "supabase/functions/batch-processor/index.ts",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "supabase/functions/dune-automation/index.ts",
+        "supabase/functions/dune-scraper-trigger/index.ts",
+        "supabase/functions/gecko-test/index.ts",
+        "supabase/functions/gmgn/index.ts",
+        "supabase/functions/save-tokens/index.ts",
+        "supabase/functions/save-tokens-simple/index.ts",
+        "supabase/functions/system-monitoring/index.ts",
+        "supabase/functions/table-info/index.ts",
+        "supabase/functions/wallet-analyzer/index.ts",
+        "supabase/functions/wallet-enrichment/index.ts",
+        "supabase/functions/wallet-persistence/index.ts",
+        "supabase/functions/wallet-registry/index.ts",
+        "test-active-wallets.js",
+        "test-api-complete.js",
+        "test-api-interactive.js",
+        "test-api-keys.js",
+        "test-api-status.js",
+        "test-auto-enrichment-api.js",
+        "test-basic-cielo.js",
+        "test-buy-sell-metrics.js",
+        "test-cielo-api-anon.js",
+        "test-cielo-edge-function.js",
+        "test-cielo-integration-complete.cjs",
+        "test-columns.js",
+        "test-complete-analysis-full.js",
+        "test-complete-api.js",
+        "test-database-save.js",
+        "test-deployed-api.js",
+        "test-dexscreener-integration.js",
+        "test-dexscreener-pnl.js",
+        "test-different-approaches.js",
+        "test-edge-enrichment.js",
+        "test-enriched-response.js",
+        "test-enrichment-debug.js",
+        "test-enrichment-step-by-step.js",
+        "test-final-complet.js",
+        "test-gecko-enrichment.js",
+        "test-gecko-p1-complete.js",
+        "test-gecko-v2-enriched.js",
+        "test-geckoterminal-enrichment.js",
+        "test-improved-headers.js",
+        "test-new-analyzer-simple.js",
+        "test-new-cielo-metrics.cjs",
+        "test-new-wallet-analyzer.js",
+        "test-new-wallet.js",
+        "test-no-limits.js",
+        "test-pnl-dexscreener.js",
+        "test-real-wallet-analyzer.js",
+        "test-sdog-wallet.js",
+        "test-single-token-enrichment.js",
+        "test-step-by-step.js",
+        "test-tokens-pnl-direct.js",
+        "test-tokens-pnl-final.js",
+        "test-tokens-simple.js",
+        "test-trpc-direct.js",
+        "test-trpc-tokens-pnl.js",
+        "test-wallet-analyzer-complete.js",
+        "test-wallet-registry.cjs",
+        "test-with-real-data.cjs",
+        "validate-system.cjs",
+        "verify-cielo-metrics.js",
+        "verify-new-metrics.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 156,
+      "isReallyUsed": true
+    },
+    "last_processed_at": {
+      "inSelects": [
+        "check-database.cjs"
+      ],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "CLEAN/create-tables.sql",
+        "complete-solution.sql",
+        "create-and-fix-complete.sql",
+        "create-minimal.sql",
+        "create-tables-simple.sql",
+        "fix-schema-complete.sql"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/wallet-enrichment/index.ts",
+        "analyze-empty-columns.cjs",
+        "analyze-unused-columns.js",
+        "check-database.cjs",
+        "check-schema.js",
+        "check-second-wallet.cjs",
+        "debug-market-cap-issue.cjs",
+        "debug-wallet-metrics.cjs",
+        "deep-column-analysis.js",
+        "fix-dexscreener-metrics.cjs",
+        "scripts/api-gmgn.js",
+        "scripts/demo-enrichment.js",
+        "scripts/enrich-wallets.js",
+        "src/api/server.ts",
+        "src/etl/index.ts",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "supabase/functions/wallet-enrichment/index.ts",
+        "supabase/functions/wallet-persistence/index.ts",
+        "test-auto-enrichment-api.js",
+        "test-cielo-integration-complete.cjs",
+        "test-wallet-registry.cjs",
+        "test-with-real-data.cjs",
+        "validate-system.cjs",
+        "verify-new-metrics.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 32,
+      "isReallyUsed": true
+    },
+    "processing_attempts": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "CLEAN/create-tables.sql",
+        "create-and-fix-complete.sql",
+        "create-minimal.sql",
+        "create-tables-simple.sql",
+        "fix-schema-complete.sql"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/batch-processor/index.ts",
+        "CLEAN/supabase/functions/wallet-enrichment/index.ts",
+        "analyze-unused-columns.js",
+        "check-schema.js",
+        "deep-column-analysis.js",
+        "scripts/api-gmgn.js",
+        "scripts/demo-enrichment.js",
+        "scripts/enrich-wallets.js",
+        "supabase/functions/batch-processor/index.ts",
+        "supabase/functions/wallet-enrichment/index.ts",
+        "supabase/functions/wallet-persistence/index.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 16,
+      "isReallyUsed": true
+    },
+    "last_error": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scripts/api-gmgn.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 3,
+      "isReallyUsed": true
+    },
+    "enriched_analysis_score": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-database.cjs",
+        "deep-column-analysis.js",
+        "scripts/api-gmgn.js",
+        "scripts/demo-enrichment.js",
+        "scripts/enrich-wallets.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-new-wallet.js",
+        "test-wallet-registry.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 10,
+      "isReallyUsed": true
+    },
+    "enriched_total_value_usd": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scripts/api-gmgn.js",
+        "scripts/dashboard.js",
+        "scripts/demo-enrichment.js",
+        "scripts/enrich-wallets.js",
+        "scripts/test-enrichment.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 7,
+      "isReallyUsed": true
+    },
+    "enriched_total_tokens": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scripts/api-gmgn.js",
+        "scripts/demo-enrichment.js",
+        "scripts/enrich-wallets.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 5,
+      "isReallyUsed": true
+    },
+    "enriched_winrate": {
+      "inSelects": [
+        "check-database.cjs",
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-database.cjs",
+        "deep-column-analysis.js",
+        "fill-missing-columns.js",
+        "scripts/api-gmgn.js",
+        "scripts/demo-enrichment.js",
+        "scripts/enrich-wallets.js",
+        "src/api/server.ts",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "test-new-cielo-metrics.cjs",
+        "test-wallet-registry.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 18,
+      "isReallyUsed": true
+    },
+    "enriched_total_pnl_usd": {
+      "inSelects": [
+        "check-database.cjs",
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-database.cjs",
+        "deep-column-analysis.js",
+        "fill-missing-columns.js",
+        "scripts/api-gmgn.js",
+        "scripts/demo-enrichment.js",
+        "scripts/enrich-wallets.js",
+        "src/api/server.ts",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "test-new-cielo-metrics.cjs",
+        "test-wallet-registry.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 18,
+      "isReallyUsed": true
+    },
+    "enriched_ai_category": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scripts/api-gmgn.js",
+        "scripts/dashboard.js",
+        "scripts/demo-enrichment.js",
+        "scripts/enrich-wallets.js",
+        "scripts/test-enrichment.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 7,
+      "isReallyUsed": true
+    },
+    "enriched_ai_risk_level": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-database.cjs",
+        "deep-column-analysis.js",
+        "scripts/api-gmgn.js",
+        "scripts/dashboard.js",
+        "scripts/demo-enrichment.js",
+        "scripts/enrich-wallets.js",
+        "scripts/test-enrichment.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 10,
+      "isReallyUsed": true
+    },
+    "enriched_data_completeness_score": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-database.cjs",
+        "deep-column-analysis.js",
+        "scripts/api-gmgn.js",
+        "scripts/demo-enrichment.js",
+        "scripts/enrich-wallets.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 8,
+      "isReallyUsed": true
+    },
+    "created_at": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "CLEAN/create-tables.sql",
+        "create-analysis-jobs-table.sql",
+        "create-and-fix-complete.sql",
+        "create-minimal.sql",
+        "create-scraped-wallets-table.sql",
+        "create-table-auto.js",
+        "create-tables-simple.sql",
+        "run-migration-auto.cjs"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/system-monitoring/index.ts",
+        "alpha-frontend/components/AutomatedStrategyEngine.tsx",
+        "alpha-frontend/lib/supabase.ts",
+        "analyze-unused-columns.js",
+        "check-columns.js",
+        "check-schema.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js",
+        "scraping-server.js",
+        "scripts/api-gmgn.js",
+        "scripts/cielo-api.js",
+        "scripts/coingecko-terminal-api.js",
+        "scripts/complete-data-extractor.js",
+        "scripts/gecko-api.js",
+        "scripts/simulate-new-wallets.js",
+        "supabase/functions/dune-scraper-trigger/index.ts",
+        "supabase/functions/save-tokens/index.ts",
+        "supabase/functions/save-tokens-simple/index.ts",
+        "supabase/functions/system-monitoring/index.ts",
+        "supabase/functions/table-info/index.ts",
+        "supabase/functions/wallet-persistence/index.ts",
+        "supabase/functions/wallet-registry/index.ts",
+        "test-gecko-p1-complete.js",
+        "test-gecko-v2-enriched.js",
+        "test-new-cielo-metrics.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 34,
+      "isReallyUsed": true
+    },
+    "updated_at": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "CLEAN/create-tables.sql",
+        "create-analysis-jobs-table.sql",
+        "create-and-fix-complete.sql",
+        "create-minimal.sql",
+        "create-scraped-wallets-table.sql",
+        "create-table-auto.js",
+        "create-tables-simple.sql"
+      ],
+      "inJsCode": [
+        "alpha-frontend/lib/supabase.ts",
+        "analyze-unused-columns.js",
+        "check-columns.js",
+        "check-schema.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js",
+        "scripts/api-gmgn.js",
+        "scripts/demo-enrichment.js",
+        "src/api/server.ts",
+        "src/etl/index.ts",
+        "supabase/functions/dune-scraper-trigger/index.ts",
+        "supabase/functions/save-tokens/index.ts",
+        "supabase/functions/save-tokens-simple/index.ts",
+        "supabase/functions/table-info/index.ts",
+        "supabase/functions/wallet-persistence/index.ts",
+        "supabase/functions/wallet-registry/index.ts",
+        "test-enrichment-debug.js",
+        "test-gecko-v2-enriched.js",
+        "test-new-cielo-metrics.cjs",
+        "test-new-wallet.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 28,
+      "isReallyUsed": true
+    },
+    "data_source": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "dexscreener-token-enricher.js",
+        "explore-cielo-structure.js",
+        "final-demo.js",
+        "quick-diagnosis.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js",
+        "scripts/api-gmgn.js",
+        "scripts/complete-data-extractor.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "supabase/functions/save-tokens/index.ts",
+        "supabase/functions/table-info/index.ts",
+        "supabase/functions/wallet-analyzer/index.ts",
+        "test-active-wallets.js",
+        "test-api-interactive.js",
+        "test-api-status.js",
+        "test-cielo-edge-function.js",
+        "test-dexscreener-integration.js",
+        "test-dexscreener-pnl.js",
+        "test-final-complet.js",
+        "test-gecko-v2-enriched.js",
+        "test-geckoterminal-enrichment.js",
+        "test-mock-enrichment.js",
+        "test-pnl-dexscreener.js",
+        "test-real-wallet-analyzer.js",
+        "test-wallet-analyzer-detailed.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 28,
+      "isReallyUsed": true
+    },
+    "metadata": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "CLEAN/create-tables.sql",
+        "create-and-fix-complete.sql",
+        "create-minimal.sql",
+        "create-tables-simple.sql",
+        "fix-schema-complete.sql",
+        "fix-schema-simple.sql"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "alpha-frontend/app/layout.tsx",
+        "analyze-unused-columns.js",
+        "check-schema.js",
+        "deep-column-analysis.js",
+        "fix-database-schema.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js",
+        "scripts/demo-enrichment.js",
+        "scripts/simulate-new-wallets.js",
+        "scripts/test-enrichment.js",
+        "scripts/upload-to-supabase.js",
+        "supabase/functions/analyze-wallet-behavior/index.ts",
+        "supabase/functions/save-tokens/index.ts",
+        "supabase/functions/wallet-persistence/index.ts",
+        "supabase/functions/wallet-registry/index.ts",
+        "test-database-save.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 23,
+      "isReallyUsed": true
+    },
+    "roi": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "CLEAN/create-tables.sql",
+        "create-and-fix-complete.sql",
+        "create-minimal.sql",
+        "create-scraped-wallets-table.sql",
+        "create-tables-simple.sql",
+        "fix-schema-complete.sql",
+        "migration-add-cielo-metrics.sql",
+        "migration-add-pnl-metrics.sql",
+        "run-migration.js"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "alpha-frontend/components/ExecutiveDashboard.tsx",
+        "analyze-real-wallet-complete.js",
+        "analyze-unused-columns.js",
+        "check-schema.js",
+        "deep-column-analysis.js",
+        "fill-missing-columns.js",
+        "inspect-cielo-data.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js",
+        "scripts/api-gmgn.js",
+        "scripts/demo-enrichment.js",
+        "scripts/dune-scraper.js",
+        "scripts/enrich-wallets.js",
+        "scripts/simulate-new-wallets.js",
+        "scripts/test-enrichment.js",
+        "scripts/upload-to-supabase.js",
+        "supabase/functions/dune-scraper-trigger/index.ts",
+        "supabase/functions/wallet-persistence/index.ts",
+        "test-complete-system.js",
+        "test-database-save.js",
+        "test-tokens-pnl-final.js",
+        "test-trpc-direct.js",
+        "verify-cielo-metrics.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 33,
+      "isReallyUsed": true
+    },
+    "winrate": {
+      "inSelects": [
+        "complete-solution-fixed.sql",
+        "summary-cielo-metrics.cjs"
+      ],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "CLEAN/create-tables.sql",
+        "complete-solution-fixed.sql",
+        "create-and-fix-complete.sql",
+        "create-minimal.sql",
+        "create-scraped-wallets-table.sql",
+        "create-tables-simple.sql",
+        "fix-schema-complete.sql",
+        "migration-add-cielo-metrics.sql",
+        "run-migration-auto.cjs",
+        "src/db/migrations/001_wallet_registry_metrics.sql"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "CLEAN/test.js",
+        "alpha-frontend/components/RiskManagement.tsx",
+        "analyze-empty-columns.cjs",
+        "analyze-real-wallet-complete.js",
+        "analyze-unused-columns.js",
+        "auto-enrich-cielo.js",
+        "check-columns.js",
+        "check-database.cjs",
+        "check-schema.js",
+        "check-services.js",
+        "check-wallet-columns.js",
+        "compare-analyzer-apis.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "fill-missing-columns.js",
+        "inspect-cielo-data.js",
+        "inspect-stored-cielo-data.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js",
+        "scripts/api-gmgn.js",
+        "scripts/cielo-api.js",
+        "scripts/dashboard.js",
+        "scripts/demo-enrichment.js",
+        "scripts/dune-scraper.js",
+        "scripts/enrich-wallets.js",
+        "scripts/simulate-new-wallets.js",
+        "scripts/test-enrichment.js",
+        "scripts/upload-to-supabase.js",
+        "src/api/server.ts",
+        "summary-cielo-metrics.cjs",
+        "supabase/functions/analyze-wallet-behavior/index.ts",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "supabase/functions/dune-scraper-trigger/index.ts",
+        "supabase/functions/wallet-analyzer/index.ts",
+        "supabase/functions/wallet-persistence/index.ts",
+        "supabase/functions/wallet-registry/index.ts",
+        "test-auto-enrichment-api.js",
+        "test-cielo-edge-function.js",
+        "test-cielo-integration-complete.cjs",
+        "test-new-cielo-metrics.cjs",
+        "test-new-wallet.js",
+        "test-tokens-pnl-final.js",
+        "test-trpc-tokens-pnl.js",
+        "test-wallet-registry.cjs",
+        "test-with-real-data.cjs",
+        "verify-cielo-metrics.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 60,
+      "isReallyUsed": true
+    },
+    "tokens_traded": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "CLEAN/create-tables.sql",
+        "create-and-fix-complete.sql",
+        "create-minimal.sql",
+        "create-tables-simple.sql",
+        "fix-schema-complete.sql"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "auto-enrich-cielo.js",
+        "check-schema.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js",
+        "scripts/api-gmgn.js",
+        "scripts/cielo-api.js",
+        "scripts/enrich-wallets.js",
+        "scripts/simulate-new-wallets.js",
+        "scripts/test-enrichment.js",
+        "scripts/upload-to-supabase.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "supabase/functions/wallet-analyzer/index.ts",
+        "supabase/functions/wallet-persistence/index.ts",
+        "test-database-save.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 24,
+      "isReallyUsed": true
+    },
+    "wins": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "CLEAN/create-tables.sql",
+        "create-and-fix-complete.sql",
+        "create-minimal.sql",
+        "create-scraped-wallets-table.sql",
+        "create-tables-simple.sql",
+        "fix-schema-complete.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-schema.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js",
+        "scripts/demo-enrichment.js",
+        "scripts/dune-scraper.js",
+        "scripts/simulate-new-wallets.js",
+        "scripts/test-enrichment.js",
+        "scripts/upload-to-supabase.js",
+        "src/lib/metrics.ts",
+        "supabase/functions/dune-scraper-trigger/index.ts",
+        "supabase/functions/wallet-persistence/index.ts",
+        "test-database-save.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 20,
+      "isReallyUsed": true
+    },
+    "losses": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "CLEAN/create-tables.sql",
+        "create-and-fix-complete.sql",
+        "create-minimal.sql",
+        "create-scraped-wallets-table.sql",
+        "create-tables-simple.sql",
+        "fix-schema-complete.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-schema.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js",
+        "scripts/dune-scraper.js",
+        "scripts/simulate-new-wallets.js",
+        "scripts/test-enrichment.js",
+        "scripts/upload-to-supabase.js",
+        "src/lib/metrics.ts",
+        "supabase/functions/dune-scraper-trigger/index.ts",
+        "supabase/functions/wallet-persistence/index.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 18,
+      "isReallyUsed": true
+    },
+    "trade_count": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "CLEAN/create-tables.sql",
+        "create-and-fix-complete.sql",
+        "create-minimal.sql",
+        "create-tables-simple.sql",
+        "fix-schema-complete.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-schema.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js",
+        "scripts/api-gmgn.js",
+        "scripts/dashboard.js",
+        "scripts/simulate-new-wallets.js",
+        "scripts/test-enrichment.js",
+        "scripts/upload-to-supabase.js",
+        "supabase/functions/save-tokens/index.ts",
+        "supabase/functions/save-tokens-simple/index.ts",
+        "supabase/functions/table-info/index.ts",
+        "supabase/functions/wallet-persistence/index.ts",
+        "supabase/functions/wallet-registry/index.ts",
+        "test-database-save.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 21,
+      "isReallyUsed": true
+    },
+    "last_trade_date": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "CLEAN/create-tables.sql",
+        "create-and-fix-complete.sql",
+        "create-minimal.sql",
+        "create-tables-simple.sql",
+        "fix-schema-complete.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-schema.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js",
+        "scraping-server/test-supabase-connection.js",
+        "scripts/simulate-new-wallets.js",
+        "scripts/test-enrichment.js",
+        "scripts/upload-to-supabase.js",
+        "supabase/functions/wallet-persistence/index.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 15,
+      "isReallyUsed": true
+    },
+    "source": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "CLEAN/create-tables.sql",
+        "create-and-fix-complete.sql",
+        "create-minimal.sql",
+        "create-tables-simple.sql",
+        "fix-schema-complete.sql",
+        "supabase/migrations/20250105000000_add_columns_wallet_tokens_extended.sql",
+        "supabase/migrations/20250804_update_wallet_tokens_extended_structure.sql"
+      ],
+      "inJsCode": [
+        "CLEAN/quick-db-test.js",
+        "analyze-unused-columns.js",
+        "check-schema.js",
+        "check-wallet-columns.js",
+        "deep-column-analysis.js",
+        "dexscreener-token-enricher.js",
+        "explore-cielo-structure.js",
+        "final-demo.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js",
+        "scripts/api-gmgn.js",
+        "scripts/cielo-api.js",
+        "scripts/complete-data-extractor.js",
+        "scripts/enrich-wallets.js",
+        "scripts/gecko-api.js",
+        "scripts/simulate-new-wallets.js",
+        "scripts/test-enrichment.js",
+        "scripts/upload-to-supabase.js",
+        "simulate-enrichment.js",
+        "src/etl/index.ts",
+        "src/lib/metrics.ts",
+        "src/lib/prices.ts",
+        "src/tests/metrics.unit.test.ts",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "supabase/functions/save-tokens/index.ts",
+        "supabase/functions/table-info/index.ts",
+        "supabase/functions/wallet-analyzer/index.ts",
+        "supabase/functions/wallet-persistence/index.ts",
+        "test-active-wallets.js",
+        "test-api-status.js",
+        "test-cielo-edge-function.js",
+        "test-database-save.js",
+        "test-dexscreener-integration.js",
+        "test-dexscreener-pnl.js",
+        "test-final-complet.js",
+        "test-gecko-v2-enriched.js",
+        "test-geckoterminal-enrichment.js",
+        "test-mock-enrichment.js",
+        "test-pnl-dexscreener.js",
+        "test-real-wallet-analyzer.js",
+        "test-step-by-step.js",
+        "test-tokens-pnl-final.js",
+        "test-trpc-tokens-pnl.js",
+        "test-wallet-analyzer-detailed.js"
+      ],
+      "inConfigFiles": [
+        "alpha-frontend/package-lock.json",
+        "scraping-server/package-lock.json",
+        "scripts/package-lock.json",
+        "src/package-lock.json"
+      ],
+      "totalReferences": 56,
+      "isReallyUsed": true
+    },
+    "total_pnl_usd": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "CLEAN/create-tables.sql",
+        "add-missing-columns.sql",
+        "create-and-fix-complete.sql",
+        "create-minimal.sql",
+        "create-scraped-wallets-table.sql",
+        "create-tables-simple.sql",
+        "fix-schema-complete.sql"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "CLEAN/test.js",
+        "analyze-empty-columns.cjs",
+        "analyze-real-wallet-complete.js",
+        "analyze-unused-columns.js",
+        "auto-enrich-cielo.js",
+        "call-real-api.js",
+        "check-schema.js",
+        "check-services.js",
+        "compare-analyzer-apis.js",
+        "dashboard-final-wallets-alpha.js",
+        "database-audit.js",
+        "debug-cielo-requests.js",
+        "deep-column-analysis.js",
+        "demo-alpha-detection.js",
+        "enrich-cielo-metrics.js",
+        "final-demo.js",
+        "inspect-stored-cielo-data.js",
+        "quick-audit.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js",
+        "scripts/api-gmgn.js",
+        "scripts/cielo-api.js",
+        "scripts/dashboard.js",
+        "scripts/demo-enrichment.js",
+        "scripts/dune-scraper.js",
+        "scripts/enrich-wallets.js",
+        "scripts/simulate-new-wallets.js",
+        "scripts/test-enrichment.js",
+        "scripts/upload-to-supabase.js",
+        "src/api/server.ts",
+        "supabase/functions/analyze-wallet-behavior/index.ts",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "supabase/functions/dune-scraper-trigger/index.ts",
+        "supabase/functions/save-tokens/index.ts",
+        "supabase/functions/save-tokens-simple/index.ts",
+        "supabase/functions/table-info/index.ts",
+        "supabase/functions/wallet-analyzer/index.ts",
+        "supabase/functions/wallet-persistence/index.ts",
+        "supabase/functions/wallet-registry/index.ts",
+        "test-active-wallets.js",
+        "test-api-interactive.js",
+        "test-auto-enrichment-api.js",
+        "test-cielo-api-anon.js",
+        "test-cielo-direct.js",
+        "test-cielo-edge-function.js",
+        "test-cielo-integration-complete.cjs",
+        "test-complete-analysis-full.js",
+        "test-complete-system.js",
+        "test-database-save.js",
+        "test-new-analyzer-simple.js",
+        "test-new-cielo-metrics.cjs",
+        "test-new-wallet-analyzer.js",
+        "test-new-wallet.js",
+        "test-pnl-dexscreener.js",
+        "test-real-wallet-analyzer.js",
+        "test-real-wallet.js",
+        "test-trpc-tokens-pnl.js",
+        "test-wallet-analyzer-complete.js",
+        "test-wallet-analyzer-detailed.js",
+        "test-with-real-data.cjs",
+        "test-without-db.js",
+        "verify-cielo-metrics.js",
+        "wallet-analytics/test-market-cap-analyzer.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 72,
+      "isReallyUsed": true
+    },
+    "total_bought_usd": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "CLEAN/create-tables.sql",
+        "add-missing-columns.sql",
+        "create-and-fix-complete.sql",
+        "create-minimal.sql",
+        "create-scraped-wallets-table.sql",
+        "create-tables-simple.sql",
+        "fix-schema-complete.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-schema.js",
+        "deep-column-analysis.js",
+        "scraping-server/server.js",
+        "scraping-server/test-persistence-fix.js",
+        "scripts/demo-enrichment.js",
+        "scripts/dune-scraper.js",
+        "scripts/enrich-wallets.js",
+        "scripts/simulate-new-wallets.js",
+        "scripts/upload-to-supabase.js",
+        "supabase/functions/dune-scraper-trigger/index.ts",
+        "supabase/functions/wallet-persistence/index.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 19,
+      "isReallyUsed": true
+    },
+    "enriched_total_trades": {
+      "inSelects": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-database.cjs",
+        "deep-column-analysis.js",
+        "fill-missing-columns.js",
+        "src/api/server.ts",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "test-new-cielo-metrics.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 13,
+      "isReallyUsed": true
+    },
+    "enriched_roi_percentage": {
+      "inSelects": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-database.cjs",
+        "deep-column-analysis.js",
+        "fill-missing-columns.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 10,
+      "isReallyUsed": true
+    },
+    "enriched_portfolio_value_usd": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-database.cjs",
+        "deep-column-analysis.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-wallet-registry.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 6,
+      "isReallyUsed": true
+    },
+    "enriched_portfolio_tokens": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-specific-wallet.cjs",
+        "analyze-unused-columns.js",
+        "analyze-wallet-structure.cjs",
+        "check-database.cjs",
+        "check-second-wallet.cjs",
+        "debug-wallet-metrics.cjs",
+        "deep-column-analysis.js",
+        "deployment-report.cjs",
+        "fix-dexscreener-metrics.cjs",
+        "simulate-enrichment.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-geckoterminal-enrichment.js",
+        "test-new-wallet.js",
+        "validate-system.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 15,
+      "isReallyUsed": true
+    },
+    "dexscreener_enriched_portfolio_tokens": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-specific-wallet.cjs",
+        "analyze-unused-columns.js",
+        "analyze-wallet-structure.cjs",
+        "check-database.cjs",
+        "check-second-wallet.cjs",
+        "debug-enrichment-flow.js",
+        "debug-wallet-metrics.cjs",
+        "deep-column-analysis.js",
+        "deployment-report.cjs",
+        "fix-dexscreener-metrics.cjs",
+        "quick-diagnosis.js",
+        "simulate-enrichment.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-enriched-response.js",
+        "test-enrichment-step-by-step.js",
+        "test-wallet-registry.cjs",
+        "validate-system.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 18,
+      "isReallyUsed": true
+    },
+    "dexscreener_enriched_pnl_tokens": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-specific-wallet.cjs",
+        "analyze-unused-columns.js",
+        "analyze-wallet-structure.cjs",
+        "check-database.cjs",
+        "check-second-wallet.cjs",
+        "debug-enrichment-flow.js",
+        "debug-wallet-metrics.cjs",
+        "deep-column-analysis.js",
+        "deployment-report.cjs",
+        "fix-dexscreener-metrics.cjs",
+        "quick-diagnosis.js",
+        "simulate-enrichment.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-enriched-response.js",
+        "test-enrichment-step-by-step.js",
+        "validate-system.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 17,
+      "isReallyUsed": true
+    },
+    "dexscreener_tokens_with_market_cap": {
+      "inSelects": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inJsCode": [
+        "analyze-empty-columns.cjs",
+        "analyze-market-cap-discrepancy.cjs",
+        "analyze-specific-wallet.cjs",
+        "analyze-unused-columns.js",
+        "analyze-wallet-structure.cjs",
+        "check-database.cjs",
+        "check-second-wallet.cjs",
+        "debug-market-cap-issue.cjs",
+        "debug-wallet-metrics.cjs",
+        "deep-column-analysis.js",
+        "fill-missing-columns.js",
+        "fix-dexscreener-metrics.cjs",
+        "quick-column-check.cjs",
+        "simulate-enrichment.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-columns-simple.js",
+        "test-enriched-response.js",
+        "validate-system.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 23,
+      "isReallyUsed": true
+    },
+    "dexscreener_tokens_with_price_data": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-specific-wallet.cjs",
+        "analyze-unused-columns.js",
+        "analyze-wallet-structure.cjs",
+        "check-database.cjs",
+        "check-second-wallet.cjs",
+        "debug-wallet-metrics.cjs",
+        "deep-column-analysis.js",
+        "fix-dexscreener-metrics.cjs",
+        "simulate-enrichment.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-enriched-response.js",
+        "validate-system.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 13,
+      "isReallyUsed": true
+    },
+    "dexscreener_average_reliability_score": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-specific-wallet.cjs",
+        "analyze-unused-columns.js",
+        "analyze-wallet-structure.cjs",
+        "check-database.cjs",
+        "check-second-wallet.cjs",
+        "debug-wallet-metrics.cjs",
+        "deep-column-analysis.js",
+        "deployment-report.cjs",
+        "fix-dexscreener-metrics.cjs",
+        "simulate-enrichment.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-enriched-response.js",
+        "validate-system.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 14,
+      "isReallyUsed": true
+    },
+    "cielo_complete_data": {
+      "inSelects": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inJsCode": [
+        "analyze-empty-columns.cjs",
+        "analyze-market-cap-discrepancy.cjs",
+        "analyze-specific-wallet.cjs",
+        "analyze-unused-columns.js",
+        "analyze-wallet-structure.cjs",
+        "auto-enrich-cielo.js",
+        "check-database.cjs",
+        "check-second-wallet.cjs",
+        "debug-market-cap-issue.cjs",
+        "debug-wallet-metrics.cjs",
+        "deep-column-analysis.js",
+        "fill-missing-columns.js",
+        "fix-dexscreener-metrics.cjs",
+        "inspect-stored-cielo-data.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "test-new-wallet.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 22,
+      "isReallyUsed": true
+    },
+    "cielo_last_enriched_at": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-second-wallet.cjs",
+        "debug-wallet-metrics.cjs",
+        "deep-column-analysis.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 6,
+      "isReallyUsed": true
+    },
+    "dexscreener_last_enriched_at": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-database.cjs",
+        "check-second-wallet.cjs",
+        "debug-wallet-metrics.cjs",
+        "deep-column-analysis.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 7,
+      "isReallyUsed": true
+    },
+    "processing_version": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "create-columns.cjs"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-database.cjs",
+        "deep-column-analysis.js",
+        "src/api/server.ts",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "test-new-cielo-metrics.cjs",
+        "test-new-wallet.js",
+        "test-wallet-registry.cjs",
+        "test-with-real-data.cjs",
+        "verify-new-metrics.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 13,
+      "isReallyUsed": true
+    },
+    "pnl_low_cap_count": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-market-cap-discrepancy.cjs",
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 3,
+      "isReallyUsed": true
+    },
+    "pnl_middle_cap_count": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-market-cap-discrepancy.cjs",
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 3,
+      "isReallyUsed": true
+    },
+    "pnl_large_cap_count": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-market-cap-discrepancy.cjs",
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 3,
+      "isReallyUsed": true
+    },
+    "pnl_mega_cap_count": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-market-cap-discrepancy.cjs",
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 3,
+      "isReallyUsed": true
+    },
+    "pnl_unknown_cap_count": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-market-cap-discrepancy.cjs",
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 3,
+      "isReallyUsed": true
+    },
+    "pnl_total_analyzed_count": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-market-cap-discrepancy.cjs",
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "quick-column-check.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 4,
+      "isReallyUsed": true
+    },
+    "pnl_total_volume_24h_usd": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 2,
+      "isReallyUsed": true
+    },
+    "pnl_avg_volume_24h_usd": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 2,
+      "isReallyUsed": true
+    },
+    "pnl_tokens_with_volume_data": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 2,
+      "isReallyUsed": true
+    },
+    "portfolio_total_volume_24h_usd": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 2,
+      "isReallyUsed": true
+    },
+    "portfolio_avg_volume_24h_usd": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 2,
+      "isReallyUsed": true
+    },
+    "portfolio_tokens_with_volume_data": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 2,
+      "isReallyUsed": true
+    },
+    "profit_factor_30d": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "src/db/migrations/001_wallet_registry_metrics.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "src/api/server.ts",
+        "src/cli/etl.ts",
+        "src/etl/index.ts",
+        "src/lib/metrics.ts",
+        "src/tests/metrics.unit.test.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 8,
+      "isReallyUsed": true
+    },
+    "expectancy_usd_30d": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "src/db/migrations/001_wallet_registry_metrics.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "src/api/server.ts",
+        "src/etl/index.ts",
+        "src/lib/metrics.ts",
+        "src/tests/metrics.unit.test.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 7,
+      "isReallyUsed": true
+    },
+    "drawdown_max_usd_30d": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "src/db/migrations/001_wallet_registry_metrics.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "src/api/server.ts",
+        "src/etl/index.ts",
+        "src/lib/metrics.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 6,
+      "isReallyUsed": true
+    },
+    "median_hold_min_30d": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "src/db/migrations/001_wallet_registry_metrics.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "src/api/server.ts",
+        "src/etl/index.ts",
+        "src/lib/metrics.ts",
+        "src/tests/metrics.unit.test.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 7,
+      "isReallyUsed": true
+    },
+    "scalp_ratio_30d": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "src/db/migrations/001_wallet_registry_metrics.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "src/api/server.ts",
+        "src/etl/index.ts",
+        "src/lib/metrics.ts",
+        "src/tests/metrics.unit.test.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 7,
+      "isReallyUsed": true
+    },
+    "cap_exposure_micro_pct_30d": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "src/db/migrations/001_wallet_registry_metrics.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "src/api/server.ts",
+        "src/etl/index.ts",
+        "src/lib/metrics.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 6,
+      "isReallyUsed": true
+    },
+    "cap_exposure_low_pct_30d": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "src/db/migrations/001_wallet_registry_metrics.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "src/api/server.ts",
+        "src/etl/index.ts",
+        "src/lib/metrics.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 6,
+      "isReallyUsed": true
+    },
+    "cap_exposure_mid_pct_30d": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "src/db/migrations/001_wallet_registry_metrics.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "src/api/server.ts",
+        "src/etl/index.ts",
+        "src/lib/metrics.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 6,
+      "isReallyUsed": true
+    },
+    "cap_exposure_large_pct_30d": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "src/db/migrations/001_wallet_registry_metrics.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "src/api/server.ts",
+        "src/etl/index.ts",
+        "src/lib/metrics.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 6,
+      "isReallyUsed": true
+    },
+    "cap_exposure_mega_pct_30d": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "src/db/migrations/001_wallet_registry_metrics.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "src/api/server.ts",
+        "src/etl/index.ts",
+        "src/lib/metrics.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 6,
+      "isReallyUsed": true
+    },
+    "liquidity_median_usd_30d": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "src/db/migrations/001_wallet_registry_metrics.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "src/api/server.ts",
+        "src/etl/index.ts",
+        "src/lib/metrics.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 6,
+      "isReallyUsed": true
+    },
+    "recency_score_30d": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "src/db/migrations/001_wallet_registry_metrics.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "src/api/server.ts",
+        "src/etl/index.ts",
+        "src/lib/metrics.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 6,
+      "isReallyUsed": true
+    },
+    "streak_wins_max_90d": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "src/db/migrations/001_wallet_registry_metrics.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 3,
+      "isReallyUsed": true
+    },
+    "streak_losses_max_90d": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "src/db/migrations/001_wallet_registry_metrics.sql"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 3,
+      "isReallyUsed": true
+    },
+    "copy_trading_score": {
+      "inSelects": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inUpdates": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inInserts": [],
+      "inMigrations": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql",
+        "src/db/migrations/001_wallet_registry_metrics.sql"
+      ],
+      "inJsCode": [
+        "analyze-empty-columns.cjs",
+        "analyze-unused-columns.js",
+        "check-second-wallet.cjs",
+        "deep-column-analysis.js",
+        "deployment-report.cjs",
+        "fill-missing-columns.js",
+        "src/api/server.ts",
+        "src/cli/etl.ts",
+        "src/etl/index.ts",
+        "src/lib/metrics.ts",
+        "src/tests/metrics.unit.test.ts",
+        "validate-system.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 19,
+      "isReallyUsed": true
+    },
+    "pnl_30d": {
+      "inSelects": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inUpdates": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inInserts": [],
+      "inMigrations": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql",
+        "src/db/migrations/001_wallet_registry_metrics.sql"
+      ],
+      "inJsCode": [
+        "analyze-empty-columns.cjs",
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "fill-missing-columns.js",
+        "src/api/server.ts",
+        "src/etl/index.ts",
+        "src/lib/metrics.ts",
+        "src/tests/metrics.unit.test.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 15,
+      "isReallyUsed": true
+    },
+    "trade_count_30d": {
+      "inSelects": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inUpdates": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inInserts": [],
+      "inMigrations": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inJsCode": [
+        "analyze-empty-columns.cjs",
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "fill-missing-columns.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 10,
+      "isReallyUsed": true
+    },
+    "winrate_30d": {
+      "inSelects": [
+        "complete-solution.sql"
+      ],
+      "inUpdates": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inInserts": [],
+      "inMigrations": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql",
+        "src/db/migrations/001_wallet_registry_metrics.sql"
+      ],
+      "inJsCode": [
+        "analyze-empty-columns.cjs",
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "fill-missing-columns.js",
+        "src/api/server.ts",
+        "src/cli/etl.ts",
+        "src/etl/index.ts",
+        "src/lib/metrics.ts",
+        "src/tests/metrics.unit.test.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 15,
+      "isReallyUsed": true
+    },
+    "roi_pct_30d": {
+      "inSelects": [
+        "complete-solution.sql"
+      ],
+      "inUpdates": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inInserts": [],
+      "inMigrations": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql",
+        "src/db/migrations/001_wallet_registry_metrics.sql"
+      ],
+      "inJsCode": [
+        "analyze-empty-columns.cjs",
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "fill-missing-columns.js",
+        "src/api/server.ts",
+        "src/etl/index.ts",
+        "src/lib/metrics.ts"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 13,
+      "isReallyUsed": true
+    },
+    "dexscreener_micro_cap_count": {
+      "inSelects": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inUpdates": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inInserts": [],
+      "inMigrations": [
+        "apply-migration.js",
+        "complete-solution-fixed.sql",
+        "complete-solution.sql",
+        "create-columns.cjs",
+        "migration-dexscreener-caps.sql"
+      ],
+      "inJsCode": [
+        "analyze-empty-columns.cjs",
+        "analyze-market-cap-discrepancy.cjs",
+        "analyze-unused-columns.js",
+        "debug-market-cap-issue.cjs",
+        "deep-column-analysis.js",
+        "fill-missing-columns.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "test-columns-simple.js",
+        "verify-new-metrics.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 20,
+      "isReallyUsed": true
+    },
+    "dexscreener_low_cap_count": {
+      "inSelects": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inUpdates": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inInserts": [],
+      "inMigrations": [
+        "apply-migration.js",
+        "complete-solution-fixed.sql",
+        "complete-solution.sql",
+        "create-columns.cjs",
+        "migration-dexscreener-caps.sql"
+      ],
+      "inJsCode": [
+        "analyze-empty-columns.cjs",
+        "analyze-market-cap-discrepancy.cjs",
+        "analyze-unused-columns.js",
+        "debug-market-cap-issue.cjs",
+        "deep-column-analysis.js",
+        "fill-missing-columns.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "verify-new-metrics.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 19,
+      "isReallyUsed": true
+    },
+    "dexscreener_middle_cap_count": {
+      "inSelects": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inUpdates": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inInserts": [],
+      "inMigrations": [
+        "apply-migration.js",
+        "complete-solution-fixed.sql",
+        "complete-solution.sql",
+        "create-columns.cjs",
+        "migration-dexscreener-caps.sql"
+      ],
+      "inJsCode": [
+        "analyze-empty-columns.cjs",
+        "analyze-market-cap-discrepancy.cjs",
+        "analyze-unused-columns.js",
+        "debug-market-cap-issue.cjs",
+        "deep-column-analysis.js",
+        "fill-missing-columns.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "verify-new-metrics.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 19,
+      "isReallyUsed": true
+    },
+    "dexscreener_large_cap_count": {
+      "inSelects": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inUpdates": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inInserts": [],
+      "inMigrations": [
+        "apply-migration.js",
+        "complete-solution-fixed.sql",
+        "complete-solution.sql",
+        "create-columns.cjs",
+        "migration-dexscreener-caps.sql"
+      ],
+      "inJsCode": [
+        "analyze-empty-columns.cjs",
+        "analyze-market-cap-discrepancy.cjs",
+        "analyze-unused-columns.js",
+        "debug-market-cap-issue.cjs",
+        "deep-column-analysis.js",
+        "fill-missing-columns.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "verify-new-metrics.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 19,
+      "isReallyUsed": true
+    },
+    "dexscreener_mega_cap_count": {
+      "inSelects": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inUpdates": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inInserts": [],
+      "inMigrations": [
+        "apply-migration.js",
+        "complete-solution-fixed.sql",
+        "complete-solution.sql",
+        "create-columns.cjs",
+        "migration-dexscreener-caps.sql"
+      ],
+      "inJsCode": [
+        "analyze-empty-columns.cjs",
+        "analyze-market-cap-discrepancy.cjs",
+        "analyze-unused-columns.js",
+        "debug-market-cap-issue.cjs",
+        "deep-column-analysis.js",
+        "fill-missing-columns.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "verify-new-metrics.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 19,
+      "isReallyUsed": true
+    },
+    "dexscreener_unknown_cap_count": {
+      "inSelects": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inUpdates": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inInserts": [],
+      "inMigrations": [
+        "apply-migration.js",
+        "complete-solution-fixed.sql",
+        "complete-solution.sql",
+        "create-columns.cjs",
+        "migration-dexscreener-caps.sql"
+      ],
+      "inJsCode": [
+        "analyze-empty-columns.cjs",
+        "analyze-market-cap-discrepancy.cjs",
+        "analyze-unused-columns.js",
+        "debug-market-cap-issue.cjs",
+        "deep-column-analysis.js",
+        "fill-missing-columns.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "verify-new-metrics.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 19,
+      "isReallyUsed": true
+    },
+    "dexscreener_total_analyzed_count": {
+      "inSelects": [],
+      "inUpdates": [
+        "complete-solution-fixed.sql",
+        "complete-solution.sql"
+      ],
+      "inInserts": [],
+      "inMigrations": [
+        "apply-migration.js",
+        "complete-solution-fixed.sql",
+        "complete-solution.sql",
+        "create-columns.cjs",
+        "migration-dexscreener-caps.sql"
+      ],
+      "inJsCode": [
+        "analyze-empty-columns.cjs",
+        "analyze-market-cap-discrepancy.cjs",
+        "analyze-unused-columns.js",
+        "debug-market-cap-issue.cjs",
+        "deep-column-analysis.js",
+        "fill-missing-columns.js",
+        "quick-column-check.cjs",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "verify-new-metrics.cjs"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 18,
+      "isReallyUsed": true
+    },
+    "average_holding_time": {
+      "inSelects": [
+        "summary-cielo-metrics.cjs"
+      ],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-cielo-metrics.sql",
+        "run-migration-auto.cjs"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "check-columns.js",
+        "check-wallet-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "scripts/api-gmgn.js",
+        "src/api/server.ts",
+        "summary-cielo-metrics.cjs",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "test-new-cielo-metrics.cjs",
+        "test-with-real-data.cjs",
+        "verify-cielo-metrics.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 18,
+      "isReallyUsed": true
+    },
+    "total_pnl": {
+      "inSelects": [
+        "summary-cielo-metrics.cjs"
+      ],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "create-and-fix-complete.sql",
+        "migration-add-cielo-metrics.sql",
+        "run-migration-auto.cjs"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "CLEAN/supabase/functions/gmgn/index.ts",
+        "CLEAN/supabase/functions/wallet-enrichment/index.ts",
+        "alpha-frontend/app/page.tsx",
+        "alpha-frontend/components/AIInsights.tsx",
+        "alpha-frontend/components/AlphaDashboard.tsx",
+        "alpha-frontend/components/AutomatedStrategyEngine.tsx",
+        "alpha-frontend/components/SocialTradingHub.tsx",
+        "alpha-frontend/components/TopWallets.tsx",
+        "alpha-frontend/components/TradingSignals.tsx",
+        "alpha-frontend/components/WalletAnalyzer.tsx",
+        "alpha-frontend/lib/supabase.ts",
+        "alpha-frontend/lib/utils.ts",
+        "analyze-unused-columns.js",
+        "auto-enrich-cielo.js",
+        "check-columns.js",
+        "check-wallet-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "inspect-cielo-data.js",
+        "scripts/api-gmgn.js",
+        "scripts/complete-data-extractor.js",
+        "scripts/dashboard.js",
+        "scripts/gmgn.js",
+        "show-all-complete-data.js",
+        "src/api/server.ts",
+        "summary-cielo-metrics.cjs",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "supabase/functions/gmgn/index.ts",
+        "supabase/functions/save-tokens/index.ts",
+        "supabase/functions/save-tokens-simple/index.ts",
+        "supabase/functions/table-info/index.ts",
+        "supabase/functions/wallet-analyzer/index.ts",
+        "supabase/functions/wallet-enrichment/index.ts",
+        "supabase/functions/wallet-registry/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "test-complete-system.js",
+        "test-final-complet.js",
+        "test-new-cielo-metrics.cjs",
+        "test-tokens-pnl-final.js",
+        "test-with-real-data.cjs",
+        "verify-cielo-metrics.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 47,
+      "isReallyUsed": true
+    },
+    "total_roi_percentage": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-cielo-metrics.sql",
+        "run-migration-auto.cjs"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "auto-enrich-cielo.js",
+        "check-wallet-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "scripts/api-gmgn.js",
+        "src/api/server.ts",
+        "summary-cielo-metrics.cjs",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "supabase/functions/wallet-persistence/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "test-new-cielo-metrics.cjs",
+        "test-trpc-tokens-pnl.js",
+        "test-with-real-data.cjs",
+        "verify-cielo-metrics.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 19,
+      "isReallyUsed": true
+    },
+    "swap_count": {
+      "inSelects": [
+        "summary-cielo-metrics.cjs"
+      ],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-cielo-metrics.sql",
+        "run-migration-auto.cjs"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "check-columns.js",
+        "check-wallet-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "inspect-cielo-data.js",
+        "scripts/api-gmgn.js",
+        "src/api/server.ts",
+        "summary-cielo-metrics.cjs",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "supabase/functions/wallet-analyzer/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "test-new-cielo-metrics.cjs",
+        "test-tokens-pnl-final.js",
+        "test-with-real-data.cjs",
+        "verify-cielo-metrics.js",
+        "wallet-analytics/market-cap-risk-analyzer.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 22,
+      "isReallyUsed": true
+    },
+    "first_swap_timestamp": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-cielo-metrics.sql",
+        "run-migration-auto.cjs"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "check-wallet-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "scripts/api-gmgn.js",
+        "src/api/server.ts",
+        "summary-cielo-metrics.cjs",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "test-new-cielo-metrics.cjs",
+        "test-with-real-data.cjs",
+        "verify-cielo-metrics.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 16,
+      "isReallyUsed": true
+    },
+    "last_swap_timestamp": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-cielo-metrics.sql",
+        "run-migration-auto.cjs"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "check-wallet-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "scripts/api-gmgn.js",
+        "src/api/server.ts",
+        "summary-cielo-metrics.cjs",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "test-new-cielo-metrics.cjs",
+        "test-with-real-data.cjs",
+        "verify-cielo-metrics.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 16,
+      "isReallyUsed": true
+    },
+    "unique_trading_days": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-cielo-metrics.sql",
+        "run-migration-auto.cjs"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "check-wallet-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "scripts/api-gmgn.js",
+        "src/api/server.ts",
+        "summary-cielo-metrics.cjs",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "test-new-cielo-metrics.cjs",
+        "test-with-real-data.cjs",
+        "verify-cielo-metrics.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 16,
+      "isReallyUsed": true
+    },
+    "consecutive_trading_days": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-cielo-metrics.sql",
+        "run-migration-auto.cjs"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "check-wallet-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "scripts/api-gmgn.js",
+        "src/api/server.ts",
+        "summary-cielo-metrics.cjs",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "test-new-cielo-metrics.cjs",
+        "test-with-real-data.cjs",
+        "verify-cielo-metrics.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 16,
+      "isReallyUsed": true
+    },
+    "average_trades_per_token": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-cielo-metrics.sql",
+        "run-migration-auto.cjs"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "check-wallet-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "scripts/api-gmgn.js",
+        "src/api/server.ts",
+        "summary-cielo-metrics.cjs",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-cielo-integration-complete.cjs",
+        "test-new-cielo-metrics.cjs",
+        "test-with-real-data.cjs",
+        "verify-cielo-metrics.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 16,
+      "isReallyUsed": true
+    },
+    "total_tokens_traded": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-cielo-metrics.sql",
+        "migration-add-pnl-metrics.sql",
+        "run-migration.js"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-real-wallet-complete.js",
+        "analyze-unused-columns.js",
+        "auto-enrich-cielo.js",
+        "check-services.js",
+        "check-wallet-columns.js",
+        "compare-analyzer-apis.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "inspect-stored-cielo-data.js",
+        "scripts/api-gmgn.js",
+        "scripts/cielo-api.js",
+        "supabase/functions/analyze-wallet-behavior/index.ts",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "supabase/functions/wallet-analyzer/index.ts",
+        "test-trpc-tokens-pnl.js",
+        "verify-cielo-metrics.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 21,
+      "isReallyUsed": true
+    },
+    "total_unrealized_pnl_usd": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-cielo-metrics.sql",
+        "migration-add-pnl-metrics.sql",
+        "run-migration.js"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-wallet-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "verify-cielo-metrics.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 8,
+      "isReallyUsed": true
+    },
+    "combined_pnl_usd": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-cielo-metrics.sql",
+        "migration-add-pnl-metrics.sql",
+        "run-migration.js"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-wallet-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "verify-cielo-metrics.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 8,
+      "isReallyUsed": true
+    },
+    "combined_roi_percentage": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-cielo-metrics.sql",
+        "migration-add-pnl-metrics.sql",
+        "run-migration.js"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-wallet-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "verify-cielo-metrics.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 8,
+      "isReallyUsed": true
+    },
+    "combined_average_hold_time": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-cielo-metrics.sql",
+        "migration-add-pnl-metrics.sql",
+        "run-migration.js"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-wallet-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "verify-cielo-metrics.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 8,
+      "isReallyUsed": true
+    },
+    "combined_median_hold_time": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-cielo-metrics.sql",
+        "migration-add-pnl-metrics.sql",
+        "run-migration.js"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-wallet-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "verify-cielo-metrics.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 8,
+      "isReallyUsed": true
+    },
+    "average_buy_amount_usd": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-buy-sell-metrics.sql",
+        "run-migration-buy-sell.js"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "auto-enrich-cielo.js",
+        "check-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "explore-cielo-structure.js",
+        "inspect-stored-cielo-data.js",
+        "scripts/api-gmgn.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-auto-enrichment-api.js",
+        "test-buy-sell-metrics.js",
+        "test-columns.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 16,
+      "isReallyUsed": true
+    },
+    "minimum_buy_amount_usd": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-buy-sell-metrics.sql",
+        "run-migration-buy-sell.js"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "auto-enrich-cielo.js",
+        "check-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "explore-cielo-structure.js",
+        "scripts/api-gmgn.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-buy-sell-metrics.js",
+        "test-columns.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 14,
+      "isReallyUsed": true
+    },
+    "maximum_buy_amount_usd": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-buy-sell-metrics.sql",
+        "run-migration-buy-sell.js"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "auto-enrich-cielo.js",
+        "check-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "explore-cielo-structure.js",
+        "scripts/api-gmgn.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-buy-sell-metrics.js",
+        "test-columns.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 14,
+      "isReallyUsed": true
+    },
+    "total_buy_amount_usd": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-buy-sell-metrics.sql",
+        "run-migration-buy-sell.js"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "auto-enrich-cielo.js",
+        "check-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "explore-cielo-structure.js",
+        "scripts/api-gmgn.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-auto-enrichment-api.js",
+        "test-buy-sell-metrics.js",
+        "test-columns.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 15,
+      "isReallyUsed": true
+    },
+    "total_buy_count": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-buy-sell-metrics.sql",
+        "run-migration-buy-sell.js"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "auto-enrich-cielo.js",
+        "check-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "explore-cielo-structure.js",
+        "inspect-stored-cielo-data.js",
+        "scripts/api-gmgn.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-auto-enrichment-api.js",
+        "test-buy-sell-metrics.js",
+        "test-columns.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 16,
+      "isReallyUsed": true
+    },
+    "average_sell_amount_usd": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-buy-sell-metrics.sql",
+        "run-migration-buy-sell.js"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "auto-enrich-cielo.js",
+        "check-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "explore-cielo-structure.js",
+        "scripts/api-gmgn.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-auto-enrichment-api.js",
+        "test-buy-sell-metrics.js",
+        "test-columns.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 15,
+      "isReallyUsed": true
+    },
+    "minimum_sell_amount_usd": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-buy-sell-metrics.sql",
+        "run-migration-buy-sell.js"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "auto-enrich-cielo.js",
+        "check-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "explore-cielo-structure.js",
+        "scripts/api-gmgn.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-buy-sell-metrics.js",
+        "test-columns.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 14,
+      "isReallyUsed": true
+    },
+    "maximum_sell_amount_usd": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-buy-sell-metrics.sql",
+        "run-migration-buy-sell.js"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "auto-enrich-cielo.js",
+        "check-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "explore-cielo-structure.js",
+        "scripts/api-gmgn.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-buy-sell-metrics.js",
+        "test-columns.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 14,
+      "isReallyUsed": true
+    },
+    "total_sell_amount_usd": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-buy-sell-metrics.sql",
+        "run-migration-buy-sell.js"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "auto-enrich-cielo.js",
+        "check-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "explore-cielo-structure.js",
+        "scripts/api-gmgn.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-auto-enrichment-api.js",
+        "test-buy-sell-metrics.js",
+        "test-columns.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 15,
+      "isReallyUsed": true
+    },
+    "total_sell_count": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-buy-sell-metrics.sql",
+        "run-migration-buy-sell.js"
+      ],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "auto-enrich-cielo.js",
+        "check-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "explore-cielo-structure.js",
+        "scripts/api-gmgn.js",
+        "supabase/functions/cielo-api/index-with-auto-enrichment.ts",
+        "supabase/functions/cielo-api/index.ts",
+        "test-auto-enrichment-api.js",
+        "test-buy-sell-metrics.js",
+        "test-columns.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 15,
+      "isReallyUsed": true
+    },
+    "roi_above_500": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scripts/api-gmgn.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 4,
+      "isReallyUsed": true
+    },
+    "roi_200_to_500": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scripts/api-gmgn.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 4,
+      "isReallyUsed": true
+    },
+    "roi_50_to_200": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 2,
+      "isReallyUsed": true
+    },
+    "roi_0_to_50": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 2,
+      "isReallyUsed": true
+    },
+    "roi_neg50_to_0": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scripts/api-gmgn.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 4,
+      "isReallyUsed": true
+    },
+    "roi_below_neg50": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "CLEAN/supabase/functions/cielo-api/index.ts",
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js",
+        "scripts/api-gmgn.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 4,
+      "isReallyUsed": true
+    },
+    "roi_total_trades": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 2,
+      "isReallyUsed": true
+    },
+    "roi_winning_trades": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 2,
+      "isReallyUsed": true
+    },
+    "roi_losing_trades": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 2,
+      "isReallyUsed": true
+    },
+    "roi_distribution_last_updated": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 2,
+      "isReallyUsed": true
+    },
+    "total_unrealized_roi_percentage": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [
+        "migration-add-cielo-metrics.sql",
+        "migration-add-pnl-metrics.sql",
+        "run-migration.js"
+      ],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "check-wallet-columns.js",
+        "deep-column-analysis.js",
+        "enrich-cielo-metrics.js",
+        "verify-cielo-metrics.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 8,
+      "isReallyUsed": true
+    },
+    "pnl_data_last_updated": {
+      "inSelects": [],
+      "inUpdates": [],
+      "inInserts": [],
+      "inMigrations": [],
+      "inJsCode": [
+        "analyze-unused-columns.js",
+        "deep-column-analysis.js"
+      ],
+      "inConfigFiles": [],
+      "totalReferences": 2,
+      "isReallyUsed": true
+    }
+  },
+  "analysis": {
+    "timestamp": "2025-08-18T15:17:41.430Z",
+    "recommendations": [
+      {
+        "type": "KEEP",
+        "columns": [
+          "id",
+          "wallet_address",
+          "solscan_url",
+          "gmgn_url",
+          "cielo_url",
+          "wallet_pnl_link",
+          "dune_wallet_pnl",
+          "dune_total_bought_usd",
+          "dune_total_pnl_usd",
+          "dune_roi",
+          "dune_mroi",
+          "dune_invalids",
+          "dune_tokens",
+          "dune_nosells",
+          "dune_losses",
+          "dune_nulls",
+          "dune_wins",
+          "dune_winrate",
+          "dune_w2x",
+          "dune_w10x",
+          "dune_w100x",
+          "dune_scalps",
+          "dune_scalp_ratio",
+          "dune_bal",
+          "dune_bal_ratio",
+          "dune_last_trade",
+          "dune_trade_days",
+          "status",
+          "last_processed_at",
+          "processing_attempts",
+          "last_error",
+          "enriched_analysis_score",
+          "enriched_total_value_usd",
+          "enriched_total_tokens",
+          "enriched_winrate",
+          "enriched_total_pnl_usd",
+          "enriched_ai_category",
+          "enriched_ai_risk_level",
+          "enriched_data_completeness_score",
+          "created_at",
+          "updated_at",
+          "data_source",
+          "metadata",
+          "roi",
+          "winrate",
+          "tokens_traded",
+          "wins",
+          "losses",
+          "trade_count",
+          "last_trade_date",
+          "source",
+          "total_pnl_usd",
+          "total_bought_usd",
+          "enriched_total_trades",
+          "enriched_roi_percentage",
+          "enriched_portfolio_value_usd",
+          "enriched_portfolio_tokens",
+          "dexscreener_enriched_portfolio_tokens",
+          "dexscreener_enriched_pnl_tokens",
+          "dexscreener_tokens_with_market_cap",
+          "dexscreener_tokens_with_price_data",
+          "dexscreener_average_reliability_score",
+          "cielo_complete_data",
+          "cielo_last_enriched_at",
+          "dexscreener_last_enriched_at",
+          "processing_version",
+          "pnl_low_cap_count",
+          "pnl_middle_cap_count",
+          "pnl_large_cap_count",
+          "pnl_mega_cap_count",
+          "pnl_unknown_cap_count",
+          "pnl_total_analyzed_count",
+          "pnl_total_volume_24h_usd",
+          "pnl_avg_volume_24h_usd",
+          "pnl_tokens_with_volume_data",
+          "portfolio_total_volume_24h_usd",
+          "portfolio_avg_volume_24h_usd",
+          "portfolio_tokens_with_volume_data",
+          "profit_factor_30d",
+          "expectancy_usd_30d",
+          "drawdown_max_usd_30d",
+          "median_hold_min_30d",
+          "scalp_ratio_30d",
+          "cap_exposure_micro_pct_30d",
+          "cap_exposure_low_pct_30d",
+          "cap_exposure_mid_pct_30d",
+          "cap_exposure_large_pct_30d",
+          "cap_exposure_mega_pct_30d",
+          "liquidity_median_usd_30d",
+          "recency_score_30d",
+          "streak_wins_max_90d",
+          "streak_losses_max_90d",
+          "copy_trading_score",
+          "pnl_30d",
+          "trade_count_30d",
+          "winrate_30d",
+          "roi_pct_30d",
+          "dexscreener_micro_cap_count",
+          "dexscreener_low_cap_count",
+          "dexscreener_middle_cap_count",
+          "dexscreener_large_cap_count",
+          "dexscreener_mega_cap_count",
+          "dexscreener_unknown_cap_count",
+          "dexscreener_total_analyzed_count",
+          "average_holding_time",
+          "total_pnl",
+          "total_roi_percentage",
+          "swap_count",
+          "first_swap_timestamp",
+          "last_swap_timestamp",
+          "unique_trading_days",
+          "consecutive_trading_days",
+          "average_trades_per_token",
+          "total_tokens_traded",
+          "total_unrealized_pnl_usd",
+          "combined_pnl_usd",
+          "combined_roi_percentage",
+          "combined_average_hold_time",
+          "combined_median_hold_time",
+          "average_buy_amount_usd",
+          "minimum_buy_amount_usd",
+          "maximum_buy_amount_usd",
+          "total_buy_amount_usd",
+          "total_buy_count",
+          "average_sell_amount_usd",
+          "minimum_sell_amount_usd",
+          "maximum_sell_amount_usd",
+          "total_sell_amount_usd",
+          "total_sell_count",
+          "roi_above_500",
+          "roi_200_to_500",
+          "roi_50_to_200",
+          "roi_0_to_50",
+          "roi_neg50_to_0",
+          "roi_below_neg50",
+          "roi_total_trades",
+          "roi_winning_trades",
+          "roi_losing_trades",
+          "roi_distribution_last_updated",
+          "total_unrealized_roi_percentage",
+          "pnl_data_last_updated"
+        ],
+        "description": "Ces colonnes sont activement utilisées et doivent être conservées"
+      }
+    ]
+  }
+}

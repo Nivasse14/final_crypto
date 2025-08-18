@@ -1,0 +1,103 @@
+{
+  "timestamp": "2025-08-18T15:21:24.142Z",
+  "readOnlyColumns": [
+    "dune_mroi",
+    "dune_invalids",
+    "pnl_total_volume_24h_usd",
+    "pnl_avg_volume_24h_usd",
+    "pnl_tokens_with_volume_data",
+    "portfolio_total_volume_24h_usd",
+    "portfolio_avg_volume_24h_usd",
+    "portfolio_tokens_with_volume_data",
+    "streak_wins_max_90d",
+    "streak_losses_max_90d",
+    "roi_50_to_200",
+    "roi_0_to_50",
+    "roi_total_trades",
+    "roi_winning_trades",
+    "roi_losing_trades",
+    "roi_distribution_last_updated",
+    "pnl_data_last_updated"
+  ],
+  "recommendations": {
+    "safeToRemove": [
+      {
+        "column": "pnl_total_volume_24h_usd",
+        "reason": "Métriques de volume PnL - semblent être des données calculées non maintenues"
+      },
+      {
+        "column": "pnl_avg_volume_24h_usd",
+        "reason": "Métriques de volume PnL - semblent être des données calculées non maintenues"
+      },
+      {
+        "column": "pnl_tokens_with_volume_data",
+        "reason": "Métriques de volume PnL - semblent être des données calculées non maintenues"
+      },
+      {
+        "column": "portfolio_total_volume_24h_usd",
+        "reason": "Métriques de volume portfolio - semblent être des données calculées non maintenues"
+      },
+      {
+        "column": "portfolio_avg_volume_24h_usd",
+        "reason": "Métriques de volume portfolio - semblent être des données calculées non maintenues"
+      },
+      {
+        "column": "portfolio_tokens_with_volume_data",
+        "reason": "Métriques de volume portfolio - semblent être des données calculées non maintenues"
+      },
+      {
+        "column": "roi_50_to_200",
+        "reason": "Distribution ROI - données calculées qui semblent obsolètes, non mises à jour"
+      },
+      {
+        "column": "roi_0_to_50",
+        "reason": "Distribution ROI - données calculées qui semblent obsolètes, non mises à jour"
+      },
+      {
+        "column": "roi_total_trades",
+        "reason": "Distribution ROI - données calculées qui semblent obsolètes, non mises à jour"
+      },
+      {
+        "column": "roi_winning_trades",
+        "reason": "Distribution ROI - données calculées qui semblent obsolètes, non mises à jour"
+      },
+      {
+        "column": "roi_losing_trades",
+        "reason": "Distribution ROI - données calculées qui semblent obsolètes, non mises à jour"
+      }
+    ],
+    "reviewNeeded": [
+      {
+        "column": "dune_mroi",
+        "reason": "Métrique Dune potentiellement obsolète, mais pourrait être utilisée dans des rapports"
+      },
+      {
+        "column": "dune_invalids",
+        "reason": "Compteur d'erreurs Dune - utile pour debugging mais peut être obsolète"
+      },
+      {
+        "column": "streak_wins_max_90d",
+        "reason": "Métriques de streaks - pourraient être utilisées dans des analyses avancées"
+      },
+      {
+        "column": "streak_losses_max_90d",
+        "reason": "Métriques de streaks - pourraient être utilisées dans des analyses avancées"
+      }
+    ],
+    "keepForNow": [
+      {
+        "column": "roi_distribution_last_updated",
+        "reason": "Timestamps de mise à jour - utiles pour le debugging et la maintenance"
+      },
+      {
+        "column": "pnl_data_last_updated",
+        "reason": "Timestamps de mise à jour - utiles pour le debugging et la maintenance"
+      }
+    ]
+  },
+  "summary": {
+    "safeToRemove": 11,
+    "reviewNeeded": 4,
+    "keepForNow": 2
+  }
+}
